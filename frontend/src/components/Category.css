@@ -1,0 +1,47 @@
+.category-oval {
+  display: flex;
+  flex-direction: row;
+  background: #F2F6EB;
+  border-radius: 500px;
+  width: 10vw;
+  height: 2.3vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.85vw;
+  color: #A3BE85;
+}
+
+/* For phones: adaptive layout (вёрстка) */
+@media (min-height: 700px) and (max-height: 799px) {
+  .category-oval {
+    height: 1.8vh;
+  }
+}
+
+@media (min-height: 800px) and (max-height: 950px) {
+  .category-oval {
+    height: 1.8vh;
+  }
+}
+
+@media (min-height: 901px) and (max-height: 1400px) and (min-width: 900px) and (max-width: 1500px) {
+  .category-oval {
+    height: 1.8h;
+  }
+}
+
+@media (min-height: 700px) and (max-height: 1080px) and (min-width: 1200px) and (max-width: 2048px) {
+  .category-oval {
+    height: 25px;
+    width: 90px;
+  }
+
+  .label {
+    font-size: 18px;
+  }
+}
