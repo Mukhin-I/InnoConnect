@@ -1,10 +1,8 @@
 package app
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/config"
 	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
 )
 
@@ -15,8 +13,7 @@ func CreateServer() {
 	setEndpoints(router)
 
 	// Getting .env vars
-	godotenv.Load()
-	meetingPort := os.Getenv("MEETING_SERVICE_PORT")
+	meetingPort := config.GetVar("MEETING_SERVICE_PORT")
 
 	logger.Info("Meeting service running on :" + meetingPort)
 

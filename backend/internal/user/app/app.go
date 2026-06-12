@@ -1,10 +1,8 @@
 package app
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/config"
 	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
 )
 
@@ -15,8 +13,7 @@ func CreateServer() {
 	setEndpoints(router)
 
 	// Getting .env vars
-	godotenv.Load()
-	userPort := os.Getenv("USER_SERVICE_PORT")
+	userPort := config.GetVar("USER_SERVICE_PORT")
 
 	logger.Info("User service running on :" + userPort)
 
