@@ -1,5 +1,5 @@
 import './Map.css';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import logoIcon from './assets/logo.svg';
 import filterIcon from './assets/filter.svg';
 import sportIcon from './assets/football.svg';
@@ -10,10 +10,27 @@ import settingsIcon from './assets/settings.svg';
 
 function Map() {
   const [activeFilter, setActiveFilter] = useState('Спорт');
+  const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 }); // Start hidden until measured
+  const containerRef = useRef(null);
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
   };
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const activeBtn = containerRef.current.querySelector('.active-filter');
+      if (activeBtn) {
+        setHighlightStyle({
+          left: activeBtn.offsetLeft,
+          width: activeBtn.offsetWidth,
+          height: activeBtn.offsetHeight,
+          top: activeBtn.offsetTop,
+          opacity: 1,
+        });
+      }
+    }
+  }, [activeFilter]);
 
   return (
     <div className="map-page">
@@ -28,7 +45,8 @@ function Map() {
       </header>
 
       <div className="filters-bar">
-        <div className="filters-group">
+        <div className="filters-group" ref={containerRef}>
+          <div className="highlight-pill" style={highlightStyle}></div>
           <button className="filter-btn filter-settings">
             <img src={filterIcon} alt="Filter" className="filter-icon" />
             Фильтры

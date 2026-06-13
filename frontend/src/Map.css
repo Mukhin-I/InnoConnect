@@ -4,7 +4,7 @@
   width: 100vw;
   height: 100vh;
   box-sizing: border-box;
-  background-color: #F8F9F3; /* Similar light background from EventCard */
+  background-color: #F8F9F3;
   background-image: url('./assets/bg.svg');
   background-size: cover;
   background-position: center top;
@@ -53,22 +53,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5vw;
+  padding: 0 4vw;
   margin-top: 1vh;
   margin-bottom: 2vh;
   gap: 2vw;
+  width: 100vw;
+  box-sizing: border-box;
 }
 
 .filters-group {
   display: flex;
-  gap: 1vw;
-  overflow-x: auto;
+  justify-content: space-between;
+  flex: 1;
   align-items: center;
   background-color: #FFFFFF;
   border-radius: 40px;
-  padding: 0.5vh 2vw;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Shadow on the whole container now */
-  /* Hide scrollbar */
+  padding: 0.5vh 1.5vw;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: relative;
   -ms-overflow-style: none;  
   scrollbar-width: none;  
 }
@@ -81,19 +83,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1vh 3vw;
+  padding: 0.8vh 2.5vw;
   border-radius: 20px;
   border: none;
-  background-color: transparent; /* Transparent to let container white show through */
+  background-color: transparent; 
   color: #343434;
   font-family: 'Montserrat', sans-serif;
-  font-size: 3.5vw;
-  font-weight: 400; /* Removed bold */
+  font-size: 3vw;
+  font-weight: 400; 
   white-space: nowrap;
-  gap: 1.5vw;
-  box-shadow: none; /* Removed individual shadow */
+  gap: 1.2vw;
+  box-shadow: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  position: relative;
+  z-index: 2; 
+  transition: color 0.3s ease;
 }
 
 .filter-icon {
@@ -106,15 +110,20 @@
   height: 3.5vw;
 }
 
-/* Specific pill modifications based on mockup */
 .active-filter {
-  background-color: #F1F4EA;
   color: #6CA64D;
+  background-color: transparent !important;
 }
-/* If you're using CSS to tint SVG images, one way is CSS filters (for green).
-   For exact color matching via filter: invert(...) sepia(...) etc,
-   if they are already green in your SVG, this isn't needed. 
-   Assuming they are grey default SVGs, below provides a green tint placeholder */
+
+.highlight-pill {
+  position: absolute;
+  background-color: #F1F4EA;
+  border-radius: 20px;
+  z-index: 1; 
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+
 .active-filter .filter-icon {
   filter: brightness(0) saturate(100%) invert(56%) sepia(18%) saturate(1476%) hue-rotate(50deg) brightness(98%) contrast(85%); 
 }
@@ -123,14 +132,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 10vw;
-  height: 10vw;
-  min-width: 10vw;
+  width: 9vw;
+  height: 9vw;
+  min-width: 9vw;
   border-radius: 50%;
   border: none;
   background-color: #FFFFFF;
   color: #343434;
-  font-size: 6vw;
+  font-size: 5.5vw;
   font-weight: 400;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   cursor: pointer;
