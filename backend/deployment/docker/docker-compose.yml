@@ -1,0 +1,27 @@
+services:
+  gateway:
+    env_file:
+      - .env
+    ports:
+      - "${GATEWAY_PORT}:8080"
+    build:
+      context: ../../../  
+      dockerfile: backend/deployment/docker/Dockerfile.gateway
+      args:
+        - VERSION=1.0
+    container_name: gateway
+    image: gateway:1.0
+    environment:
+        - GATEWAY_SERVICE_PORT=8080
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8080"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - local
+    restart: unless-stopped
+networks:
+  local:
+    driver: bridge
