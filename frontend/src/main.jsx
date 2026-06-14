@@ -1,10 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import EventCard from './EventCard.jsx'
+import Map from './Map.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <EventCard />
+    <Map />
   </StrictMode>,
 )
