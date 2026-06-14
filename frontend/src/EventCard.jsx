@@ -7,7 +7,7 @@ import chatIcon from './assets/message.png';
 import closeIcon from './assets/closeIcon.png';
 import { useState, useEffect } from 'react';
 
-function EventCard({ eventId }) {
+function EventCard({ eventId, onClose }) {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -101,7 +101,7 @@ function EventCard({ eventId }) {
                 <img src={chatIcon} alt="chat" />
               </button>
             </div>
-            <button className="close-button"><img src={closeIcon} alt="x" /></button>
+            <button className="close-button" onClick={onClose}><img src={closeIcon} alt="x" /></button>
           </div>
         </div>
     </>
