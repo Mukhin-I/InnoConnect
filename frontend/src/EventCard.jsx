@@ -61,7 +61,7 @@ function EventCard({ eventId, onClose }) {
 
   if (loading) return (
     <div className="card-page">
-      <div className="card-container-loading">Загрузка...</div>
+      <div className="card-container-loading"></div>
     </div>
   );
 
