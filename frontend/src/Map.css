@@ -142,6 +142,7 @@
   font-weight: 400;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   cursor: pointer;
+  text-decoration: none;
 }
 
 .map-container-placeholder {
