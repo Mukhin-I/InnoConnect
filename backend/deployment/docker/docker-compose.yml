@@ -135,24 +135,30 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=meeting
-      - PG_PORT=${DB_SERVICE_PORT}
+      - PGPORT=${DB_SERVICE_PORT}
+    command: -p ${DB_SERVICE_PORT}
     container_name: db_meeting
-    image: postgres:18.4-alpine3.23
+    image: db_meeting:1.0
+    build: # just for the pure number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_SERVICE_PORT}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "meeting"]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "meeting", "-p", "${DB_SERVICE_PORT}"]
       interval: 3s
       timeout: 30s
       retries: 5
       start_period: 30s
     volumes:
-      - pgdata_meeting:/var/lib/postgresql/data
+      - pgdata_meeting:/var/lib/postgresql
       - ../../db/init-meetings.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - meeting
     depends_on:
       meeting:
         condition: service_started
-    restart: unless-stoppe
+    restart: unless-stopped
   db_request:
     env_file:
       - .env
@@ -160,21 +166,27 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=request
-      - PG_PORT=${DB_SERVICE_PORT}
+      - PGPORT=${DB_SERVICE_PORT}
+    command: -p ${DB_SERVICE_PORT}
     container_name: db_request
-    image: postgres:18.4-alpine3.23
+    image: db_request:1.0
+    build: # just for the pure number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_SERVICE_PORT}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "postgres", "-p", "${DB_SERVICE_PORT}"]
       interval: 3s
       timeout: 30s
       retries: 5
       start_period: 30s
     volumes:
-      - pgdata_request:/var/lib/postgresql/data
+      - pgdata_request:/var/lib/postgresql
     networks:
       - request
     depends_on:
-      meeting:
+      request:
         condition: service_started
     restart: unless-stopped
   db_user:
@@ -184,21 +196,27 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=user
-      - PG_PORT=${DB_SERVICE_PORT}
+      - PGPORT=${DB_SERVICE_PORT}
+    command: -p ${DB_SERVICE_PORT}
     container_name: db_user
-    image: postgres:18.4-alpine3.23
+    image: db_user:1.0
+    build: # just for the pure number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_SERVICE_PORT}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "postgres", "-p", "${DB_SERVICE_PORT}"]
       interval: 3s
       timeout: 30s
       retries: 5
       start_period: 30s
     volumes:
-      - pgdata_user:/var/lib/postgresql/data
+      - pgdata_user:/var/lib/postgresql
     networks:
       - user
     depends_on:
-      meeting:
+      user:
         condition: service_started
     restart: unless-stopped
   db_chat:
@@ -208,21 +226,27 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=chat
-      - PG_PORT=${DB_SERVICE_PORT}
+      - PGPORT=${DB_SERVICE_PORT}
+    command: -p ${DB_SERVICE_PORT}
     container_name: db_chat
-    image: postgres:18.4-alpine3.23
+    image: db_chat:1.0 
+    build: # just for the pure number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_SERVICE_PORT}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "postgres", "-p", "${DB_SERVICE_PORT}"]
       interval: 3s
       timeout: 30s
       retries: 5
       start_period: 30s
     volumes:
-      - pgdata_chat:/var/lib/postgresql/data
+      - pgdata_chat:/var/lib/postgresql
     networks:
       - chat
     depends_on:
-      meeting:
+      chat:
         condition: service_started
     restart: unless-stopped
 
@@ -237,6 +261,7 @@ networks:
     driver: bridge
   chat:
     driver: bridge
+
 volumes:
   pgdata_meeting:
     driver: local
