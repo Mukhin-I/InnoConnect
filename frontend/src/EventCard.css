@@ -1,4 +1,7 @@
 .card-page {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
     width: 90%;
     height: 35vh;
     background-color: #FFFFFF;
@@ -6,11 +9,7 @@
     padding: 2.5vh 3.3vw;
     box-sizing: border-box;
     text-align: left;
-    margin: 0 auto;
-    margin-top: auto;
-    position: fixed;
-    bottom: 0;
-    margin-bottom: 72px; /* Поправить, когда будет реализован нижний бар, а также добавить в вёрстку*/
+    bottom: 72px; /* Поправить, когда будет реализован нижний бар, а также добавить в вёрстку*/
 }
 
 .card-container {
@@ -43,6 +42,10 @@
     display: flex;
     flex-direction: column;
     gap: 0.6vh;
+}
+
+.categories-container {
+  margin-bottom: 12px;
 }
 
 .icon-container {

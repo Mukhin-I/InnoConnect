@@ -1,11 +1,20 @@
 import './EventCard.css'
-import flagIcon from './assets/Flag.png';
 import calendarIcon from './assets/calendar.png';
 import peopleIcon from './assets/Profile.png';
 import addressIcon from './assets/location.png';
 import chatIcon from './assets/message.png';
 import closeIcon from './assets/closeIcon.png';
+import sportIcon from './assets/gantelActiveIcon.png';
+import socialIcon from './assets/socialActiveIcon.png';
+import studyIcon from './assets/learningActiveIcon.png';
 import { useState, useEffect } from 'react';
+import Category from './components/Category';
+
+const CATEGORY_ITEMS = {
+  "Спорт": sportIcon,
+  "Соц": socialIcon,
+  "Учеба": studyIcon,
+};
 
 function EventCard({ eventId, onClose }) {
   const [event, setEvent] = useState(null);
@@ -70,9 +79,14 @@ function EventCard({ eventId, onClose }) {
         <div className="card-container">
           <div className="card-top">
             <div className="icon-container">
-              <img src={flagIcon} alt=""></img>
+              <img src={CATEGORY_ITEMS[event.type]} alt="" />
             </div>
             <div className="card-right-content">
+                {event.type && (
+                  <div className="categories-container">
+                    <Category label={event.type} />
+                  </div>
+                )}
               <div className="card-header">
                 <h2>{event.title}</h2>
                 <div className="card-info-row">
