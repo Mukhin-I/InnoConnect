@@ -4,6 +4,7 @@ import calendarIcon from './assets/calendar.png';
 import peopleIcon from './assets/Profile.png';
 import addressIcon from './assets/location.png';
 import chatIcon from './assets/message.png';
+import closeIcon from './assets/closeIcon.png';
 import { useState, useEffect } from 'react';
 
 function EventCard({ eventId }) {
@@ -100,6 +101,7 @@ function EventCard({ eventId }) {
                 <img src={chatIcon} alt="chat" />
               </button>
             </div>
+            <button className="close-button"><img src={closeIcon} alt="x" /></button>
           </div>
         </div>
     </>
