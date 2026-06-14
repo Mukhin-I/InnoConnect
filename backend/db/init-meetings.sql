@@ -1,4 +1,4 @@
-CREATE TABLE meetings (
+CREATE TABLE IF NOT EXISTS meetings(
     id BIGSERIAL PRIMARY KEY,
     creator_id BIGINT NOT NULL,
     creator_name TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE meetings (
     max_people INTEGER
 );
 
-CREATE TABLE meeting_participants (
+CREATE TABLE IF NOT EXISTS meeting_participants (
     meeting_id BIGINT NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
     user_id BIGINT NOT NULL,
     user_name TEXT NOT NULL,
