@@ -1,0 +1,692 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.meeting-creation-page {
+    width: 100vw;
+    height: 100vh;
+    padding: 5vh 4vw;
+    background-color: #f5f5f5;
+    background-image: url('./assets/bg.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;      
+    margin: 0 auto;
+}
+
+.header-top {
+    display: flex;
+    flex-direction: row;
+    gap: 3vw;
+}
+
+.text-header {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 68vw;
+}
+
+.notification-button, .settings-button {
+    height: 3vh;
+    width: 5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.notification-button img, .settings-button img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.header-top h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 4.7vw;
+    font-weight: 600;
+    color: #00130c;
+    margin-right: auto;
+}
+
+.text-header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 4vw;
+    font-weight: 600;
+    color: #000000;
+    margin-bottom: 3vh;
+}
+
+.text-header p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.65vw;
+    font-weight: 500;
+    color: rgba(52, 52, 52, 0.6);
+    line-height: 1.2;
+    margin-top: 0;
+    margin-bottom: 2.25vh;
+}
+
+.creation-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    text-align: left;
+    padding: 2.25vh 3.5vw;
+    box-sizing: border-box;
+    gap: 1.5vh;
+    width: 100%;
+    max-width: 95.5vw;
+    height: 74vh;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    margin: 0 auto;
+}
+
+.meeting-name h2, .meeting-description h2, .meeting-time-date h2,
+.meeting-place h2, .seats-amount h2, .event-cataegories h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.85vw;
+    font-weight: 700;
+    color: #768F64;
+    margin-bottom: 0.45vh;
+}
+
+.meeting-name input, .meeting-description textarea, .seats-amount input {
+    width: 85vw;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.86vw;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+.meeting-name input {
+    height: 4vh;
+    background-image: url('./assets/calendarIcon.png');
+    background-repeat: no-repeat;
+    background-position: left 1.33vw center;
+    background-size: 2.66vw;
+    padding-left: 6.4vw;
+}
+
+.meeting-name input::placeholder, .meeting-description textarea::placeholder,  .seats-amount input::placeholder {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 1.86vw;
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.meeting-name input:focus, .meeting-description textarea:focus, .datetime-input:last-child:focus, 
+.datetime-input:focus, .seats-amount input:focus {
+    border-color: #90aa6f;
+    outline: none;
+}
+
+.datetime-input:first-child:focus {
+    border-top: 1px solid #90aa6f;
+    border-right: 1px solid #90aa6f;
+    border-bottom: 2px solid #90aa6f;
+    border-left: 1px solid #90aa6f;
+    outline: none;
+}
+
+.meeting-description textarea {
+    resize: none;
+    height: 9.75vh;
+    background-image: url('./assets/descriptionIcon.png');
+    background-repeat: no-repeat;
+    background-position: left 1.33vw top 1.2vh;
+    background-size: 2.66vw;
+    padding-left: 6.4vw;
+    padding-top: 1.5vh;
+    padding-bottom: 3vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.meeting-description {
+    position: relative;
+}
+
+.char-counter-inside {
+    position: absolute;
+    bottom: 1.2vh;
+    right: 3.2vw;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.86vw;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+    background: transparent;
+}
+
+.meeting-time-date h2 {
+    margin: 0;
+}
+
+.meeting-time-date p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.6vw;
+    color: rgba(52, 52, 52, 0.5);
+}
+
+.choose-date-time-container {
+    display: flex;
+    align-items: center;
+    gap: 2.13vw;
+    justify-content: center;
+    width: 70.75vw;
+}
+
+.choose-date-time-container img {
+    width: 3.72vw;
+    height: 2.1vh;
+    flex-shrink: 0;
+}
+
+.choose-mini-left, .choose-mini-right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.datetime-input {
+    padding: 1.2vh 3.2vw;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.86vw;
+    box-sizing: border-box;
+    width: 30.9vw;
+    height: 4vh;
+}
+
+.datetime-input:first-child {
+    border-radius: 7px 7px 0 0;
+}
+
+.datetime-input:last-child {
+    border-radius: 0 0 7px 7px;
+    margin-top: -1px;
+}
+
+.meeting-place h2 {
+    margin-bottom: 0.9vh;
+}
+
+.map-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 85vw;;
+    height: 10.35vh;
+    box-sizing: border-box;
+    background-color: #ededed;
+    border-radius: 12px;
+    margin-bottom: 1.2vh;
+}
+
+.bottom-header-map {
+    display: flex;
+    flex-direction: row;
+    margin-top: auto;
+    align-items: center;
+    border-radius: 0 0 12px 12px;
+}
+
+.bottom-header-map img {
+    width: 3.2vw;
+    height: 1.8vh;
+    margin-left: 1.86vw;
+    margin-right: 1.86vw;
+}
+
+.bottom-header-h-p-combo {
+    display: flex;
+    flex-direction: column;
+}
+
+.bottom-header-h-p-combo h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.86vw;
+    color: #343434;
+    margin: 0;
+}
+
+.bottom-header-h-p-combo p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 1.6vw;
+    color: rgba(52, 52, 52, 0.6);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.edit-location-button {
+    width: 13.6vw;
+    height: 2.6vh;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.6vw;
+    color: #96B076;
+    border: 1.5px solid #D5DCC9;
+    margin-left: auto;
+    margin-right: 1.9vw;
+}
+
+.bottom-header-map {
+    width: 85vw;
+    height: 4vh;
+    background-color: #F7F7F7;
+}
+
+.seats-amount input {
+    height: 4vh;
+    background-image: url('./assets/seatsIcon.png');
+    background-repeat: no-repeat;
+    background-position: left 1.33vw center;
+    background-size: 2.7vw;
+    padding-left: 6.4vw;
+    margin-bottom: 0.75vh;
+}
+
+.seats-amount .optional-text {
+    font-weight: 500;
+    font-size: 1.86vw;
+    color: rgba(52, 52, 52, 0.4)
+}
+
+.category-switch {
+    display: flex;
+    width: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid #ededed;
+    border-radius: 7px;
+    padding: 0;
+    overflow: hidden;
+    margin-bottom: 1.5vh;
+}
+
+.category-switch button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6vw;
+    flex: 1;
+    padding: 1.2vh 3.2vw;
+    border: none;
+    background: transparent;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 2.13vw;
+    color: rgba(52, 52, 52, 0.5);
+    position: relative;
+}
+
+.category-switch button:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 60%;
+    background-color: #ededed;
+}
+
+.category-switch button.active {
+    background-color: #f5f5f1;
+    color: white;
+    font-weight: 600;
+    border-radius: 1.86vw;
+    color: #90AA6F;
+}
+
+.category-switch button.active::after {
+    display: none;
+}
+
+.category-switch button:hover:not(.active) {
+    background-color: rgba(149, 176, 110, 0.2);
+}
+
+.category-switch img {
+    width: 3.2vw;
+    height: 1.8vh;
+}
+
+.create-event-button {
+    width: 85vw;
+    height: 4.8vh;
+    border-radius: 500px;
+    background-color: #91AD69;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 2.7vw;
+    color: #FFFFFF;
+}
+
+@media (min-height: 700px) and (max-height: 799px) {
+    .meeting-creation-page {
+        height: 100vh;
+    }
+    
+    .creation-card {
+        height: 70vh;
+        margin-top: 1.5vh;
+    }
+    
+    .meeting-name h2, .meeting-description h2, .meeting-time-date h2,
+    .meeting-place h2, .seats-amount h2, .event-cataegories h2 {
+        font-size: 2vw;
+    }
+
+    .meeting-name input::placeholder, .meeting-description textarea::placeholder,  .seats-amount input::placeholder {
+        font-size: 1.95vw;
+    }
+
+    .meeting-time-date p {
+        font-size: 1.7vw;
+    }
+
+    .datetime-input {
+        width: 29vw;
+        height: 3.5vh;
+    }
+
+    .choose-date-time-container {
+        width: 67vw;
+    }
+
+    .category-switch button {
+        padding: 1vh 3.2vw;
+    }
+
+    .create-event-button {
+        height: 4.3vh;
+    }
+}
+
+@media (min-height: 800px) and (max-height: 950px) {
+    .meeting-creation-page {
+        height: 100vh;
+    }
+
+    .header-top h2 {
+        margin-top: 0.7vh;
+        margin-bottom: 1vh;
+    }
+
+    .text-header h1 {
+        margin-bottom: 3.5vh;
+    }
+    
+    .creation-card {
+        height: 69vh;
+        margin-top: 2vh;
+    }
+    
+    .meeting-name h2, .meeting-description h2, .meeting-time-date h2,
+    .meeting-place h2, .seats-amount h2, .event-cataegories h2 {
+        font-size: 2vw;
+    }
+
+    .meeting-name input::placeholder, .meeting-description textarea::placeholder,  .seats-amount input::placeholder {
+        font-size: 2vw;
+    }
+
+    .meeting-time-date p {
+        font-size: 1.8vw;
+    }
+
+    .datetime-input {
+        width: 29vw;
+        height: 3.5vh;
+    }
+
+    .choose-date-time-container {
+        width: 67vw;
+    }
+
+    .category-switch button {
+        padding: 0.9vh 3.2vw;
+    }
+
+    .bottom-header-h-p-combo h2 {
+        font-size: 1.9vw;
+    }
+
+    .bottom-header-h-p-combo p {
+        font-size: 1.7vw;
+    }
+
+    .create-event-button {
+        height: 4.3vh;
+    }
+}
+
+@media (min-height: 901px) and (max-height: 1400px) and (min-width: 750px) {
+    .header-top h2 {
+        margin-bottom: 1vh;
+    }
+
+    .category-switch button {
+        padding: 0.9vh 3.2vw;
+    }
+
+    .create-event-button {
+        height: 4.3vh;
+        margin-top: 0.5vh;
+    }
+}
+
+@media (min-height: 901px) and (max-height: 1400px) and (min-width: 900px) and (max-width: 1500px) {
+    .header-top h2 {
+        margin-top: -1vh;
+        margin-bottom: 1.5vh;
+    }
+
+    .meeting-time-date p {
+        margin-bottom: 0.7vh;
+    }
+
+    .datetime-input {
+        width: 25vw;
+        height: 3.7vh;
+    }
+
+    .choose-date-time-container {
+        width: 59vw;
+    }
+
+    .map-container {
+        margin-bottom: 1.7vh;
+    }
+
+    .category-switch button {
+        padding: 0.9vh 3.2vw;
+    }
+
+    .create-event-button {
+        height: 4.3vh;
+        margin-top: 0.5vh;
+    } 
+}
+
+@media (min-height: 700px) and (max-height: 1100px) and (min-width: 1200px) and (max-width: 2048px) {    
+    .meeting-creation-page {
+        background-color: transparent;
+        background-image: none;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .creation-card {
+        height: 900px;
+    }
+    
+    .header-top h2 {
+        font-size: 2.5vw;
+        margin-top: -2vh;
+    }
+
+    .text-header {
+        margin-top: -2vh;
+    }
+
+    .text-header h1 {
+        font-size: 3vw;
+    }
+
+    .text-header p {
+        font-size: 1.7vw;
+    }
+
+    .meeting-name h2, .meeting-description h2, .meeting-time-date h2,
+    .meeting-place h2, .seats-amount h2, .event-cataegories h2 {
+        font-size: 1.4vw;
+    }
+
+    .notification-button, .settings-button {
+        width: 30px;
+        height: 30px;
+    }
+
+    .meeting-name input, .meeting-description textarea, .seats-amount input {
+        width: 85vw;
+        height: 6vh;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 14px;
+        font-size: 1.5vw;
+        margin-bottom: 1.5vh;
+    }
+
+    .meeting-name input {
+        background-size: 2vw;
+        padding-left: 4.5vw;
+    }
+
+    .meeting-description textarea {
+        height: 14vh;
+        background-position: left 1.33vw top 1.2vh;
+        background-size: 2.66vw;
+        padding-left: 4.5vw;
+        font-size: 1.5vw;
+    }
+    
+    .meeting-time-date p {
+        font-size: 1.2vw;
+    }
+
+    .datetime-input {
+        margin-top: 1vh;
+        height: 5.7vh;
+        width: 24vw;
+        margin-bottom: 0.7vh;
+    }
+
+    .choose-date-time-container img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .choose-date-time-container {
+        width: 56vw;
+    }
+
+    .map-container {
+        height: 25vh;
+    }
+
+    .bottom-header-map {
+        height: 10vh;
+    }
+
+    .bottom-header-map img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .bottom-header-h-p-combo h2 {
+        font-size: 1.5vw;
+    }
+
+    .bottom-header-h-p-combo p {
+        font-size: 1.2vw;
+    }
+
+    .edit-location-button {
+        height: 7vh;
+        border-radius: 18px;
+    }
+
+    .map-container {
+        margin-bottom: 2.5vh;
+    }
+
+    .seats-amount .optional-text {
+        font-size: 1.3vw;
+    }
+
+    .meeting-name input::placeholder, .meeting-description textarea::placeholder,  .seats-amount input::placeholder {
+        font-size: 1.4vw;
+    }
+
+    .seats-amount {
+        margin-bottom: 1vh;
+    }
+
+    .event-cataegories h2 {
+        margin-bottom: 1.5vh;
+    }
+
+    .category-switch button {
+        gap: 1vw;
+        padding: 1.5vh 3.2vw;
+        font-size: 2.13vw;
+    }
+
+    .category-switch img {
+        width: 3vw;
+        height: 4vh;
+    }
+
+    .event-cataegories {
+        margin-bottom: 5vh;
+    }
+
+    .create-event-button {
+        height: 8vh;
+        width: 85vw;
+        margin: 0 auto;
+        display: block;
+        margin-bottom: 30px;
+        font-size: 2.2vw;
+    }
+
+    .char-counter-inside {
+    position: absolute;
+    bottom: 4vh;
+    right: 1.5vw;
+    font-size: 1.3vw;
+    }
+
+     html, body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+}
