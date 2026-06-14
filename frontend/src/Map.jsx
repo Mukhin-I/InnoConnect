@@ -8,8 +8,13 @@ import studyIcon from './assets/books.svg';
 import notificationIcon from './assets/notifications.svg';
 import settingsIcon from './assets/settings.svg';
 import MapBox from './components/MapBox';
+import EventCard from './EventCard.jsx'
 
 function Map() {
+  const [meetings, setMeetings] = useState([]);
+  const [selectedMeetingId, setSelectedMeetingId] = useState(null);
+
+
   const [activeFilter, setActiveFilter] = useState('Спорт');
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 }); // Start hidden until measured
   const containerRef = useRef(null);
@@ -17,6 +22,27 @@ function Map() {
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
   };
+
+  useEffect(() => {
+    async function fetchMeetings() {
+      try {
+        const response = await fetch("http://localhost:8082/meetings");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch meetings");
+        }
+
+        const data = await response.json();
+
+        setMeetings(data.meetings);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchMeetings();
+  }, []);
+
 
   useEffect(() => {
     if (containerRef.current) {
@@ -73,7 +99,20 @@ function Map() {
       </div>
 
       <div className="map-container-placeholder">
-        <MapBox />
+        <MapBox 
+          meetings={meetings}
+          selectedMeetingId={selectedMeetingId}
+          setSelectedMeetingId={setSelectedMeetingId}
+        />
+
+        {selectedMeetingId && (
+          <EventCard
+            meeting={meetings.find(
+              meeting => meeting.id === selectedMeetingId
+            )}
+            onClose={() => setSelectedMeetingId(null)}
+          />
+        )}
       </div>
 
     </div>
