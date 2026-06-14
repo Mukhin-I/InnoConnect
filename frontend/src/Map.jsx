@@ -8,14 +8,11 @@ import studyIcon from './assets/books.svg';
 import notificationIcon from './assets/notifications.svg';
 import settingsIcon from './assets/settings.svg';
 import MapBox from './components/MapBox';
-// import mapboxgl from 'mapbox-gl';
-// import 'mapbox-gl/dist/mapbox-gl.css';
 
 function Map() {
   const [activeFilter, setActiveFilter] = useState('Спорт');
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 }); // Start hidden until measured
   const containerRef = useRef(null);
-  //const mapRef = useRef(null);
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
@@ -35,22 +32,6 @@ function Map() {
       }
     }
   }, [activeFilter]);
-
-  // useEffect(() => {
-  //   mapboxgl.accessToken = 'pk.eyJ1Ijoic2VhbnNodXNoaWNra2siLCJhIjoiY21vb2hya251MGcyaTJyczZvcjB2YzRyeSJ9.1J1NvKSCBzXwiY5ufpAqDw';
-
-  //   const map = new mapboxgl.Map({
-  //     container: mapRef.current,
-  //     style: 'mapbox://styles/seanshushickkk/cmqazkvqy003d01qz36xq2coo',
-  //     center: [48.752, 55.752], // долгота, широта
-  //     zoom: 12,
-  //     attributionControl: false,
-  //   });
-
-  //   return () => {
-  //     map.remove();
-  //   };
-  // }, []);
 
   return (
     <div className="map-page">

@@ -11,8 +11,8 @@ function MapBox({
   const mapRef = useRef(null);
 
   useEffect(() => {
-    // mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
-    mapboxgl.accessToken = 'pk.eyJ1Ijoic2VhbnNodXNoaWNra2siLCJhIjoiY21vb2hya251MGcyaTJyczZvcjB2YzRyeSJ9.1J1NvKSCBzXwiY5ufpAqDw';
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
+    console.log(import.meta.env.VITE_MAPBOX_TOKEN)
 
     const map = new mapboxgl.Map({
       container: mapRef.current,
