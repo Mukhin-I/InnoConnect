@@ -1,0 +1,444 @@
+.card-page {
+    width: 90%;
+    height: 35vh;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 2.5vh 3.3vw;
+    box-sizing: border-box;
+    text-align: left;
+    margin: 0 auto;
+    margin-top: auto;
+    margin-bottom: 72px; /* Поправить, когда будет реализован нижний бар, а также добавить в вёрстку*/
+}
+
+.card-container-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.card-container-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.card-top {
+    display: flex;
+    gap: 3.2vw;
+    margin-bottom: 1.5vh;
+}
+
+.card-right-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6vh;
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 12.5vw;
+    height: 7vh;
+    background-color: #F1F4EA;
+    border-radius: 10px;
+}
+
+.icon-container img {
+    width: 60%;
+    height: 60%; 
+    object-fit: contain;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 3.2vw;
+  color: #343434;
+  margin: 0;
+}
+
+.card-info-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5.4vw;
+}
+
+.card-date {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.3vw;
+    margin-top: -0.15vh;
+}
+
+.card-date img {
+    width: 10px;
+    height: 10px;
+}
+
+.card-date p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.85vw;
+    color: rgb(52, 52, 52, 0.5);
+}
+
+.card-people-amount {
+    display: flex;
+    flex-direction: row;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px; 
+}
+
+.card-people-amount img {
+    width: 12px;
+    height: 12px;
+}
+
+.card-people-amount p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.85vw;
+    color: rgb(52, 52, 52, 0.5);
+}
+
+.description {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    width: 82.5vw;
+    height: 6.4vh;
+    background-color: #F8F8F8;
+    border-radius: 7px;
+    padding: 1.8vh 3.7vw;
+    box-sizing: border-box;
+    margin-bottom: 1.8vh;
+}
+
+.description p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.85vw;
+    color: rgb(52, 52, 52, 0.5);
+    line-height: 1.2;
+    margin: 0;
+}
+
+.address {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 82.5vw;
+    height: 4.2vh;
+    background-color: #F8F8F8;
+    border-radius: 7px;
+    padding: 2.17vh 2.4vw;
+    box-sizing: border-box;
+    margin-bottom: 2.7vh;
+}
+
+.address img {
+    width: 14px;
+    height: 14px;
+    margin-right: 2.4vw;
+}
+
+.address h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 2.1vw;
+    color: rgb(52, 52, 52, 0.5);
+    display: inline;
+    margin: 0;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sign-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 72.6vw;
+    height: 4vh;
+    border-radius: 7px;
+    background-color: #95B06E;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 2.4vw;
+    color: #FFFFFF;
+}
+
+.chat-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 7.1vw;
+    height: 4vh;
+    border: 1px solid #B7CAA4;
+    border-radius: 7px;
+}
+
+.chat-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* For phones: adaptive layout (вёрстка) */
+@media (min-height: 700px) and (max-height: 799px) {
+  .card-page {
+    height: 30.5vh;
+  }
+  
+  .icon-container {
+    height: 6.6vh;
+  }
+
+  .description {
+    height: 6vh;
+  }
+
+  .address {
+    height: 3.5vh;
+    padding: 1vh;
+    margin-bottom: 2.5vh;
+  }
+
+  .sign-button, .chat-button {
+    height: 3.5vh;
+  }
+}
+
+/* For phones: adaptive layout (вёрстка) */
+@media (min-height: 800px) and (max-height: 950px) {
+  .card-page {
+    height: 30vh;
+  }
+
+  .icon-container {
+    height: 6.3vh;
+  }
+
+  .description {
+    height: 5.7vh;
+  }
+
+  .address {
+    height: 3.3vh;
+    padding: 1vh;
+  }
+
+  .sign-button, .chat-button {
+    height: 3.5vh;
+  }
+
+  .sign-button {
+    font-size: 3vw;
+  }
+}
+
+/* For tablets: adaptive layout (вёрстка) */
+@media (min-height: 901px) and (max-height: 1400px) and (min-width: 750px) {
+  .card-page {
+    width: 85%;
+  }
+
+  .icon-container {
+    width: 10.5vw;
+  }
+
+  .card-date img {
+    width: 15px;
+    height: 15px;
+  }
+
+  .card-people-amount img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .card-date {
+    margin-top: 0.5vh;
+  }
+
+  .description {
+    width: 78vw;
+  }
+
+  .address {
+    width: 78vw;
+  }
+
+  .address img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .sign-button, .chat-button {
+    height: 4.5vh;
+  }
+
+  .chat-button {
+    border: 2px solid #B7CAA4;
+  }
+
+  .chat-button img {
+    width: 90%;
+    height: 90%;
+  }
+}
+
+@media (min-height: 901px) and (max-height: 1400px) and (min-width: 900px) and (max-width: 1500px) {
+  .description {
+    margin-top: 2vh;
+  }
+
+  .address img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sign-button, .chat-button {
+    height: 4.7vh;
+  }
+
+  .chat-button {
+    border: 2px solid #B7CAA4;
+  }
+
+  .chat-button img {
+    width: 80%;
+    height: 80%;
+  }
+
+  .chat-button, .sign-button {
+    border-radius: 20px;
+  }
+}
+
+/* For laptops: adaptive layout (вёрстка) */
+@media (min-height: 700px) and (max-height: 1100px) and (min-width: 1200px) and (max-width: 2048px) {  
+  .card-page {
+    height: 430px;
+    width: 800px;
+    padding: 35px 35px;
+    border-radius: 30px;
+  }
+
+  .card-top {
+    gap: 20px; 
+  }
+
+  .icon-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+  }
+
+  .card-header {
+    margin-bottom: 5px;
+  }
+
+  .card-header h2 {
+    font-size: 24px;
+    margin-top: 3px;
+  }
+
+  .card-info-row {
+    gap: 50px;
+  }
+
+  .card-date {
+    margin-top: 5px;
+    gap: 10px;
+  }
+
+  .card-date p {
+    font-size: 15px;
+  }
+
+  .card-date img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .card-people-amount {
+    margin-top: 5px;
+  }
+  
+  .card-people-amount img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .card-people-amount p {
+    font-size: 15px;
+  }
+
+  .description {
+    margin-top: 15px;
+    width: 720px;
+    height: 80px;
+    padding: 5px 15px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+  }
+
+  .description p {
+    font-size: 15px;
+  }
+
+  .address {
+    height: 55px;
+    width: 720px;
+    padding: 5px 15px;
+    border-radius: 15px;
+  }
+
+  .address h2 {
+    font-size: 20px;
+  }
+
+  .address img {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+  }
+
+  .sign-button, .chat-button {
+    height: 60px;
+    border-radius: 15px;
+  }
+
+  .sign-button {
+    font-size: 25px;
+  }
+
+  .chat-button {
+    border: 2px solid #B7CAA4;
+  }
+
+  .chat-button img {
+    width: 80%;
+    height: 80%;
+  }
+}
