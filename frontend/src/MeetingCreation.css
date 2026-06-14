@@ -241,6 +241,7 @@
     margin-top: auto;
     align-items: center;
     border-radius: 0 0 12px 12px;
+    padding: 2vw;
 }
 
 .bottom-header-map img {

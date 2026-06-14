@@ -10,6 +10,7 @@ import socialActiveIcon from './assets/socialActiveIcon.png'
 import socialNotActiveIcon from './assets/socialNotActiveIcon.png'
 import learningActiveIcon from './assets/learningActiveIcon.png'
 import learningNotActiveIcon from './assets/learningNotActiveIcon.png'
+import MapBox from './components/MapBox'
 
 /* Надо добавить карту вовнутрь и давать бэку координаты */
 function MeetingCreation() {
@@ -213,6 +214,7 @@ function MeetingCreation() {
               <div className="meeting-place">
                 <h2>Местоположение</h2>
                 <div className="map-container">
+                  <MapBox />
                   <div className="bottom-header-map">
                     <img src={mapIcon} alt=""></img>
                     <div className="bottom-header-h-p-combo">

@@ -1,0 +1,7 @@
+.mapboxgl-ctrl-bottom-left, .mapboxgl-ctrl-bottom-right {
+  display: none !important;
+}
+
+.mapboxgl-map {
+  border-radius: 12px;
+}
