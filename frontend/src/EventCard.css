@@ -8,6 +8,8 @@
     text-align: left;
     margin: 0 auto;
     margin-top: auto;
+    position: fixed;
+    bottom: 0;
     margin-bottom: 72px; /* Поправить, когда будет реализован нижний бар, а также добавить в вёрстку*/
 }
 
