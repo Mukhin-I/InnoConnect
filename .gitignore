@@ -4,5 +4,5 @@ backend/.env
 .env
 backend/deployment/ssh
 backend/deployment/ssh_git
-backend/deployment/lexa-ssg-git.pub
-backend/deployment/lexa-ssg.pub
+backend/deployment/lexa-ssh-git.pub
+backend/deployment/lexa-ssh.pub
