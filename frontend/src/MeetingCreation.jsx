@@ -4,6 +4,7 @@ import mapIcon from './assets/mapIcon.png'
 import notificationIcon from './assets/notificationIcon.png'
 import settingsIcon from './assets/settingsIcon.png'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import gantelActiveIcon from './assets/gantelActiveIcon.png'
 import gantelNotActiveIcon from './assets/gantelNotActiveIcon.png'
 import socialActiveIcon from './assets/socialActiveIcon.png'
@@ -14,6 +15,7 @@ import MapBox from './components/MapBox'
 
 /* Надо добавить карту вовнутрь и давать бэку координаты */
 function MeetingCreation() {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState('Спорт');
   const [text, setText] = useState('');
   const maxLength = 500;
@@ -127,6 +129,7 @@ function MeetingCreation() {
       setAddress('');
       setMaxPeople('');
       setSelected('Спорт');
+      navigate('/');
       
     } catch (err) {
       setError(err.message || 'Ошибка при создании мероприятия. Попробуйте еще раз.');

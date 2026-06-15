@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import './Map.css';
 import { useState, useEffect, useRef } from 'react';
 import logoIcon from './assets/logo.svg';
@@ -93,9 +94,9 @@ function Map() {
           </button>
         </div>
     
-        <button className="add-btn">
+        <Link to="/create-meeting" className="add-btn">
           <span>+</span>
-        </button>
+        </Link>
       </div>
 
       <div className="map-container-placeholder">
