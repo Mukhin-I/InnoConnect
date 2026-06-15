@@ -18,9 +18,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $GATEWAY_SERVICE_PORT"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     networks:
       - local
     restart: unless-stopped
@@ -39,9 +39,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $MEETING_SERVICE_PORT"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     networks:
       - local
       - meeting
@@ -64,9 +64,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $REQUEST_SERVICE_PORT"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     networks:
       - local
       - request
@@ -89,9 +89,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $USER_SERVICE_PORT"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     networks:
       - local
       - user
@@ -114,9 +114,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $CHAT_SERVICE_PORT"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     networks:
       - local
       - chat
@@ -139,17 +139,17 @@ services:
     command: -p ${DB_SERVICE_PORT}
     container_name: db_meeting
     image: db_meeting:1.0
-    build: # just for the pure number in the docker ps -a
+    build: # just for the pure port number in the docker ps -a
       context: ../../../
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_SERVICE_PORT}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "meeting", "-p", "${DB_SERVICE_PORT}"]
+      test: ["CMD-SHELL", "psql -U ${DB_USER} -d meeting -p ${DB_SERVICE_PORT} -c 'SELECT 1 FROM meetings LIMIT 1' && psql -U ${DB_USER} -d meeting -p ${DB_SERVICE_PORT} -c 'SELECT 1 FROM meeting_participants LIMIT 1'"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     volumes:
       - pgdata_meeting:/var/lib/postgresql
       - ../../db/init-meetings.sql:/docker-entrypoint-initdb.d/init.sql
@@ -170,7 +170,7 @@ services:
     command: -p ${DB_SERVICE_PORT}
     container_name: db_request
     image: db_request:1.0
-    build: # just for the pure number in the docker ps -a
+    build: # just for the pure port number in the docker ps -a
       context: ../../../
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
@@ -178,9 +178,9 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "postgres", "-p", "${DB_SERVICE_PORT}"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     volumes:
       - pgdata_request:/var/lib/postgresql
     networks:
@@ -200,7 +200,7 @@ services:
     command: -p ${DB_SERVICE_PORT}
     container_name: db_user
     image: db_user:1.0
-    build: # just for the pure number in the docker ps -a
+    build: # just for the pure port number in the docker ps -a
       context: ../../../
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
@@ -208,9 +208,9 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "postgres", "-p", "${DB_SERVICE_PORT}"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     volumes:
       - pgdata_user:/var/lib/postgresql
     networks:
@@ -230,7 +230,7 @@ services:
     command: -p ${DB_SERVICE_PORT}
     container_name: db_chat
     image: db_chat:1.0 
-    build: # just for the pure number in the docker ps -a
+    build: # just for the pure port number in the docker ps -a
       context: ../../../
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
@@ -238,9 +238,9 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "postgres", "-p", "${DB_SERVICE_PORT}"]
       interval: 3s
-      timeout: 30s
+      timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     volumes:
       - pgdata_chat:/var/lib/postgresql
     networks:
