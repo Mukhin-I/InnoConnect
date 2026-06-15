@@ -7,6 +7,6 @@ import (
 )
 
 func GetVar(name string) string {
-	godotenv.Load("../.env")
+	godotenv.Load("../../../.env")
 	return os.Getenv(name)
 }

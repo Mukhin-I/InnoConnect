@@ -1,7 +1,7 @@
 services:
   gateway:
     env_file:
-      - .env
+      - ../../../.env
     environment:
         - GATEWAY_SERVICE_PORT=8080
     ports:
@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
   meeting:
     env_file:
-      - .env
+      - ../../../.env
     build:
       context: ../../../  
       dockerfile: backend/deployment/docker/Dockerfile.service
@@ -51,7 +51,7 @@ services:
     restart: unless-stopped
   request:
     env_file:
-      - .env
+      - ../../../.env
     build:
       context: ../../../  
       dockerfile: backend/deployment/docker/Dockerfile.service
@@ -76,7 +76,7 @@ services:
     restart: unless-stopped
   user:
     env_file:
-      - .env
+      - ../../../.env
     build:
       context: ../../../  
       dockerfile: backend/deployment/docker/Dockerfile.service
@@ -101,7 +101,7 @@ services:
     restart: unless-stopped
   chat:
     env_file:
-      - .env
+      - ../../../.env
     build:
       context: ../../../  
       dockerfile: backend/deployment/docker/Dockerfile.service
@@ -130,7 +130,7 @@ services:
 
   db_meeting:
     env_file:
-      - .env
+      - ../../../.env
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -161,7 +161,7 @@ services:
     restart: unless-stopped
   db_request:
     env_file:
-      - .env
+      - ../../../.env
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -191,7 +191,7 @@ services:
     restart: unless-stopped
   db_user:
     env_file:
-      - .env
+      - ../../../.env
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -221,7 +221,7 @@ services:
     restart: unless-stopped
   db_chat:
     env_file:
-      - .env
+      - ../../../.env
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
