@@ -3,7 +3,7 @@ services:
     env_file:
       - ../../../.env
     environment:
-        - GATEWAY_SERVICE_PORT=${GATEWAY_SERVICE_PORT}
+        - GATEWAY_SERVICE_PORT=$GATEWAY_SERVICE_PORT
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_SERVICE_PORT}"
     build:
@@ -12,7 +12,7 @@ services:
       args:
         - VERSION=1.0
         - SERVICE=gateway
-        - EXPOSE_PORT=${GATEWAY_SERVICE_PORT}
+        - EXPOSE_PORT=$GATEWAY_SERVICE_PORT
     container_name: gateway
     image: gateway:1.0
     healthcheck:
@@ -58,7 +58,9 @@ services:
       args:
         - VERSION=1.0
         - SERVICE=request
-        - EXPOSE_PORT=$REQUEST_SERVICE_PORT
+        - EXPOSE_PORT=${REQUEST_SERVICE_PORT}
+    ports:
+      - "${REQUEST_SERVICE_PORT}:${REQUEST_SERVICE_PORT}"
     container_name: request
     image: request:1.0
     healthcheck:
@@ -83,7 +85,9 @@ services:
       args:
         - VERSION=1.0
         - SERVICE=user
-        - EXPOSE_PORT=$USER_SERVICE_PORT
+        - EXPOSE_PORT=${USER_SERVICE_PORT}
+    ports:
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
     container_name: user
     image: user:1.0
     healthcheck:
@@ -108,7 +112,9 @@ services:
       args:
         - VERSION=1.0
         - SERVICE=chat
-        - EXPOSE_PORT=$CHAT_SERVICE_PORT
+        - EXPOSE_PORT=${CHAT_SERVICE_PORT}
+    ports:
+      - "${CHAT_SERVICE_PORT}:${CHAT_SERVICE_PORT}"
     container_name: chat
     image: chat:1.0
     healthcheck:
@@ -144,6 +150,8 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_MEETING_PORT}
+    ports:
+      - "${DB_MEETING_PORT}:${DB_MEETING_PORT}"
     healthcheck:
       test: ["CMD-SHELL", "psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meetings LIMIT 1' && psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meeting_participants LIMIT 1'"]
       interval: 3s
@@ -155,9 +163,6 @@ services:
       - ../../db/init-meetings.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - meeting
-    depends_on:
-      meeting:
-        condition: service_started
     restart: unless-stopped
   db_request:
     env_file:
@@ -175,6 +180,8 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_REQUEST_PORT}
+    ports:
+      - "${DB_REQUEST_PORT}:${DB_REQUEST_PORT}"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_REQUEST_USER}", "-d", "postgres", "-p", "${DB_REQUEST_PORT}"]
       interval: 3s
@@ -185,9 +192,6 @@ services:
       - pgdata_request:/var/lib/postgresql
     networks:
       - request
-    depends_on:
-      request:
-        condition: service_started
     restart: unless-stopped
   db_user:
     env_file:
@@ -205,6 +209,8 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_USER_PORT}
+    ports:
+      - "${DB_USER_PORT}:${DB_USER_PORT}"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER_USER}", "-d", "postgres", "-p", "${DB_USER_PORT}"]
       interval: 3s
@@ -215,9 +221,6 @@ services:
       - pgdata_user:/var/lib/postgresql
     networks:
       - user
-    depends_on:
-      user:
-        condition: service_started
     restart: unless-stopped
   db_chat:
     env_file:
@@ -235,6 +238,8 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_CHAT_PORT}
+    ports:
+      - "${DB_CHAT_PORT}:${DB_CHAT_PORT}"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_CHAT_USER}", "-d", "postgres", "-p", "${DB_CHAT_PORT}"]
       interval: 3s
@@ -245,9 +250,6 @@ services:
       - pgdata_chat:/var/lib/postgresql
     networks:
       - chat
-    depends_on:
-      chat:
-        condition: service_started
     restart: unless-stopped
 
 networks:
