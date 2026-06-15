@@ -1,4 +1,4 @@
-CREATE TABLE meetings (
+CREATE TABLE meetings(
     id BIGSERIAL PRIMARY KEY,
     creator_id BIGINT NOT NULL,
     creator_name TEXT NOT NULL,

@@ -1,0 +1,6 @@
+FROM postgres:18.4-alpine3.23
+
+ARG DB_PORT=5432
+
+# just for the pure port number in the docker ps -a
+EXPOSE ${DB_PORT} 

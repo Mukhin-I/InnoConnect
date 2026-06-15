@@ -1,0 +1,291 @@
+services:
+  gateway:
+    env_file:
+      - ../../../.env
+    environment:
+        - GATEWAY_SERVICE_PORT=$GATEWAY_SERVICE_PORT
+    ports:
+      - "${GATEWAY_PORT}:${GATEWAY_SERVICE_PORT}"
+    build:
+      context: ../../../  
+      dockerfile: backend/deployment/docker/Dockerfile.service
+      args:
+        - VERSION=1.0
+        - SERVICE=gateway
+        - EXPOSE_PORT=$GATEWAY_SERVICE_PORT
+    container_name: gateway
+    image: gateway:1.0
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost $GATEWAY_SERVICE_PORT"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - local
+    restart: unless-stopped
+  meeting:
+    env_file:
+      - ../../../.env
+    build:
+      context: ../../../  
+      dockerfile: backend/deployment/docker/Dockerfile.service
+      args:
+        - VERSION=1.0
+        - SERVICE=meeting
+        - EXPOSE_PORT=$MEETING_SERVICE_PORT
+    container_name: meeting
+    image: meeting:1.0
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost $MEETING_SERVICE_PORT"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - local
+      - meeting
+    depends_on:
+      gateway:
+        condition: service_started
+    restart: unless-stopped
+  request:
+    env_file:
+      - ../../../.env
+    build:
+      context: ../../../  
+      dockerfile: backend/deployment/docker/Dockerfile.service
+      args:
+        - VERSION=1.0
+        - SERVICE=request
+        - EXPOSE_PORT=${REQUEST_SERVICE_PORT}
+    ports:
+      - "${REQUEST_SERVICE_PORT}:${REQUEST_SERVICE_PORT}"
+    container_name: request
+    image: request:1.0
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost $REQUEST_SERVICE_PORT"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - local
+      - request
+    depends_on:
+      gateway:
+        condition: service_started
+    restart: unless-stopped
+  user:
+    env_file:
+      - ../../../.env
+    build:
+      context: ../../../  
+      dockerfile: backend/deployment/docker/Dockerfile.service
+      args:
+        - VERSION=1.0
+        - SERVICE=user
+        - EXPOSE_PORT=${USER_SERVICE_PORT}
+    ports:
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+    container_name: user
+    image: user:1.0
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost $USER_SERVICE_PORT"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - local
+      - user
+    depends_on:
+      gateway:
+        condition: service_started
+    restart: unless-stopped
+  chat:
+    env_file:
+      - ../../../.env
+    build:
+      context: ../../../  
+      dockerfile: backend/deployment/docker/Dockerfile.service
+      args:
+        - VERSION=1.0
+        - SERVICE=chat
+        - EXPOSE_PORT=${CHAT_SERVICE_PORT}
+    ports:
+      - "${CHAT_SERVICE_PORT}:${CHAT_SERVICE_PORT}"
+    container_name: chat
+    image: chat:1.0
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost $CHAT_SERVICE_PORT"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - local
+      - chat
+    depends_on:
+      gateway:
+        condition: service_started
+    restart: unless-stopped
+
+
+
+
+  db_meeting:
+    env_file:
+      - ../../../.env
+    environment:
+      - POSTGRES_USER=${DB_MEETING_USER}
+      - POSTGRES_PASSWORD=${DB_MEETING_PASSWORD}
+      - POSTGRES_DB=meeting
+      - PGPORT=${DB_MEETING_PORT}
+    command: -p ${DB_MEETING_PORT}
+    container_name: db_meeting
+    image: db_meeting:1.0
+    build: # just for the pure port number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_MEETING_PORT}
+    ports:
+      - "${DB_MEETING_PORT}:${DB_MEETING_PORT}"
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meetings LIMIT 1' && psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meeting_participants LIMIT 1'"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - pgdata_meeting:/var/lib/postgresql
+      - ../../db/init-meetings.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - meeting
+    restart: unless-stopped
+  db_request:
+    env_file:
+      - ../../../.env
+    environment:
+      - POSTGRES_USER=${DB_REQUEST_USER}
+      - POSTGRES_PASSWORD=${DB_REQUEST_PASSWORD}
+      - POSTGRES_DB=request
+      - PGPORT=${DB_REQUEST_PORT}
+    command: -p ${DB_REQUEST_PORT}
+    container_name: db_request
+    image: db_request:1.0
+    build: # just for the pure port number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_REQUEST_PORT}
+    ports:
+      - "${DB_REQUEST_PORT}:${DB_REQUEST_PORT}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_REQUEST_USER}", "-d", "postgres", "-p", "${DB_REQUEST_PORT}"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - pgdata_request:/var/lib/postgresql
+    networks:
+      - request
+    restart: unless-stopped
+  db_user:
+    env_file:
+      - ../../../.env
+    environment:
+      - POSTGRES_USER=${DB_USER_USER}
+      - POSTGRES_PASSWORD=${DB_USER_PASSWORD}
+      - POSTGRES_DB=user
+      - PGPORT=${DB_USER_PORT}
+    command: -p ${DB_USER_PORT}
+    container_name: db_user
+    image: db_user:1.0
+    build: # just for the pure port number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_USER_PORT}
+    ports:
+      - "${DB_USER_PORT}:${DB_USER_PORT}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER_USER}", "-d", "postgres", "-p", "${DB_USER_PORT}"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - pgdata_user:/var/lib/postgresql
+    networks:
+      - user
+    restart: unless-stopped
+  db_chat:
+    env_file:
+      - ../../../.env
+    environment:
+      - POSTGRES_USER=${DB_CHAT_USER}
+      - POSTGRES_PASSWORD=${DB_CHAT_PASSWORD}
+      - POSTGRES_DB=chat
+      - PGPORT=${DB_CHAT_PORT}
+    command: -p ${DB_CHAT_PORT}
+    container_name: db_chat
+    image: db_chat:1.0 
+    build: # just for the pure port number in the docker ps -a
+      context: ../../../
+      dockerfile: backend/deployment/docker/Dockerfile.db
+      args:
+      - DB_PORT=${DB_CHAT_PORT}
+    ports:
+      - "${DB_CHAT_PORT}:${DB_CHAT_PORT}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_CHAT_USER}", "-d", "postgres", "-p", "${DB_CHAT_PORT}"]
+      interval: 3s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - pgdata_chat:/var/lib/postgresql
+    networks:
+      - chat
+    restart: unless-stopped
+
+networks:
+  local:
+    driver: bridge
+  user:
+    driver: bridge
+  meeting:
+    driver: bridge
+  request:
+    driver: bridge
+  chat:
+    driver: bridge
+
+volumes:
+  pgdata_meeting:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../db/pgdata_meeting
+  pgdata_request:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../db/pgdata_request
+  pgdata_user:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../db/pgdata_user
+  pgdata_chat:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../db/pgdata_chat

@@ -2,3 +2,7 @@
 backend/.env
 .git
 .env
+backend/deployment/ssh
+backend/deployment/ssh_git
+backend/deployment/lexa-ssh-git.pub
+backend/deployment/lexa-ssh.pub

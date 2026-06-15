@@ -1,0 +1,42 @@
+FROM golang:1.26.4-alpine3.23 AS builder
+
+ARG VERSION=1.0
+ARG SERVICE
+
+WORKDIR /backend
+
+RUN apk add --no-cache netcat-openbsd
+
+COPY backend/go.mod backend/go.sum ./
+
+RUN --mount=type=cache,target=/root/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go mod download
+
+COPY backend/internal/${SERVICE}/ ./internal/${SERVICE}/ 
+COPY backend/cmd/${SERVICE} ./cmd/${SERVICE}
+COPY backend/pkg ./pkg
+COPY backend/proto ./proto
+
+RUN --mount=type=cache,target=/root/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 go build -o ./cmd/${SERVICE}/${SERVICE} ./cmd/${SERVICE}/main.go
+
+FROM alpine:3.23.4
+
+RUN apk add --no-cache netcat-openbsd ca-certificates
+
+WORKDIR /backend
+
+ARG SERVICE
+ENV SERVICE=${SERVICE}
+
+COPY --from=builder /backend/cmd/${SERVICE}/${SERVICE} ./${SERVICE}
+
+RUN chmod +x ./${SERVICE}
+USER nobody
+
+ARG EXPOSE_PORT
+EXPOSE ${EXPOSE_PORT}
+
+ENTRYPOINT ./${SERVICE}
