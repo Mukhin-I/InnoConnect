@@ -112,6 +112,7 @@ function MeetingCreation() {
       title: title.trim(),
       description: text.trim(),
       meeting_time: meetingTime,
+      type: selected,
     };
 
     if (address.trim()) {
