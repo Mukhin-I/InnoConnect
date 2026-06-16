@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"net/url"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/meeting/repo"
@@ -24,10 +25,18 @@ func CreateServer() {
 	}
 	defer dbPool.Close()
 
-	if err := dbPool.Ping(context.Background()); err != nil {
-		logger.Error("Failed to ping meeting database: " + err.Error())
-		return
+	for i := 0; i < 10; i++ {
+		err := dbPool.Ping(context.Background())
+		if err == nil {
+			logger.Info("Pinged db successfully")
+			break
+		}
+		time.Sleep(2 * time.Second)
 	}
+	//if err := dbPool.Ping(context.Background()); err != nil {
+		//logger.Error("Failed to ping meeting database: " + err.Error())
+		//return
+	//}
 
 	meetingRepo := repo.New(dbPool)
 	meetingUsecase := usecase.New(meetingRepo)

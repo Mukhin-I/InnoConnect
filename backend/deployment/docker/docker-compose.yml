@@ -48,6 +48,8 @@ services:
     depends_on:
       gateway:
         condition: service_started
+      db_meeting:
+        condition: service_started
     restart: unless-stopped
   request:
     env_file:
@@ -155,9 +157,9 @@ services:
       - ../../db/init-meetings.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - meeting
-    depends_on:
-      meeting:
-        condition: service_started
+    #depends_on:
+      #meeting:
+        #condition: service_started
     restart: unless-stopped
   db_request:
     env_file:
