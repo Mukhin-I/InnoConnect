@@ -13,6 +13,7 @@ import (
 type MeetingUsecase interface {
 	Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error)
 	GetAll(ctx context.Context) ([]entity.Meeting, error)
+	GetByID(ctx context.Context, id int64) (entity.Meeting, error)
 }
 
 type MeetingServer struct {
@@ -76,4 +77,33 @@ func toMeetingShort(meeting entity.Meeting) *pb.MeetingShort {
 		Latitude:  meeting.Latitude,
 		Longitude: meeting.Longitude,
 	}
+}
+
+func (s *MeetingServer) GetMeeting(
+	ctx context.Context,
+	req *pb.GetMeetingRequest,
+) (*pb.MeetingFull, error) {
+
+	meeting, err := s.usecase.GetByID(ctx, req.GetId())
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+
+	return &pb.MeetingFull{
+		Id:            meeting.ID,
+		Title:         meeting.Title,
+		Description:   meeting.Description,
+		Type:          meeting.Type,
+		Address:       meeting.Address,
+		Latitude:      meeting.Latitude,
+		Longitude:     meeting.Longitude,
+		MeetingTime:   meeting.MeetingTime.Format(time.RFC3339),
+		CurrentPeople: 0, // fill later
+		MaxPeople:     meeting.MaxPeople,
+		Creator: &pb.User{
+			Id:   meeting.CreatorID,
+			Name: meeting.CreatorName,
+		},
+		Participants: []*pb.User{},
+	}, nil
 }
