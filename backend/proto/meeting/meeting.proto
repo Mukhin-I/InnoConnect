@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package meeting;
+
+option go_package = "pkg/pb/meeting";
+
+service MeetingService {
+  rpc CreateMeeting(CreateMeetingRequest)
+    returns (MeetingShort);
+
+  rpc GetMeetings(GetMeetingsRequest)
+      returns (GetMeetingsResponse);
+
+  rpc GetMeeting(GetMeetingRequest)
+      returns (MeetingFull);
+}
+
+message User {
+  int64 id = 1;
+  string name = 2;
+}
+
+message MeetingShort {
+  int64 id = 1;
+
+  optional string address = 2;
+
+  string type = 3;
+
+  optional double latitude = 4;
+  optional double longitude = 5;
+}
+
+message MeetingFull {
+  int64 id = 1;
+
+  string title = 2;
+  string description = 3;
+
+  User creator = 4;
+  repeated User participants = 5;
+
+  optional string address = 6;
+
+  string type = 7;
+
+  optional double latitude = 8;
+  optional double longitude = 9;
+
+  string meeting_time = 10;
+
+  int32 current_people = 11;
+
+  optional int32 max_people = 12;
+}
+
+message CreateMeetingRequest {
+  int64 creator_id = 1;
+
+  string title = 2;
+  string description = 3;
+
+  optional string address = 4;
+
+  string type = 5;
+
+  optional double latitude = 6;
+  optional double longitude = 7;
+
+  string meeting_time = 8;
+
+  optional int32 max_people = 9;
+}
+
+message GetMeetingsRequest {}
+
+message GetMeetingsResponse {
+  repeated MeetingShort meetings = 1;
+}
+
+message GetMeetingRequest {
+  int64 id = 1;
+}
