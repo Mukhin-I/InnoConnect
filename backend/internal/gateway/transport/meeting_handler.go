@@ -12,6 +12,8 @@ import (
 func (h *Handler) CreateMeeting(c *gin.Context) {
 	var req entity.CreateMeetingRequest
 
+	logger.Info("Sending gRPC request to create meeting")
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Invalid JSON": err.Error(),
@@ -44,6 +46,7 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 }
 
 func (h *Handler) GetMeetings(c *gin.Context) {
+	logger.Info("Getting meetings from meeting service")
 	resp, err := h.meetingClient.GetMeetings(
 		c.Request.Context(),
 		&meeting.GetMeetingsRequest{},
@@ -56,7 +59,7 @@ func (h *Handler) GetMeetings(c *gin.Context) {
 		)
 
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to get meetings",
+			"error": "failed to get meetings" + err.Error(),
 		})
 		return
 	}
