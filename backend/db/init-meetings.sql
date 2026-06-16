@@ -4,6 +4,7 @@ CREATE TABLE meetings(
     creator_name TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
+    type TEXT NOT NULL,
 
     address TEXT,
     latitude DOUBLE PRECISION,
