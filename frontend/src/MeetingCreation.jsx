@@ -131,7 +131,7 @@ function MeetingCreation() {
     try {
       const token = 'temp';
       
-      const response = await fetch('http://localhost:8082/meetings', {
+      const response = await fetch('http://localhost:8080/meetings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

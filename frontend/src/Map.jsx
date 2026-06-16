@@ -27,7 +27,7 @@ function Map() {
   useEffect(() => {
     async function fetchMeetings() {
       try {
-        const response = await fetch("http://localhost:8082/meetings");
+        const response = await fetch("http://localhost:8080/meetings");
 
         if (!response.ok) {
           throw new Error("Failed to fetch meetings");
