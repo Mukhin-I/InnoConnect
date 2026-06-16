@@ -24,6 +24,11 @@ func CreateServer() {
 	}
 	defer dbPool.Close()
 
+	if err := dbPool.Ping(context.Background()); err != nil {
+		logger.Error("Failed to ping meeting database: " + err.Error())
+		return
+	}
+
 	meetingRepo := repo.New(dbPool)
 	meetingUsecase := usecase.New(meetingRepo)
 	meetingServer := transport.NewMeetingServer(meetingUsecase)
