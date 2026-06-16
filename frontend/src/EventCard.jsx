@@ -45,7 +45,7 @@ function EventCard({ eventId, onClose }) {
     const fetchEvent = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:8082/meetings/${eventId}`);
+        const response = await fetch(`http://localhost:8080/meetings/${eventId}`);
         if (!response.ok) throw new Error('Ошибка загрузки');
         const data = await response.json();
         setEvent(data);
