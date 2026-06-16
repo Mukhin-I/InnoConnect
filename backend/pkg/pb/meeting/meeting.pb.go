@@ -284,14 +284,15 @@ func (x *MeetingFull) GetMaxPeople() int32 {
 type CreateMeetingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CreatorId     int64                  `protobuf:"varint,1,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Address       *string                `protobuf:"bytes,4,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	Type          string                 `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
-	Latitude      *float64               `protobuf:"fixed64,6,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
-	Longitude     *float64               `protobuf:"fixed64,7,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
-	MeetingTime   string                 `protobuf:"bytes,8,opt,name=meeting_time,json=meetingTime,proto3" json:"meeting_time,omitempty"`
-	MaxPeople     *int32                 `protobuf:"varint,9,opt,name=max_people,json=maxPeople,proto3,oneof" json:"max_people,omitempty"`
+	CreatorName   string                 `protobuf:"bytes,2,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
+	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Address       *string                `protobuf:"bytes,5,opt,name=address,proto3,oneof" json:"address,omitempty"`
+	Type          string                 `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty"`
+	Latitude      *float64               `protobuf:"fixed64,7,opt,name=latitude,proto3,oneof" json:"latitude,omitempty"`
+	Longitude     *float64               `protobuf:"fixed64,8,opt,name=longitude,proto3,oneof" json:"longitude,omitempty"`
+	MeetingTime   string                 `protobuf:"bytes,9,opt,name=meeting_time,json=meetingTime,proto3" json:"meeting_time,omitempty"`
+	MaxPeople     *int32                 `protobuf:"varint,10,opt,name=max_people,json=maxPeople,proto3,oneof" json:"max_people,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -331,6 +332,13 @@ func (x *CreateMeetingRequest) GetCreatorId() int64 {
 		return x.CreatorId
 	}
 	return 0
+}
+
+func (x *CreateMeetingRequest) GetCreatorName() string {
+	if x != nil {
+		return x.CreatorName
+	}
+	return ""
 }
 
 func (x *CreateMeetingRequest) GetTitle() string {
@@ -552,19 +560,21 @@ const file_proto_meeting_meeting_proto_rawDesc = "" +
 	"\t_latitudeB\f\n" +
 	"\n" +
 	"_longitudeB\r\n" +
-	"\v_max_people\"\xe1\x02\n" +
+	"\v_max_people\"\x84\x03\n" +
 	"\x14CreateMeetingRequest\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\x01 \x01(\x03R\tcreatorId\x12\x14\n" +
-	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1d\n" +
-	"\aaddress\x18\x04 \x01(\tH\x00R\aaddress\x88\x01\x01\x12\x12\n" +
-	"\x04type\x18\x05 \x01(\tR\x04type\x12\x1f\n" +
-	"\blatitude\x18\x06 \x01(\x01H\x01R\blatitude\x88\x01\x01\x12!\n" +
-	"\tlongitude\x18\a \x01(\x01H\x02R\tlongitude\x88\x01\x01\x12!\n" +
-	"\fmeeting_time\x18\b \x01(\tR\vmeetingTime\x12\"\n" +
+	"creator_id\x18\x01 \x01(\x03R\tcreatorId\x12!\n" +
+	"\fcreator_name\x18\x02 \x01(\tR\vcreatorName\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x1d\n" +
+	"\aaddress\x18\x05 \x01(\tH\x00R\aaddress\x88\x01\x01\x12\x12\n" +
+	"\x04type\x18\x06 \x01(\tR\x04type\x12\x1f\n" +
+	"\blatitude\x18\a \x01(\x01H\x01R\blatitude\x88\x01\x01\x12!\n" +
+	"\tlongitude\x18\b \x01(\x01H\x02R\tlongitude\x88\x01\x01\x12!\n" +
+	"\fmeeting_time\x18\t \x01(\tR\vmeetingTime\x12\"\n" +
 	"\n" +
-	"max_people\x18\t \x01(\x05H\x03R\tmaxPeople\x88\x01\x01B\n" +
+	"max_people\x18\n" +
+	" \x01(\x05H\x03R\tmaxPeople\x88\x01\x01B\n" +
 	"\n" +
 	"\b_addressB\v\n" +
 	"\t_latitudeB\f\n" +
