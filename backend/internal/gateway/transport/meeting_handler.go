@@ -12,7 +12,13 @@ import (
 func (h *Handler) CreateMeeting(c *gin.Context) {
 	var req entity.CreateMeetingRequest
 
-	logger.Info("Sending gRPC request to create meeting")
+	authHeader := c.GetHeader("Authorization")
+
+	if authHeader == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing authorization header"})
+		logger.Error("missing authorization header")
+		return
+	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -22,15 +28,21 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 		return
 	}
 
+	logger.Info("Sending gRPC request to create meeting")
+
 	meeting, err := h.meetingClient.CreateMeeting(
 		c.Request.Context(),
 		&meeting.CreateMeetingRequest{
 			CreatorId:   1, // temporary
 			CreatorName: "Pavel", // temporary
-			Title:       req.Title,
+			Title: req.Title,
 			Description: req.Description,
-			Type:        req.Type,
+			Address: req.Address,
+			Latitude: req.Latitude,
+			Longitude: req.Longitude,
+			Type: req.Type,
 			MeetingTime: req.MeetingTime,
+			MaxPeople: req.MaxPeople,
 		},
 	)
 
@@ -68,10 +80,10 @@ func (h *Handler) GetMeetings(c *gin.Context) {
 
 	for _, m := range resp.Meetings {
 		meetings = append(meetings, entity.MeetingShort{
-			ID:        m.Id,
-			Address:   m.Address,
-			Type:      m.Type,
-			Latitude:  m.Latitude,
+			ID: m.Id,
+			Address: m.Address,
+			Type: m.Type,
+			Latitude: m.Latitude,
 			Longitude: m.Longitude,
 		})
 	}

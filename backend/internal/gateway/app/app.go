@@ -6,6 +6,7 @@ import (
 	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/gateway/transport"
 	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/config"
 	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
+	"github.com/gin-contrib/cors"
 )
 
 // Function for setuping Gin server
@@ -18,6 +19,17 @@ func CreateServer() error {
 
 	handler := transport.NewHandler(client)
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:5173"}, // your frontend
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{
+			"Origin",
+			"Content-Type",
+			"Authorization",
+		},
+		AllowCredentials: true,
+	}))
 
 	setEndpoints(router, handler)
 
