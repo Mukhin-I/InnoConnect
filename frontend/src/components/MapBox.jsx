@@ -12,11 +12,45 @@ function MapBox({
   center = [48.752, 55.752],
   zoom = 12,
   style = 'mapbox://styles/seanshushickkk/cmqazkvqy003d01qz36xq2coo',
+  isSelectable = false,
+  onLocationSelect = null,
+  initialLatitude = null,
+  initialLongitude = null,
+  clearMarker = false
 }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const selectMarkerRef = useRef(null);
+  const isMapLoadedRef = useRef(false);
+
+  const addSelectMarker = (lng, lat) => {
+    if (!mapRef.current) return;
+    
+    if (selectMarkerRef.current) {
+      selectMarkerRef.current.remove();
+    }
+    
+    const el = document.createElement("img");
+    el.src = pinIconActive;
+    el.style.width = "34px";
+    el.style.height = "34px";
+    el.style.cursor = "pointer";
+    
+    selectMarkerRef.current = new mapboxgl.Marker(el)
+      .setLngLat([lng, lat])
+      .addTo(mapRef.current);
+  };
+
+  const removeSelectMarker = () => {
+    if (selectMarkerRef.current) {
+      selectMarkerRef.current.remove();
+      selectMarkerRef.current = null;
+    }
+  };
 
   useEffect(() => {
+    if (!mapContainerRef.current) return;
+
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
     mapRef.current = new mapboxgl.Map({
@@ -27,12 +61,42 @@ function MapBox({
       attributionControl: false,
     });
 
-    mapRef.current.on('click', () => {
-      setSelectedMeetingId(null);
+    mapRef.current.on('load', () => {
+      isMapLoadedRef.current = true;
+      
+      if (initialLatitude && initialLongitude && !clearMarker) {
+        addSelectMarker(initialLongitude, initialLatitude);
+      }
     });
 
-    return () => mapRef.current.remove();
+    mapRef.current.on('click', (e) => {
+      const { lng, lat } = e.lngLat;
+      
+      if (isSelectable && onLocationSelect) {
+        addSelectMarker(lng, lat);
+        onLocationSelect(lng, lat);
+      }
+    });
+
+    return () => {
+      if (selectMarkerRef.current) {
+        selectMarkerRef.current.remove();
+      }
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || !isMapLoadedRef.current) return;
+    
+    if (clearMarker) {
+      removeSelectMarker();
+    } else if (initialLatitude && initialLongitude) {
+      addSelectMarker(initialLongitude, initialLatitude);
+    }
+  }, [initialLatitude, initialLongitude, clearMarker]);
 
   const markersRef = useRef([]);
 
@@ -72,7 +136,7 @@ function MapBox({
       markersRef.current.push(marker);
     });
 
-  }, [meetings, selectedMeetingId]);
+  }, [meetings, selectedMeetingId, setSelectedMeetingId]);
 
   return (
     <div

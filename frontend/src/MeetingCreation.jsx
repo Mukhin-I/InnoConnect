@@ -12,10 +12,13 @@ import socialNotActiveIcon from './assets/socialNotActiveIcon.png'
 import learningActiveIcon from './assets/learningActiveIcon.png'
 import learningNotActiveIcon from './assets/learningNotActiveIcon.png'
 import MapBox from './components/MapBox'
+import LocationPicker from './components/LocationPicker'
 
-/* Надо добавить карту вовнутрь и давать бэку координаты */
 function MeetingCreation() {
   const navigate = useNavigate();
+  const handleClose = () => {
+    navigate('/');
+  };
   const [selected, setSelected] = useState('Спорт');
   const [text, setText] = useState('');
   const maxLength = 500;
@@ -29,6 +32,9 @@ function MeetingCreation() {
   const [isLoading, setIsLoading] = useState(false);
   const [, setError] = useState('');
   const [, setSuccess] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const categoryIcons = {
     Спорт: {
@@ -56,6 +62,19 @@ function MeetingCreation() {
 
   const getMeetingTime = () => {
     return combineDateTime(date, startTime);
+  };
+
+  const handleLocationSelect = (lng, lat, locationAddress) => {
+    if (lng === null && lat === null) {
+      setLongitude(null);
+      setLatitude(null);
+      setAddress('');
+    } else {
+      setLongitude(lng);
+      setLatitude(lat);
+      setAddress(locationAddress);
+    }
+    setIsModalOpen(false);
   };
 
   const handleSubmit = async (e) => {
@@ -103,10 +122,15 @@ function MeetingCreation() {
       requestBody.max_people = parseInt(maxPeople);
     }
 
+    if (latitude != null && longitude != null) {
+      requestBody.latitude = latitude;
+      requestBody.longitude = longitude;
+    }
+
     try {
       const token = 'temp';
       
-      const response = await fetch('/meetings', {
+      const response = await fetch('http://localhost:8082/meetings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,6 +153,8 @@ function MeetingCreation() {
       setAddress('');
       setMaxPeople('');
       setSelected('Спорт');
+      setLatitude(null);
+      setLongitude(null);
       navigate('/');
       
     } catch (err) {
@@ -142,6 +168,7 @@ function MeetingCreation() {
     <>
       <div className="meeting-creation-page">
         <div className="meeting-creation-page-content">
+          <button className="close-button-creation" onClick={handleClose}>×</button>
           <div className="header-top">
             <h2>InnoConnect</h2>
             <button className="notification-button"><img src={notificationIcon} alt="" /></button>
@@ -224,7 +251,8 @@ function MeetingCreation() {
                       <h2>Укажите адрес вашего мероприятия</h2>
                       <p>Нажмите на карту или введите адрес</p>
                     </div>
-                    <button type="button" className="edit-location-button">Изменить</button>
+                    <button type="button" className="edit-location-button"
+                        onClick={() => setIsModalOpen(true)}>Изменить</button>
                   </div>
                 </div>
                 
@@ -275,6 +303,14 @@ function MeetingCreation() {
           </form>
         </div>
       </div>
+        <LocationPicker
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onLocationSelect={handleLocationSelect}
+        currentLatitude={latitude}
+        currentLongitude={longitude}
+        currentAddress={address}
+      />
     </>
   )
 }
