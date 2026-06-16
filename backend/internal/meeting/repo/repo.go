@@ -112,3 +112,44 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Meeting, error) {
 
 	return meetings, nil
 }
+
+func (r *Repository) GetByID(ctx context.Context, id int64) (entity.Meeting, error) {
+	query := `
+		SELECT
+			id,
+			creator_id,
+			creator_name,
+			title,
+			description,
+			type,
+			address,
+			latitude,
+			longitude,
+			meeting_time,
+			max_people
+		FROM meetings
+		WHERE id = $1
+	`
+
+	var meeting entity.Meeting
+
+	err := r.pool.QueryRow(ctx, query, id).Scan(
+		&meeting.ID,
+		&meeting.CreatorID,
+		&meeting.CreatorName,
+		&meeting.Title,
+		&meeting.Description,
+		&meeting.Type,
+		&meeting.Address,
+		&meeting.Latitude,
+		&meeting.Longitude,
+		&meeting.MeetingTime,
+		&meeting.MaxPeople,
+	)
+
+	if err != nil {
+		return entity.Meeting{}, err
+	}
+
+	return meeting, nil
+}

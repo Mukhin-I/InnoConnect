@@ -9,6 +9,7 @@ import (
 type MeetingRepository interface {
 	Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error)
 	GetAll(ctx context.Context) ([]entity.Meeting, error)
+	GetByID(ctx context.Context, id int64) (entity.Meeting, error)
 }
 
 type Usecase struct {
@@ -27,4 +28,8 @@ func (u *Usecase) Create(ctx context.Context, meeting entity.Meeting) (entity.Me
 
 func (u *Usecase) GetAll(ctx context.Context) ([]entity.Meeting, error) {
 	return u.repo.GetAll(ctx)
+}
+
+func (u *Usecase) GetByID(ctx context.Context, id int64) (entity.Meeting, error) {
+	return u.repo.GetByID(ctx, id)
 }

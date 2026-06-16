@@ -2,6 +2,7 @@ package transport
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/gateway/entity"
@@ -90,5 +91,59 @@ func (h *Handler) GetMeetings(c *gin.Context) {
 
 	c.JSON(http.StatusOK, entity.GetMeetingsResponse{
 		Meetings: meetings,
+	})
+}
+
+func (h *Handler) GetMeeting(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+
+	logger.Info("Getting meeting by id: " + strconv.FormatInt(id, 10))
+
+	resp, err := h.meetingClient.GetMeeting(
+		c.Request.Context(),
+		&meeting.GetMeetingRequest{
+			Id: id,
+		},
+	)
+
+	if err != nil {
+		logger.Error(
+			"Failed to get meeting from meeting service: " +
+				err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to get meeting",
+		})
+		return
+	}
+
+	participants := make([]entity.User, 0, len(resp.Participants))
+
+	for _, p := range resp.Participants {
+		participants = append(participants, entity.User{
+			ID:   p.Id,
+			Name: p.Name,
+		})
+	}
+
+	c.JSON(http.StatusOK, entity.MeetingFull{
+		ID:          resp.Id,
+		Title:       resp.Title,
+		Description: resp.Description,
+
+		Creator: entity.User{
+			ID:   resp.Creator.Id,
+			Name: resp.Creator.Name,
+		},
+
+		Participants: participants,
+		Address:       resp.Address,
+		Latitude:      resp.Latitude,
+		Longitude:     resp.Longitude,
+		Type:          resp.Type,
+		MeetingTime:   resp.MeetingTime,
+		CurrentPeople: resp.CurrentPeople,
+		MaxPeople:     resp.MaxPeople,
 	})
 }
