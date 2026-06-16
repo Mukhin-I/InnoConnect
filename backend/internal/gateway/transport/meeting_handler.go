@@ -42,3 +42,38 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, meeting)
 }
+
+func (h *Handler) GetMeetings(c *gin.Context) {
+	resp, err := h.meetingClient.GetMeetings(
+		c.Request.Context(),
+		&meeting.GetMeetingsRequest{},
+	)
+
+	if err != nil {
+		logger.Error(
+			"Failed to get meetings from meeting service: " +
+				err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to get meetings",
+		})
+		return
+	}
+
+	var meetings []entity.MeetingShort
+
+	for _, m := range resp.Meetings {
+		meetings = append(meetings, entity.MeetingShort{
+			ID:        m.Id,
+			Address:   m.Address,
+			Type:      m.Type,
+			Latitude:  m.Latitude,
+			Longitude: m.Longitude,
+		})
+	}
+
+	c.JSON(http.StatusOK, entity.GetMeetingsResponse{
+		Meetings: meetings,
+	})
+}

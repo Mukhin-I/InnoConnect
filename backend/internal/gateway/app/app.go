@@ -33,6 +33,6 @@ func CreateServer() error {
 
 func setEndpoints(router *gin.Engine, h *transport.Handler) {
 	router.POST("/meetings", h.CreateMeeting)
-	//router.GET("/meetings", h.GetMeetings)
+	router.GET("/meetings", h.GetMeetings)
 	//router.GET("/meetings/:id", h.GetMeeting)
 }
