@@ -1,4 +1,4 @@
-module gitlab.pg.innopolis.university/innoconnect-team/innoconnect
+module innoconnect
 
 go 1.25.4
 

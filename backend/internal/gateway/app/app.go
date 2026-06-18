@@ -2,10 +2,10 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/gateway/grpcclient"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/gateway/transport"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/config"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
+	"innoconnect/internal/gateway/grpcclient"
+	"innoconnect/internal/gateway/transport"
+	"innoconnect/pkg/config"
+	"innoconnect/pkg/logger"
 	"github.com/gin-contrib/cors"
 )
 

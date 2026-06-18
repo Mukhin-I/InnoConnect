@@ -1,6 +1,6 @@
 package transport
 
-import meetingpb "gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/pb/meeting"
+import meetingpb "innoconnect/pkg/pb/meeting"
 
 type Handler struct {
 	meetingClient meetingpb.MeetingServiceClient

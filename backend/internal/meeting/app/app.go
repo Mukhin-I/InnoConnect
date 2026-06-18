@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/meeting/repo"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/meeting/transport"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/meeting/usecase"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/config"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
-	pb "gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/pb/meeting"
+	"innoconnect/internal/meeting/repo"
+	"innoconnect/internal/meeting/transport"
+	"innoconnect/internal/meeting/usecase"
+	"innoconnect/pkg/config"
+	"innoconnect/pkg/logger"
+	pb "innoconnect/pkg/pb/meeting"
 	"google.golang.org/grpc"
 )
 

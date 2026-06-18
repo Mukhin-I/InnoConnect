@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/meeting/entity"
-	pb "gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/pb/meeting"
+	"innoconnect/internal/meeting/entity"
+	pb "innoconnect/pkg/pb/meeting"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

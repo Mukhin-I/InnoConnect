@@ -2,8 +2,8 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/config"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
+	"innoconnect/pkg/config"
+	"innoconnect/pkg/logger"
 )
 
 // Function for setuping Gin server
