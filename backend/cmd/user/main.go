@@ -1,7 +1,7 @@
 package main
 
 import (
-	userapp "gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/user/app"
+	userapp "innoconnect/internal/user/app"
 )
 
 func main() {

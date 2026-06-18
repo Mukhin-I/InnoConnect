@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/gateway/entity"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/pb/meeting"
+	"innoconnect/internal/gateway/entity"
+	"innoconnect/pkg/logger"
+	"innoconnect/pkg/pb/meeting"
 )
 
 func (h *Handler) CreateMeeting(c *gin.Context) {

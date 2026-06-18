@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/meeting/entity"
+	"innoconnect/internal/meeting/entity"
 )
 
 type MeetingRepository interface {

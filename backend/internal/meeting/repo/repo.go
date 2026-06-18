@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/internal/meeting/entity"
+	"innoconnect/internal/meeting/entity"
 )
 
 type Repository struct {

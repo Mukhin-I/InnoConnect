@@ -4,9 +4,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/config"
-	"gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/logger"
-	meetingpb "gitlab.pg.innopolis.university/innoconnect-team/innoconnect/pkg/pb/meeting"
+	"innoconnect/pkg/config"
+	"innoconnect/pkg/logger"
+	meetingpb "innoconnect/pkg/pb/meeting"
 )
 
 func NewMeetingClient() (meetingpb.MeetingServiceClient, error) {
