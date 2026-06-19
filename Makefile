@@ -5,7 +5,7 @@ ENV_FILE = .env
 COMPOSE = docker compose -f ./backend/deployment/docker/docker-compose.yml --env-file $(ENV_FILE)
 COMPOSE_DEV = docker compose -f ./backend/deployment/docker/docker-compose-dev.yml --env-file $(ENV_FILE)
 
-SERVICES = all up down db dev gateway meeting meetings request user chat log logs help
+SERVICES = all up down stop db dev gateway meeting meetings request user chat log logs help clean
 .PHONY: $(SERVICES)
 
 uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$(wordlist 2,$(words $1),$1))))
@@ -51,7 +51,7 @@ $(firstword $(ARGS)):
 					db="false"; \
 				fi \
 				;; \
-			down) \
+			down|stop) \
 				if [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
 						echo "Останавливаю всё, что есть"; \
