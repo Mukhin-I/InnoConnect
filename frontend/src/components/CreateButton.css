@@ -1,0 +1,12 @@
+.create-button {
+    width: 85vw;
+    height: 4.8vh;
+    border-radius: 500px;
+    background-color: #91AD69;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 2.7vw;
+    color: #FFFFFF;
+    margin-top: auto;
+}

@@ -1,0 +1,10 @@
+.category-selector {
+    display: flex;
+    width: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid #ededed;
+    border-radius: 7px;
+    padding: 0;
+    overflow: hidden;
+    margin-bottom: 1.5vh;
+}

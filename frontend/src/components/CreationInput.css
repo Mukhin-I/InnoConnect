@@ -1,0 +1,25 @@
+.input-icon {
+    width: 85vw;
+    height: 4vh;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 7px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.86vw;
+    font-weight: 500;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    padding-left: 1.33vw;
+    color: #343434;
+}
+
+.input-icon::placeholder {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 1.86vw;
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.input-icon:focus {
+    border-color: #90aa6f;
+    outline: none;
+}

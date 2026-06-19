@@ -8,7 +8,7 @@ function LocationPicker({
   onLocationSelect,
   currentLatitude,
   currentLongitude,
-  currentAddress 
+  currentAddress,
 }) {
   const [selectedPoint, setSelectedPoint] = useState(
     currentLatitude && currentLongitude 
