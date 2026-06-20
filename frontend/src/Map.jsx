@@ -106,11 +106,9 @@ function Map() {
           setSelectedMeetingId={setSelectedMeetingId}
         />
 
-        {selectedMeetingId && (
+        {selectedMeetingId !== null && (
           <EventCard
-            meeting={meetings.find(
-              meeting => meeting.id === selectedMeetingId
-            )}
+            eventId={selectedMeetingId}
             onClose={() => setSelectedMeetingId(null)}
           />
         )}
