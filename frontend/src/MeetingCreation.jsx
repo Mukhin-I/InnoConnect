@@ -311,6 +311,7 @@ function MeetingCreation() {
         currentLatitude={latitude}
         currentLongitude={longitude}
         currentAddress={address}
+        selectedCategory={selected}
       />
     </>
   )

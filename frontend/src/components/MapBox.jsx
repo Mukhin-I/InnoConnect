@@ -2,8 +2,12 @@ import './MapBox.css'
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import pinIconInactive from '../assets/pin-sport-inactive.svg';
-import pinIconActive from '../assets/pin-sport-active.svg';
+import pinSportInactive from '../assets/pin-sport-inactive.svg';
+import pinSocialInactive from '../assets/pin-social-inactive.svg';
+import pinStudyInactive from '../assets/pin-study-inactive.svg';
+import pinSportActive from '../assets/pin-sport-active.svg';
+import pinSocialActive from '../assets/pin-social-active.svg';
+import pinStudyActive from '../assets/pin-study-active.svg';
 
 function MapBox({
   meetings = [],
@@ -16,12 +20,24 @@ function MapBox({
   onLocationSelect = null,
   initialLatitude = null,
   initialLongitude = null,
-  clearMarker = false
+  clearMarker = false,
+  selectedCategory = 'Спорт'
 }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const selectMarkerRef = useRef(null);
   const isMapLoadedRef = useRef(false);
+
+  const getPinIcon = (category, isActive = false) => {
+    const categoryMap = {
+      'Спорт': { active: pinSportActive, inactive: pinSportInactive},
+      'Соц': { active: pinSocialActive, inactive: pinSocialInactive},
+      'Учеба': { active: pinStudyActive, inactive: pinStudyInactive},
+    };
+
+    const pins = categoryMap[category] || categoryMap['Спорт'];
+    return isActive ? pins.active : pins.inactive;
+  };
 
   const addSelectMarker = (lng, lat) => {
     if (!mapRef.current) return;
@@ -31,7 +47,7 @@ function MapBox({
     }
     
     const el = document.createElement("img");
-    el.src = pinIconActive;
+    el.src = getPinIcon(selectedCategory, true);
     el.style.width = "34px";
     el.style.height = "34px";
     el.style.cursor = "pointer";
@@ -96,30 +112,38 @@ function MapBox({
     } else if (initialLatitude && initialLongitude) {
       addSelectMarker(initialLongitude, initialLatitude);
     }
-  }, [initialLatitude, initialLongitude, clearMarker]);
+  }, [initialLatitude, initialLongitude, clearMarker, selectedCategory]);
 
   const markersRef = useRef([]);
 
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // удалить старые пины
-    markersRef.current.forEach(marker => marker.remove());
-    markersRef.current = [];
+    if (Array.isArray(markersRef.current)) {
+      markersRef.current.forEach(marker => {
+      if (marker && marker.remove) {
+        marker.remove();
+          }
+      });
+    }
+        
+      markersRef.current = [];
 
-    meetings.forEach(meeting => {
-      if (!meeting.latitude || !meeting.longitude) {
+      if (!meetings || meetings.length === 0) {
         return;
       }
 
-      const el = document.createElement("img");
+      meetings.forEach(meeting => {
+          if (!meeting.latitude || !meeting.longitude) {
+            return;
+      }
 
-      el.src =
-        meeting.id === selectedMeetingId
-          ? pinIconActive
-          : pinIconInactive;
-      el.style.width = meeting.id === selectedMeetingId ? "34px" : "24px";
-      el.style.height = meeting.id === selectedMeetingId ? "34px" : "24px";
+      const el = document.createElement("img");
+      const isActive = meeting.id === selectedMeetingId;
+
+      el.src = getPinIcon(meeting.type, isActive);
+      el.style.width = meeting.id === selectedMeetingId ? "34px" : "30px";
+      el.style.height = meeting.id === selectedMeetingId ? "34px" : "30px";
 
       el.addEventListener('click', (e) => {
         e.stopPropagation();
