@@ -13,6 +13,10 @@ function CardOfRequest() {
         return `${day}.${month}, ${hours}:${minutes}`;
     };
 
+    const [request, setRequest] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     return(
         <>
             <div className="request-card-container">
