@@ -9,6 +9,7 @@ function LocationPicker({
   currentLatitude,
   currentLongitude,
   currentAddress,
+  selectedCategory="Спорт"
 }) {
   const [selectedPoint, setSelectedPoint] = useState(
     currentLatitude && currentLongitude 
@@ -78,6 +79,7 @@ function LocationPicker({
             initialLatitude={selectedPoint?.lat || currentLatitude}
             initialLongitude={selectedPoint?.lng || currentLongitude}
             clearMarker={!selectedPoint}
+            selectedCategory={selectedCategory}
           />
         </div>
         <div className="modal-address-container">
