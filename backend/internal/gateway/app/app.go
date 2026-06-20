@@ -11,13 +11,19 @@ import (
 
 // Function for setuping Gin server
 func CreateServer() error {
-	client, err := grpcclient.NewMeetingClient()
+	meetingClient, err := grpcclient.NewMeetingClient()
 	if err != nil {
 		logger.Error("Server startup failed" + err.Error())
 		return err
 	}
 
-	handler := transport.NewHandler(client)
+	requestClient, err := grpcclient.NewRequestClient()
+	if err != nil {
+		logger.Error("Server startup failed" + err.Error())
+		return err
+	}
+
+	handler := transport.NewHandler(meetingClient, requestClient)
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -47,4 +53,8 @@ func setEndpoints(router *gin.Engine, h *transport.Handler) {
 	router.POST("/meetings", h.CreateMeeting)
 	router.GET("/meetings", h.GetMeetings)
 	router.GET("/meetings/:id", h.GetMeeting)
+
+	router.POST("/requests", h.CreateRequest)
+	router.GET("/requests", h.GetRequests)
+	router.GET("/requests/:id", h.GetRequest)
 }

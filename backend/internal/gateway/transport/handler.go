@@ -1,13 +1,18 @@
 package transport
 
-import meetingpb "innoconnect/pkg/pb/meeting"
+import (
+requestpb "innoconnect/pkg/pb/request"
+meetingpb "innoconnect/pkg/pb/meeting"
+)
 
 type Handler struct {
-	meetingClient meetingpb.MeetingServiceClient
+meetingClient meetingpb.MeetingServiceClient
+requestClient requestpb.RequestServiceClient
 }
 
-func NewHandler(client meetingpb.MeetingServiceClient) *Handler {
-	return &Handler{
-		meetingClient: client,
-	}
+func NewHandler(meetingClient meetingpb.MeetingServiceClient, requestClient requestpb.RequestServiceClient) *Handler {
+return &Handler{
+meetingClient: meetingClient,
+requestClient: requestClient,
+}
 }
