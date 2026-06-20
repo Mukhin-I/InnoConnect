@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+.requests-page {
+    font-family: 'Montserrat', sans-serif;
+    width: 100vw;
+    height: 100vh;
+    padding: 0.5vh 4vw;
+    padding-top: 5.5vh;
+    background-color: #f5f5f5;
+    background-image: url('./assets/bg.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;      
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.requests-header {
+    font-weight: 700;
+    font-size: 20px;
+    color: #243D34;
+    text-align: left;
+    margin-top: 5.5vh;
+}
+
+.requests-top-bar {
+    margin-top: 2.5vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.requests-filter-container {
+    width: 53.251vw;
+    height: 11.146vw;
+    border-radius: 45px;
+    background-color: #fff;
+    padding: 4px 7px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 3.096vw 6.192vw 0 rgba(52, 52, 52, 0.05);
+}
+
+.request-filter-item {
+    background-color: #fff;
+    border-radius: 500px;
+    width: 24.458vw;
+    height: 8.669vw;
+    color: #343434;
+    font-weight: 500;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    gap: 3.096vw;
+    padding: 2.477vw 4.954vw;
+
+    transition: 
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.request-filter-item img {
+    visibility: hidden;
+}
+
+.request-selected {
+    background-color: #799855;
+    color: #fff;
+}
+
+.request-selected img {
+    visibility: visible;
+}
+
+.add-request {
+    box-shadow: 0 3.096vw 6.192vw 0 rgba(52, 52, 52, 0.05);
+    background-color: #fff;
+    border-radius: 1000px;
+    width: 11.146vw;
+    height: 11.146vw;
+    padding: 1.238vw 3.406vw;
+    text-decoration: none;
+    color: #000;
+    font-weight: 300;
+    font-size: 24px;
+}
+
+.type-of-requests-filter {
+    margin-top: 5.573vw;
+    width: 100%;
+    height: 8.669vw;
+
+    display: flex;
+    align-items: center;
+    gap: 1.238vw;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.type-of-requests-filter::-webkit-scrollbar {
+    display: none;
+}
+
+.type-of-request {
+    height: 8.669vw;
+    border-radius: 500px;
+    color: #343434;
+    font-weight: 500;
+    font-size: 8px;
+    padding: 2.167vw 2.786vw;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 1.548vw;
+    box-shadow: 0 3.096vw 6.192vw 0 rgba(52, 52, 52, 0.1);
+    background-color: #fff;
+    flex-shrink: 0;
+
+    transition: 
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.type-selected {
+    font-weight: 700;
+    color: #8CB669;
+    background-color: #F1F9E7;
+    border: 1px solid rgba(140, 182, 105, 0.06);
+    box-shadow: 0 3.096vw 6.192vw 0 rgba(177, 207, 152, 0.25);
+}
+
+.type-request-icon {
+    width: 4.334vw;
+    height: 4.334vw;
+    background: rgba(52, 52, 52, 0.7);
+}
+
+.allrequests {
+    mask: url('./assets/allrequests.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('./assets/allrequests.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.helpreq {
+    mask: url('./assets/helprequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('./assets/helprequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.stuffreq {
+    mask: url('./assets/stuffrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('./assets/stuffrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.transportreq {
+    mask: url('./assets/transportrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('./assets/transportrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.otherreq {
+    mask: url('./assets/otherrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('./assets/otherrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+
+.type-selected .type-request-icon {
+    background: #8CB669;
+}
+
+.list-of-reqs-container {
+    height: 113.313vw;
+    margin-top: 7.74vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.858vw;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
