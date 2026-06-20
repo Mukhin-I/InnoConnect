@@ -5,7 +5,7 @@ ENV_FILE = .env
 COMPOSE = docker compose -f ./backend/deployment/docker/docker-compose.yml --env-file $(ENV_FILE)
 COMPOSE_DEV = docker compose -f ./backend/deployment/docker/docker-compose-dev.yml --env-file $(ENV_FILE)
 
-SERVICES = all up down stop switch selfDestroySequence db dev gateway meeting meetings request user chat log logs help cache remove
+SERVICES = all up down stop switch selfDestroySequence db dev gateway meeting meetings request user chat log logs help cache remove init
 .PHONY: $(SERVICES)
 
 uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$(wordlist 2,$(words $1),$1))))
@@ -76,7 +76,9 @@ $(firstword $(ARGS)):
 						dev="false"; \
 					fi; \
 					db="false"; \
-				fi \
+				fi; \
+				echo "Запускаю фронтend"; \
+				(cd frontend && npm run dev) \
 				;; \
 			down|stop) \
 				if [ "$$remove" = "true" ]; then \
@@ -123,6 +125,8 @@ $(firstword $(ARGS)):
 					else \
 						echo "Не все сервисы запущены, запускаю всё"; \
 						$(COMPOSE) up -d --build; \
+						echo "Запускаю фронтend"; \
+						(cd frontend && npm run dev) \
 					fi; \
 					db="false"; \
 					dev="false"; \
@@ -334,34 +338,73 @@ $(firstword $(ARGS)):
 				fi \
 				;; \
 			help) \
-			if [ "$$remove" = "true" ]; then \
-				echo "Убрать помощь? Я лучше оставлю... на всякий случай"; \
-				remove="false"; \
-				db="false"; \
-				dev="false"; \
-			elif [ "$$db" = "false" ]; then \
-				if [ "$$dev" = "false" ]; then \
-					echo "Чтобы запустить, пересоздать или перезапустить, пиши: up/all, gateway, meeting/meetings, request, user, chat"; \
-					echo "Чтобы остановить, пиши: down/stop"; \
-					echo "Есть ещё супер-слова: db и dev, они вляют на следующее слова, например make db up запустит только бдшки, а make dev meeting — только meeting, причём в режиме разработчика"; \
-					echo "Есть ещё очистка кеша или целого(ых) сервиса(ов): cache и remove .., например make remove cache или make remove db_meeting"; \
-					echo "А ещё есть логи: make log или make db dev logs"; \
-					echo "И конечно же БОЛЬШАЯ красная КНОПКА самоуничтожения - selfDestroySequence *)"\; \
-				else \
-					echo "Доступные слова (с флагом dev): те же самые, но сервисы поднимутся через docker-compose-dev.yml — с пробросом портов и всем необходимым для разработки"; \
+				if [ "$$remove" = "true" ]; then \
+					echo "Убрать помощь? Я лучше оставлю... на всякий случай"; \
+					remove="false"; \
+					db="false"; \
 					dev="false"; \
-				fi; \
-			else \
-				if [ "$$dev" = "false" ]; then \
-					echo "Доступные бдшки: meeting, request, user, chat (как отдельные слова, например 'make db meeting')"; \
-					echo "'make db up' поднимет все бдшки разом"; \
+				elif [ "$$db" = "false" ]; then \
+					if [ "$$dev" = "false" ]; then \
+						echo "Чтобы запустить, пересоздать или перезапустить, пиши: up/all, gateway, meeting/meetings, request, user, chat"; \
+						echo "Чтобы остановить, пиши: down/stop"; \
+						echo "Есть ещё супер-слова: db и dev, они вляют на следующее слова, например make db up запустит только бдшки, а make dev meeting — только meeting, причём в режиме разработчика"; \
+						echo "Есть ещё очистка кеша или целого(ых) сервиса(ов): cache и remove .., например make remove cache или make remove db_meeting"; \
+						echo "А ещё есть логи: make log или make db dev logs"; \
+						echo "И конечно же БОЛЬШАЯ красная КНОПКА самоуничтожения - selfDestroySequence *)"\; \
+					else \
+						echo "Доступные слова (с флагом dev): те же самые, но сервисы поднимутся через docker-compose-dev.yml — с пробросом портов и всем необходимым для разработки"; \
+						dev="false"; \
+					fi; \
 				else \
-					echo "Доступные бдшки (в dev режиме): те же, но через docker-compose-dev.yml и с открытыми портами"; \
-					dev="false"; \
+					if [ "$$dev" = "false" ]; then \
+						echo "Доступные бдшки: meeting, request, user, chat (как отдельные слова, например 'make db meeting')"; \
+						echo "'make db up' поднимет все бдшки разом"; \
+					else \
+						echo "Доступные бдшки (в dev режиме): те же, но через docker-compose-dev.yml и с открытыми портами"; \
+						dev="false"; \
+					fi; \
+					db="false"; \
+				fi \
+				;; \
+			init) \
+				if [ "$$remove" = "true" ]; then \
+					echo "Убрать начало непросто, но возможно вы хотите ВЗОРВАТЬ ВСЁ!?!??!?! => selfDestructSequence"; \
+					remove="false"; \
+				else\
+					if [ "$$db" = "true" ]; then \
+						echo "И fronend поднимем, и бд поднимем"; \
+						db="false"; \
+					fi; \
+					command -v npm >/dev/null 2>&1 || { \
+						echo "Не работает npm"; \
+						echo "Плиииз поставь Node.js (в него уже встроен npm): https://nodejs.org/ или через nvm:"; \
+						echo "  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash"; \
+						echo "  nvm install --lts"; \
+						exit 1; \
+					}; \
+					command -v docker >/dev/null 2>&1 || { \
+						echo "А где docker? Не вижу в системе..."; \
+						echo "Поставь Docker пж: https://docs.docker.com/get-docker/"; \
+						exit 1; \
+					}; \
+					echo "npm и docker на месте, погнали"; \
+					echo "Копирую .env'ы..."; \
+					cp -n .env.example .env 2>/dev/null && echo "  .env создан" || echo "  .env уже есть, не трогаю"; \
+					cp -n frontend/.env.example frontend/.env 2>/dev/null && echo "  frontend/.env создан" || echo "  frontend/.env уже есть, не трогаю"; \
+					echo "Ставлю зависимости фронтенда..."; \
+					(cd frontend && npm install && npm install mapbox-gl && npm install react-router-dom); \
+					if [ "$$dev" = "true" ]; then \
+						dev="false"; \
+						echo "Поднимаю ВСЕ сервисы бэкенда в сервисном режиме"; \
+						$(COMPOSE_ENV) up -d --build; \
+					else\
+						echo "Поднимаю ВСЕ сервисы бэкенда"; \
+						$(COMPOSE) up -d --build; \
+					fi; \
+					echo "Запускаю фронтend"; \
+					(cd frontend && npm run dev) \
 				fi; \
-				db="false"; \
-			fi \
-			;; \
+				;; \
 			*) \
 				echo "Неизвестный сервис: $$word"; \
 				;; \
