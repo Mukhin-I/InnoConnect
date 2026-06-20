@@ -345,8 +345,9 @@ $(firstword $(ARGS)):
 					dev="false"; \
 				elif [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
-						echo "Чтобы запустить, пересоздать или перезапустить, пиши: up/all, gateway, meeting/meetings, request, user, chat"; \
-						echo "Чтобы остановить, пиши: down/stop"; \
+						echo "Чтобы запустить, пересоздать или перезапустить, пиши: init, up/all, switch, gateway, meeting/meetings, request, user, chat"; \
+						echo "init/up/all/switch также запускают и frontend"; \
+						echo "Чтобы остановить, пиши: switch, down/stop"; \
 						echo "Есть ещё супер-слова: db и dev, они вляют на следующее слова, например make db up запустит только бдшки, а make dev meeting — только meeting, причём в режиме разработчика"; \
 						echo "Есть ещё очистка кеша или целого(ых) сервиса(ов): cache и remove .., например make remove cache или make remove db_meeting"; \
 						echo "А ещё есть логи: make log или make db dev logs"; \
