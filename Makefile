@@ -5,7 +5,7 @@ ENV_FILE = .env
 COMPOSE = docker compose -f ./backend/deployment/docker/docker-compose.yml --env-file $(ENV_FILE)
 COMPOSE_DEV = docker compose -f ./backend/deployment/docker/docker-compose-dev.yml --env-file $(ENV_FILE)
 
-SERVICES = all up down stop db dev gateway meeting meetings request user chat log logs help clean
+SERVICES = all up down stop switch selfDestroySequence db dev gateway meeting meetings request user chat log logs help cache remove
 .PHONY: $(SERVICES)
 
 uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$(wordlist 2,$(words $1),$1))))
@@ -17,7 +17,6 @@ ARGS = $(filter $(SERVICES), $(input))
 
 # $(info info: $(ARGS))
 # $(info Количество слов: $(words $(ARGS)))  
-# TODO: добавить обработку вкл/выкл для make ""
 
 # TODO: fix bug with пользователями db
 %:
@@ -26,11 +25,39 @@ $(firstword $(ARGS)):
 	@if [ "$@" = "$(firstword $(ARGS))" ]; then \
 		db="false";\
 		dev="false";\
+		remove="false";\
+		_remove() { \
+			target="$$1"; \
+			echo "Удаляю $$target: и контейнер, и образ, и кеш, и volume'ы"; \
+			cid=`$(COMPOSE) images -q $$target 2>/dev/null`; \
+			if [ -z "$$cid" ]; then cid=`$(COMPOSE_DEV) images -q $$target 2>/dev/null`; fi; \
+			docker stop $$target 2>/dev/null; \
+			docker rm -f -v $$target 2>/dev/null; \
+			vols=`docker volume ls -q --filter "label=com.docker.compose.service=$$target"`; \
+			if [ -n "$$vols" ]; then docker volume rm $$vols; fi; \
+			if [ -n "$$cid" ]; then \
+				docker buildx prune --filter "parents=$$cid" -f; \
+				docker rmi $$cid; \
+			else \
+				echo "Не нашёл образ $$target, нечего очищать"; \
+			fi; \
+		}; \
 		for word in $(ARGS); do \
 		echo "\n"; \
 		case "$$word" in \
 			up|all) \
-				if [ "$$db" = "false" ]; then \
+				if [ "$$remove" = "true" ]; then \
+					if [ "$$db" = "true" ]; then \
+						echo "!Удаляю ВСЕ бдшки"; \
+						for s in db_meeting db_request db_user db_chat; do _remove $$s; done; \
+					else \
+						echo "!ЁУдаляю ВСЕ сервисы"; \
+						for s in gateway meeting request user chat db_meeting db_request db_user db_chat; do _remove $$s; done; \
+					fi; \
+					remove="false"; \
+					db="false"; \
+					dev="false"; \
+				elif [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
 						echo "Запускаю ВСЕ сервисы"; \
 						$(COMPOSE) up -d --build; \
@@ -52,7 +79,12 @@ $(firstword $(ARGS)):
 				fi \
 				;; \
 			down|stop) \
-				if [ "$$db" = "false" ]; then \
+				if [ "$$remove" = "true" ]; then \
+					echo "удалить ВСЁ??? точно? я боюсь... если надо, напиши тогда remove all"; \
+					remove="false"; \
+					db="false"; \
+					dev="false"; \
+				elif [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
 						echo "Останавливаю всё, что есть"; \
 						$(COMPOSE) down; \
@@ -73,8 +105,37 @@ $(firstword $(ARGS)):
 					db="false"; \
 				fi \
 				;; \
+			switch) \
+				if [ "$$remove" = "true" ]; then \
+					echo "switch не дружит с remove, забыл стереть флаг?"; \
+					remove="false"; \
+					db="false"; \
+					dev="false"; \
+				else \
+					all_up="true"; \
+					for s in gateway meeting request user chat db_meeting db_request db_user db_chat; do \
+						state=`$(COMPOSE) ps -q $$s 2>/dev/null`; \
+						if [ -z "$$state" ]; then all_up="false"; fi; \
+					done; \
+					if [ "$$all_up" = "true" ]; then \
+						echo "Все сервисы запущены, выключаю всё"; \
+						$(COMPOSE) down; \
+					else \
+						echo "Не все сервисы запущены, запускаю всё"; \
+						$(COMPOSE) up -d --build; \
+					fi; \
+					db="false"; \
+					dev="false"; \
+				fi \
+				;; \
 			log|logs) \
-				if [ "$$db" = "false" ]; then \
+				if [ "$$remove" = "true" ]; then \
+					echo "Что написано пером, уже не вырубишь топором"; \
+					echo "Всё, что будет в будущем, будет в будущем, всё, что было - уже история, живи настоящим. Зачем хочешь удалить историю)?"; \
+					remove="false"; \
+					db="false"; \
+					dev="false"; \
+				elif [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
 						echo "Открываю логи"; \
 						$(COMPOSE) logs -f; \
@@ -96,7 +157,16 @@ $(firstword $(ARGS)):
 				fi \
 				;; \
 			meetings) \
-				if [ "$$db" = "false" ]; then \
+				if [ "$$remove" = "true" ]; then \
+					if [ "$$db" = "true" ]; then \
+						_remove db_meeting; \
+					else \
+						_remove meeting; \
+					fi; \
+					remove="false"; \
+					db="false"; \
+					dev="false"; \
+				elif [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
 						echo "Запускаю meetinG.."; \
 						$(COMPOSE) up -d --build meeting; \
@@ -118,7 +188,12 @@ $(firstword $(ARGS)):
 				fi \
 				;; \
 			gateway) \
-				if [ "$$db" = "false" ]; then \
+				if [ "$$remove" = "true" ]; then \
+					_remove gateway; \
+					remove="false"; \
+					db="false"; \
+					dev="false"; \
+				elif [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
 						echo "Запускаю gateway"; \
 						$(COMPOSE) up -d --build gateway; \
@@ -139,7 +214,16 @@ $(firstword $(ARGS)):
 				fi \
 				;; \
 			meeting|request|user|chat) \
-				if [ "$$db" = "false" ]; then \
+				if [ "$$remove" = "true" ]; then \
+					if [ "$$db" = "true" ]; then \
+						_remove db_$$word; \
+					else \
+						_remove $$word; \
+					fi; \
+					remove="false"; \
+					db="false"; \
+					dev="false"; \
+				elif [ "$$db" = "false" ]; then \
 					if [ "$$dev" = "false" ]; then \
 						echo "Запускаю $$word"; \
 						$(COMPOSE) up -d --build $$word; \
@@ -178,6 +262,106 @@ $(firstword $(ARGS)):
 					dev="true"; \
 				fi \
 				;; \
+			cache) \
+				if [ "$$remove" = "true" ]; then \
+					echo "Всё, понял, если что, можешь просто cache писать\nНо так не оч красиво((("; \
+					remove="false"; \
+				fi;\
+				echo "Чищу кеш сборки..."; \
+				ids=""; \
+				for s in gateway meeting request user chat db_meeting db_request db_user db_chat; do \
+					id=`$(COMPOSE) images -q $$s 2>/dev/null`; \
+					if [ -z "$$id" ]; then id=`$(COMPOSE_DEV) images -q $$s 2>/dev/null`; fi; \
+					if [ -n "$$id" ]; then \
+						echo "Нашёл $$s: ($$id)"; \
+						ids="$$ids;$$id"; \
+					else \
+						echo "Образа $$s нет, пропускаю"; \
+					fi; \
+				done; \
+				ids=`echo $$ids | sed 's/^;//'`; \
+				if [ -n "$$ids" ]; then \
+					docker buildx prune --filter "parents=$$ids" -f; \
+				else \
+					echo "Нечего чистить — ещё ничего не было"; \
+				fi \
+				;; \
+			remove) \
+				if [ "$$remove" = "false" ]; then \
+					echo "Жду сервис для удаления"; \
+					remove="true"; \
+				else \
+					echo "ДАЙТЕ мне сервис для удаления"; \
+					remove="true"; \
+				fi \
+				;; \
+			selfDestroySequence) \
+				echo "Так-так-так. Кнопка самоуничтожения. Серьёзно?"; \
+				echo "Это удалит ВСЕ docker-контейнеры, образы, volume'ы, кеш сборки И все файлы проекта с диска. Без права на отмену."; \
+				echo "Чтобы убедиться, что ты делаешь это осознанно, ответь правильно на 3 вопроса (или хотя бы попытайся)."; \
+				echo "\n"; \
+				echo "Вопрос 1 из 3: ты точно уверен, что это то, чего ты хочешь? \nКакой твой любимый фрукт?"; \
+				read -r answer1 < /dev/tty; \
+				echo "Вопрос 2 из 3: ты осознаёшь, что обратной дороги не будет, и я не сохраняю бэкапы?\n Ты можешь написать картину?"; \
+				read -r answer2 < /dev/tty; \
+				echo "Вопрос 3 из 3: последний шанс передумать. Точно удаляем ВСЁ? \nЧто такое Чёрный кофе?"; \
+				read -r answer3 < /dev/tty; \
+				if [ "$$answer1" = "яблоко" ] && [ "$$answer2" = "робот" ] && [ "$$answer3" = "Агата Кристи" ]; then \
+					echo "Ну ты сам напросился. Поехали..."; \
+					sleep 1; \
+					echo "Гашу и стираю все сервисы..."; \
+					for s in gateway meeting request user chat db_meeting db_request db_user db_chat; do _remove $$s; done; \
+					echo "Чищу остатки buildx кеша..."; \
+					docker buildx prune -af 2>/dev/null; \
+					echo "Сношу volume'ы проекта..."; \
+					vols=`docker volume ls -q --filter "label=com.docker.compose.project"`; \
+					if [ -n "$$vols" ]; then docker volume rm $$vols 2>/dev/null; fi; \
+					echo "Сношу сети проекта, а то останутся висеть как призраки..."; \
+					nets=`docker network ls -q --filter "label=com.docker.compose.project"`; \
+					if [ -n "$$nets" ]; then docker network rm $$nets 2>/dev/null; fi; \
+					echo "Чищу pgdata-папки изнутри докера, иначе обычный rm на них обижается (root есть root)..."; \
+					for pg in pgdata_meeting pgdata_request pgdata_user pgdata_chat; do \
+						if [ -d "./backend/db/$$pg" ]; then \
+							docker run --rm -v "$$(pwd)/backend/db/$$pg:/target" alpine sh -c "rm -rf /target/*" 2>/dev/null; \
+						fi; \
+					done; \
+					echo "Удаляю файлы проекта с диска..."; \
+					cd .. && rm -rf "$$OLDPWD"; \
+					echo "Готово. Меня (и проекта) больше нет. Это было хорошее время вместе.\n Спасибо за всё. \nНе плачь, живи дальше...\nи прощай..."; \
+				else \
+					echo "А вот и нет;) Фух, пронесло. Самоуничтожение отменено."; \
+					echo "Значит, в другой раз..."; \
+				fi \
+				;; \
+			help) \
+			if [ "$$remove" = "true" ]; then \
+				echo "Убрать помощь? Я лучше оставлю... на всякий случай"; \
+				remove="false"; \
+				db="false"; \
+				dev="false"; \
+			elif [ "$$db" = "false" ]; then \
+				if [ "$$dev" = "false" ]; then \
+					echo "Чтобы запустить, пересоздать или перезапустить, пиши: up/all, gateway, meeting/meetings, request, user, chat"; \
+					echo "Чтобы остановить, пиши: down/stop"; \
+					echo "Есть ещё супер-слова: db и dev, они вляют на следующее слова, например make db up запустит только бдшки, а make dev meeting — только meeting, причём в режиме разработчика"; \
+					echo "Есть ещё очистка кеша или целого(ых) сервиса(ов): cache и remove .., например make remove cache или make remove db_meeting"; \
+					echo "А ещё есть логи: make log или make db dev logs"; \
+					echo "И конечно же БОЛЬШАЯ красная КНОПКА самоуничтожения - selfDestroySequence *)"\; \
+				else \
+					echo "Доступные слова (с флагом dev): те же самые, но сервисы поднимутся через docker-compose-dev.yml — с пробросом портов и всем необходимым для разработки"; \
+					dev="false"; \
+				fi; \
+			else \
+				if [ "$$dev" = "false" ]; then \
+					echo "Доступные бдшки: meeting, request, user, chat (как отдельные слова, например 'make db meeting')"; \
+					echo "'make db up' поднимет все бдшки разом"; \
+				else \
+					echo "Доступные бдшки (в dev режиме): те же, но через docker-compose-dev.yml и с открытыми портами"; \
+					dev="false"; \
+				fi; \
+				db="false"; \
+			fi \
+			;; \
 			*) \
 				echo "Неизвестный сервис: $$word"; \
 				;; \

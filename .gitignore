@@ -6,4 +6,7 @@ backend/deployment/ssh
 backend/deployment/ssh_git
 backend/deployment/lexa-ssh-git.pub
 backend/deployment/lexa-ssh.pub
-backend/db/pgdata_meeting
+backend/db/pgdata_chat/
+backend/db/pgdata_meeting/
+backend/db/pgdata_request/
+backend/db/pgdata_user/
