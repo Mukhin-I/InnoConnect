@@ -7,6 +7,6 @@ export default defineConfig({
   server: {
     historyApiFallback: true,
     host: '0.0.0.0',
-    port: 80, // или 8080, если без sudo
+    port: 5173,
   },
 })
