@@ -1,0 +1,153 @@
+basePath: /
+definitions:
+  entity.CreateMeetingRequest:
+    properties:
+      address:
+        type: string
+      description:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      max_people:
+        type: integer
+      meeting_time:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  entity.GetMeetingsResponse:
+    properties:
+      meetings:
+        items:
+          $ref: '#/definitions/entity.MeetingShort'
+        type: array
+    type: object
+  entity.MeetingFull:
+    properties:
+      address:
+        type: string
+      creator:
+        $ref: '#/definitions/entity.User'
+      current_people:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      latitude:
+        type: number
+      longitude:
+        type: number
+      max_people:
+        type: integer
+      meeting_time:
+        type: string
+      participants:
+        items:
+          $ref: '#/definitions/entity.User'
+        type: array
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  entity.MeetingShort:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      latitude:
+        type: number
+      longitude:
+        type: number
+      type:
+        type: string
+    type: object
+  entity.User:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Innoconnect backend API
+  title: Innoconnect API
+  version: "1.0"
+paths:
+  /meetings:
+    get:
+      description: Returns a list of meetings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.GetMeetingsResponse'
+        "500":
+          description: Internal Server Error
+      summary: Get all meetings
+      tags:
+      - meetings
+    post:
+      consumes:
+      - application/json
+      description: Creates a new meeting
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Meeting data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateMeetingRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.MeetingFull'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Create a meeting
+      tags:
+      - meetings
+  /meetings/{id}:
+    get:
+      description: Returns detailed information about a meeting
+      parameters:
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.MeetingFull'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Get meeting by ID
+      tags:
+      - meetings
+swagger: "2.0"

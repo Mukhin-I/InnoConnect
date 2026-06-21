@@ -10,6 +10,18 @@ import (
 	"innoconnect/pkg/pb/meeting"
 )
 
+// CreateMeeting godoc
+// @Summary Create a meeting
+// @Description Creates a new meeting
+// @Tags meetings
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Param request body entity.CreateMeetingRequest true "Meeting data"
+// @Success 201 {object} entity.MeetingFull
+// @Failure 400 "Bad Request"
+// @Failure 500 "Internal Server Error"
+// @Router /meetings [post]
 func (h *Handler) CreateMeeting(c *gin.Context) {
 	var req entity.CreateMeetingRequest
 
@@ -58,6 +70,14 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 	c.JSON(http.StatusCreated, meeting)
 }
 
+// GetMeetings godoc
+// @Summary Get all meetings
+// @Description Returns a list of meetings
+// @Tags meetings
+// @Produce json
+// @Success 200 {object} entity.GetMeetingsResponse
+// @Failure 500 "Internal Server Error"
+// @Router /meetings [get]
 func (h *Handler) GetMeetings(c *gin.Context) {
 	logger.Info("Getting meetings from meeting service")
 	resp, err := h.meetingClient.GetMeetings(
@@ -94,6 +114,16 @@ func (h *Handler) GetMeetings(c *gin.Context) {
 	})
 }
 
+// GetMeeting godoc
+// @Summary Get meeting by ID
+// @Description Returns detailed information about a meeting
+// @Tags meetings
+// @Produce json
+// @Param id path int true "Meeting ID"
+// @Success 200 {object} entity.MeetingFull
+// @Failure 400 "Bad Request"
+// @Failure 500 "Internal Server Error"
+// @Router /meetings/{id} [get]
 func (h *Handler) GetMeeting(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 

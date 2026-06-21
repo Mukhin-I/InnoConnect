@@ -17,6 +17,7 @@ COPY backend/internal/${SERVICE}/ ./internal/${SERVICE}/
 COPY backend/cmd/${SERVICE} ./cmd/${SERVICE}
 COPY backend/pkg ./pkg
 COPY backend/proto ./proto
+COPY backend/docs ./docs
 
 RUN --mount=type=cache,target=/root/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
