@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import React from 'react';
 import './CardOfRequest.css';
 
-function CardOfRequest() {
+function CardOfRequest({ request }) {
     // Date in such format: day.month, hour:minutes like 02.02, 15:05
     const formatDate = (dateString) => {
         const date = new Date(dateString);  
@@ -13,28 +13,34 @@ function CardOfRequest() {
         return `${day}.${month}, ${hours}:${minutes}`;
     };
 
-    const [request, setRequest] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const typeOfReq = {
+        "Help": "helpreq",
+        "Things": "stuffreq",
+        "Transport": "transportreq",
+        "Other": "otherreq",
+    }
 
-    return(
-        <>
-            <div className="request-card-container">
-                <div className="request-card-icon">
-                    <div className="type-request-icon-card helpreq"></div>
-                </div>
-
-                <div className="request-card-info">
-                    <p className="request-card-type">Помощь</p>
-                    <p className="request-card-title">Помочь с выносом мусора</p>
-                    <p className="request-card-date">Сегодня, 15:45</p>
-                </div>
-
-                <div className="new-request-tag">
-                    <p>Новое</p>
-                </div>
+    return (
+        <Link 
+            to={`/request/${request.request_id}`}
+            className="request-card-container"
+        >
+            <div className="request-card-icon">
+                <div className={`type-request-icon-card ${typeOfReq[request.type]}`}></div>
             </div>
-        </>
+
+            <div className="request-card-info">
+                <p className="request-card-type">{request.type}</p>
+                <p className="request-card-title">{request.title}</p>
+                <p className="request-card-date">
+                    {formatDate(request.deadline)}
+                </p>
+            </div>
+
+            <div className="new-request-tag">
+                <p>Новое</p>
+            </div>
+        </Link>
     );
 }
 
