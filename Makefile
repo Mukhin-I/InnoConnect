@@ -1,51 +1,50 @@
-MAKEFLAGS += --silent
+MAKEFLAGS += --silent # Убрать стандартные warnings из-за повторяюбщихся кодовых слов и встроенной логики make 
 
 ENV_FILE = .env
 
-COMPOSE = docker compose -f ./backend/deployment/docker/docker-compose.yml --env-file $(ENV_FILE)
+COMPOSE = docker compose -f ./backend/deployment/docker/docker-compose.yml --env-file $(ENV_FILE) # Подготовленные команды docker, сохранённые в переменных
 COMPOSE_DEV = docker compose -f ./backend/deployment/docker/docker-compose-dev.yml --env-file $(ENV_FILE)
 
-SERVICES = all up down stop switch selfDestroySequence db dev gateway meeting meetings request user chat log logs help cache remove init
-.PHONY: $(SERVICES)
+SERVICES = all up down stop switch selfDestroySequence db dev gateway meeting meetings request user chat log logs help cache remove init # объявление кодовых слов
+.PHONY: $(SERVICES) # не запускать как файлы с подобными именами
 
-uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$(wordlist 2,$(words $1),$1))))
+uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$(wordlist 2,$(words $1),$1)))) # функция для фильтрации слов по одному разу
 
-input = $(if $(MAKECMDGOALS),$(MAKECMDGOALS), up)
+input = $(if $(MAKECMDGOALS),$(MAKECMDGOALS), up) # Если есть ввод - брать ввод, если make без аргументов - подразумевать подъём всего
 
-#* ARGS = $(call uniq, $(filter $(SERVICES), $(input)))
-ARGS = $(filter $(SERVICES), $(input))
+ #* ARGS = $(call uniq, $(filter $(SERVICES), $(input)))
+ARGS = $(filter $(SERVICES), $(input)) # оставляем только кодовые фразы без опечаток и мусора
 
-# $(info info: $(ARGS))
-# $(info Количество слов: $(words $(ARGS)))  
+ # $(info info: $(ARGS))
+ # $(info Количество слов: $(words $(ARGS)))  
 
-# TODO: fix bug with пользователями db
-%:
+%: # заглушка для слов с опечатками(make запускает пайплайн для каждого слова, в том числе и неправильно написанного, вне зависимости хотим мы того или нет)
 	@:
-$(firstword $(ARGS)):
-	@if [ "$@" = "$(firstword $(ARGS))" ]; then \
-		db="false";\
-		dev="false";\
+$(firstword $(ARGS)): # берём из отфильтрованных слов первое и на нём триггерим проход по всей входной строчке 
+	@if [ "$@" = "$(firstword $(ARGS))" ]; then # на остальных кодовых словах ничего не делаем, чтобы один и тот же цикл не выполнять N слов=раз\
+		db="false"; # со знака @ тут начинается bash синтаксис, объявляем флаги\
+		dev="false"; # из полезного: $() - считать переменную make, $$.. - считать переменную bash\
 		remove="false";\
-		_remove() { \
+		_remove() { # вспомогательная bash функция для удаления контейнеров\
 			target="$$1"; \
 			echo "Удаляю $$target: и контейнер, и образ, и кеш, и volume'ы"; \
 			cid=`$(COMPOSE) images -q $$target 2>/dev/null`; \
 			if [ -z "$$cid" ]; then cid=`$(COMPOSE_DEV) images -q $$target 2>/dev/null`; fi; \
-			docker stop $$target 2>/dev/null; \
-			docker rm -f -v $$target 2>/dev/null; \
+			docker stop $$target 2>/dev/null; # стопаем контейнеры \
+			docker rm -f -v $$target 2>/dev/null; # чистим volumes \
 			vols=`docker volume ls -q --filter "label=com.docker.compose.service=$$target"`; \
-			if [ -n "$$vols" ]; then docker volume rm $$vols; fi; \
+			if [ -n "$$vols" ]; then docker volume rm $$vols; fi; # чистим volumes ещё раз \
 			if [ -n "$$cid" ]; then \
-				docker buildx prune --filter "parents=$$cid" -f; \
-				docker rmi $$cid; \
+				docker buildx prune --filter "parents=$$cid" -f; # чистим кеш сборки \
+				docker rmi $$cid; # ещё что-то чистим \
 			else \
 				echo "Не нашёл образ $$target, нечего очищать"; \
 			fi; \
 		}; \
-		for word in $(ARGS); do \
+		for word in $(ARGS); do # тепербь для каждого слова в строке ввода(после фильтрации, оставив только знакомые слова) \
 		echo "\n"; \
-		case "$$word" in \
-			up|all) \
+		case "$$word" in #switch case по словам\
+			up|all) # поднимаем *всё* с обработкой флагов db => поднять *всё* бд, dev => поднять *всё* [бд] в dev режиме, remove => удалить *всё* [бд] \
 				if [ "$$remove" = "true" ]; then \
 					if [ "$$db" = "true" ]; then \
 						echo "!Удаляю ВСЕ бдшки"; \
@@ -57,7 +56,7 @@ $(firstword $(ARGS)):
 					remove="false"; \
 					db="false"; \
 					dev="false"; \
-				elif [ "$$db" = "false" ]; then \
+				elif [ "$$db" = "false" ]; then # 4 варианта соответственно для комбинаций db=true/false, dev=true/false \
 					if [ "$$dev" = "false" ]; then \
 						echo "Запускаю ВСЕ сервисы"; \
 						$(COMPOSE) up -d --build; \
@@ -77,10 +76,10 @@ $(firstword $(ARGS)):
 					fi; \
 					db="false"; \
 				fi; \
-				echo "Запускаю фронтend"; \
+				echo "Запускаю фронтend"; # в конце prodная история, поднимаем ещё и фронтend \
 				(cd frontend && npm run dev) \
 				;; \
-			down|stop) \
+			down|stop) # то же самое, но вместа запуска, останавливаем \
 				if [ "$$remove" = "true" ]; then \
 					echo "удалить ВСЁ??? точно? я боюсь... если надо, напиши тогда remove all"; \
 					remove="false"; \
@@ -107,7 +106,7 @@ $(firstword $(ARGS)):
 					db="false"; \
 				fi \
 				;; \
-			switch) \
+			switch) # если все сервисы подняты -> выключаем, если не все -> доподнимаем \
 				if [ "$$remove" = "true" ]; then \
 					echo "switch не дружит с remove, забыл стереть флаг?"; \
 					remove="false"; \
@@ -132,7 +131,7 @@ $(firstword $(ARGS)):
 					dev="false"; \
 				fi \
 				;; \
-			log|logs) \
+			log|logs) # открыть логи все или бдшек \
 				if [ "$$remove" = "true" ]; then \
 					echo "Что написано пером, уже не вырубишь топором"; \
 					echo "Всё, что будет в будущем, будет в будущем, всё, что было - уже история, живи настоящим. Зачем хочешь удалить историю)?"; \
@@ -160,8 +159,8 @@ $(firstword $(ARGS)):
 					db="false"; \
 				fi \
 				;; \
-			meetings) \
-				if [ "$$remove" = "true" ]; then \
+			meetings) # отдельный кейс с неправильным названием сервиса с буквой С в конце - популярная моя ошибка со стёбными комментариями \
+				if [ "$$remove" = "true" ]; then # remove meeting или db meeting (логично?) удаляет это контейнер \
 					if [ "$$db" = "true" ]; then \
 						_remove db_meeting; \
 					else \
@@ -191,7 +190,7 @@ $(firstword $(ARGS)):
 					db="false"; \
 				fi \
 				;; \
-			gateway) \
+			gateway) # отдельный кейс для gateway, потому что у него нет бд =) обработку этого флага нужно писать иначе \
 				if [ "$$remove" = "true" ]; then \
 					_remove gateway; \
 					remove="false"; \
@@ -217,7 +216,7 @@ $(firstword $(ARGS)):
 					fi; \
 				fi \
 				;; \
-			meeting|request|user|chat) \
+			meeting|request|user|chat) # для основной группы сервисок всё одинаково, парсим название через $$word и передаём в запуск, удаление, бдшки и бла бла бла \
 				if [ "$$remove" = "true" ]; then \
 					if [ "$$db" = "true" ]; then \
 						_remove db_$$word; \
@@ -248,12 +247,12 @@ $(firstword $(ARGS)):
 					db="false"; \
 				fi \
 				;; \
-			db) \
+			db) # УраЁ!!! сервисы закончились, остались флаги, кеш и инициализация \
 				if [ "$$db" = "false" ]; then \
 					echo "Жду бд"; \
 					db="true"; \
 				else \
-					echo "Очень жду бд"; \
+					echo "Очень жду бд"; # когда встретилось db при уже активированном db, например make db db meeting \
 					db="true"; \
 				fi \
 				;; \
@@ -266,8 +265,17 @@ $(firstword $(ARGS)):
 					dev="true"; \
 				fi \
 				;; \
-			cache) \
-				if [ "$$remove" = "true" ]; then \
+			remove) \
+				if [ "$$remove" = "false" ]; then \
+					echo "Жду сервис для удаления"; \
+					remove="true"; \
+				else \
+					echo "ДАЙТЕ мне сервис для удаления"; \
+					remove="true"; \
+				fi \
+				;; \
+			cache) # очистка кеша, TODO: обработка dev и db не сделана, чистит сразу всё \
+				if [ "$$remove" = "true" ]; then # когда make remove cache = make cache\
 					echo "Всё, понял, если что, можешь просто cache писать\nНо так не оч красиво((("; \
 					remove="false"; \
 				fi;\
@@ -275,7 +283,7 @@ $(firstword $(ARGS)):
 				ids=""; \
 				for s in gateway meeting request user chat db_meeting db_request db_user db_chat; do \
 					id=`$(COMPOSE) images -q $$s 2>/dev/null`; \
-					if [ -z "$$id" ]; then id=`$(COMPOSE_DEV) images -q $$s 2>/dev/null`; fi; \
+					if [ -z "$$id" ]; then id=`$(COMPOSE_DEV) images -q $$s 2>/dev/null`; fi; # если не нашли id('') то заполнить нулями и потом проверить   P.s.[не 100%]TODO \
 					if [ -n "$$id" ]; then \
 						echo "Нашёл $$s: ($$id)"; \
 						ids="$$ids;$$id"; \
@@ -290,16 +298,7 @@ $(firstword $(ARGS)):
 					echo "Нечего чистить — ещё ничего не было"; \
 				fi \
 				;; \
-			remove) \
-				if [ "$$remove" = "false" ]; then \
-					echo "Жду сервис для удаления"; \
-					remove="true"; \
-				else \
-					echo "ДАЙТЕ мне сервис для удаления"; \
-					remove="true"; \
-				fi \
-				;; \
-			selfDestroySequence) \
+			selfDestroySequence) # команда самоуничтожения для удобного удаления проекта[нужно знать пароль] TODO спрятать пароль или хранить его хеш \
 				echo "Так-так-так. Кнопка самоуничтожения. Серьёзно?"; \
 				echo "Это удалит ВСЕ docker-контейнеры, образы, volume'ы, кеш сборки И все файлы проекта с диска. Без права на отмену."; \
 				echo "Чтобы убедиться, что ты делаешь это осознанно, ответь правильно на 3 вопроса (или хотя бы попытайся)."; \
@@ -337,26 +336,30 @@ $(firstword $(ARGS)):
 					echo "Значит, в другой раз..."; \
 				fi \
 				;; \
-			help) \
+			help) # команда помощи (увы, не психологической)\
+				_help() { \
+					echo "Чтобы запустить, пересоздать или перезапустить, пиши: init, up/all, switch, gateway, meeting/meetings, request, user, chat"; \
+					echo "init/up/all/switch также запускают и frontend"; \
+					echo "Чтобы остановить, пиши: switch, down/stop"; \
+					echo "Есть ещё супер-слова: db и dev, они влияют на следующее слово, например make db up запустит только бдшки, а make dev meeting — только meeting, причём в режиме разработчика"; \
+					echo "Есть ещё очистка кеша или дезинтеграция целого(ых) сервиса(ов): cache и remove .., например make remove cache или make remove db_meeting"; \
+					echo "А ещё есть логи: make log или make db dev logs"; \
+					echo "И конечно же БОЛЬШАЯ красная КНОПКА самоуничтожения - selfDestroySequence *)"; \
+					echo "\n"; \
+				}; \
 				if [ "$$remove" = "true" ]; then \
 					echo "Убрать помощь? Я лучше оставлю... на всякий случай"; \
 					remove="false"; \
 					db="false"; \
 					dev="false"; \
 				elif [ "$$db" = "false" ]; then \
-					if [ "$$dev" = "false" ]; then \
-						echo "Чтобы запустить, пересоздать или перезапустить, пиши: init, up/all, switch, gateway, meeting/meetings, request, user, chat"; \
-						echo "init/up/all/switch также запускают и frontend"; \
-						echo "Чтобы остановить, пиши: switch, down/stop"; \
-						echo "Есть ещё супер-слова: db и dev, они вляют на следующее слова, например make db up запустит только бдшки, а make dev meeting — только meeting, причём в режиме разработчика"; \
-						echo "Есть ещё очистка кеша или целого(ых) сервиса(ов): cache и remove .., например make remove cache или make remove db_meeting"; \
-						echo "А ещё есть логи: make log или make db dev logs"; \
-						echo "И конечно же БОЛЬШАЯ красная КНОПКА самоуничтожения - selfDestroySequence *)"\; \
-					else \
+    				_help; \
+					if [ "$$dev" = "true" ]; then \
 						echo "Доступные слова (с флагом dev): те же самые, но сервисы поднимутся через docker-compose-dev.yml — с пробросом портов и всем необходимым для разработки"; \
 						dev="false"; \
 					fi; \
 				else \
+    				_help; \
 					if [ "$$dev" = "false" ]; then \
 						echo "Доступные бдшки: meeting, request, user, chat (как отдельные слова, например 'make db meeting')"; \
 						echo "'make db up' поднимет все бдшки разом"; \
@@ -367,11 +370,11 @@ $(firstword $(ARGS)):
 					db="false"; \
 				fi \
 				;; \
-			init) \
+			init) # дошли до конца=вернулись к началу всего приложения, проверка зависимостей(docker и node.js) в системе, скачивание библиотек и запуск всего и вся \
 				if [ "$$remove" = "true" ]; then \
 					echo "Убрать начало непросто, но возможно вы хотите ВЗОРВАТЬ ВСЁ!?!??!?! => selfDestructSequence"; \
 					remove="false"; \
-				else\
+				else \
 					if [ "$$db" = "true" ]; then \
 						echo "И fronend поднимем, и бд поднимем"; \
 						db="false"; \
@@ -383,6 +386,14 @@ $(firstword $(ARGS)):
 						echo "  nvm install --lts"; \
 						exit 1; \
 					}; \
+					NODE_VER=$$(node -e "process.stdout.write(String(parseInt(process.versions.node)))" 2>/dev/null); \
+					if [ -z "$$NODE_VER" ] || [ "$$NODE_VER" -lt 12 ]; then \
+						echo "Node.js слишком старый (нашёл: $$(node -v 2>/dev/null || echo 'вообще непонятно что')), нужна версия 12+"; \
+						echo "Обнови через nvm:"; \
+						echo "  nvm install --lts && nvm use --lts"; \
+						echo "Или скачай свежий с https://nodejs.org/"; \
+						exit 1; \
+					fi; \
 					command -v docker >/dev/null 2>&1 || { \
 						echo "А где docker? Не вижу в системе..."; \
 						echo "Поставь Docker пж: https://docs.docker.com/get-docker/"; \
@@ -398,7 +409,7 @@ $(firstword $(ARGS)):
 						dev="false"; \
 						echo "Поднимаю ВСЕ сервисы бэкенда в сервисном режиме"; \
 						$(COMPOSE_ENV) up -d --build; \
-					else\
+					else \
 						echo "Поднимаю ВСЕ сервисы бэкенда"; \
 						$(COMPOSE) up -d --build; \
 					fi; \
@@ -406,9 +417,10 @@ $(firstword $(ARGS)):
 					(cd frontend && npm run dev) \
 				fi; \
 				;; \
-			*) \
+			*) #ну мало ли сюда как-то попадёт что-то кроме отфильтрованных слов\
 				echo "Неизвестный сервис: $$word"; \
 				;; \
 		esac; \
 		done;\
 	fi;\
+ # ВСЁ! Ты герой, ты прошёл этот файл вместе со мной!
