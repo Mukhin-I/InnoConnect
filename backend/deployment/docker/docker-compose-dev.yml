@@ -183,13 +183,14 @@ services:
     ports:
       - "${DB_REQUEST_PORT}:${DB_REQUEST_PORT}"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_REQUEST_USER}", "-d", "postgres", "-p", "${DB_REQUEST_PORT}"]
+      test: ["CMD-SHELL", "psql -U ${DB_REQUEST_USER} -d request -p ${DB_REQUEST_PORT} -c 'SELECT 1 FROM requests LIMIT 1'"]
       interval: 3s
       timeout: 10s
       retries: 5
       start_period: 10s
     volumes:
       - pgdata_request:/var/lib/postgresql
+      - ../../db/init-requests.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - request
     restart: unless-stopped

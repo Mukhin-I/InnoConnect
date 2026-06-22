@@ -11,5 +11,5 @@ CREATE TABLE requests (
 
     type TEXT NOT NULL,
 
-    deadline TIMESTAMPTZ
+    deadline TIMESTAMPTZ NOT NULL
 );
