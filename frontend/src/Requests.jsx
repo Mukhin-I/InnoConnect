@@ -219,13 +219,13 @@ function Requests() {
         );
     }
 
-    const filteredRequests = requests.filter(request => {
-        if (requestType === 'allTypes') {
-            return true;
-        }
+    const filteredRequests = (requests || []).filter(request => {
+    if (requestType === 'allTypes') {
+        return true;
+    }
 
-        return request.type.toLowerCase() === requestType;
-    });
+    return request.type.toLowerCase() === requestType;
+});
 
     return(
         <>

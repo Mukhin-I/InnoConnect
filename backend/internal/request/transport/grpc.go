@@ -5,11 +5,12 @@ import (
 	"errors"
 	"time"
 
+	"innoconnect/internal/request/entity"
+	pb "innoconnect/pkg/pb/request"
+
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"innoconnect/internal/request/entity"
-	pb "innoconnect/pkg/pb/request"
 )
 
 type RequestUsecase interface {
