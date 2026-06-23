@@ -31,7 +31,11 @@ func CreateServer() error {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:5173"}, // your frontend
+		AllowOrigins: []string{
+            "http://localhost:5173",
+            "http://10.93.27.21:5173",
+			"http://10.93.27.21:80",
+        },
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{
 			"Origin",
