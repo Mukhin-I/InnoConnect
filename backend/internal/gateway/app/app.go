@@ -34,7 +34,7 @@ func CreateServer() error {
 		AllowOrigins: []string{
             "http://localhost:5173",
             "http://10.93.27.21:5173",
-			"http://10.93.27.21:80",
+			"http://10.93.27.21",
         },
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{
