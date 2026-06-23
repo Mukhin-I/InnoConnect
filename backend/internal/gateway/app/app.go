@@ -7,6 +7,10 @@ import (
 	"innoconnect/pkg/config"
 	"innoconnect/pkg/logger"
 	"github.com/gin-contrib/cors"
+	swaggerFiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
+
+    _ "innoconnect/docs"
 )
 
 // Function for setuping Gin server
@@ -44,6 +48,10 @@ func CreateServer() error {
 
 	logger.Info("Gateway service running on :" + gatewayPort)
 
+	for _, route := range router.Routes() {
+		logger.Info(route.Method + " " + route.Path)
+	}
+
 	router.Run(":" + gatewayPort)
 
 	return nil
@@ -57,4 +65,9 @@ func setEndpoints(router *gin.Engine, h *transport.Handler) {
 	router.POST("/requests", h.CreateRequest)
 	router.GET("/requests", h.GetRequests)
 	router.GET("/requests/:id", h.GetRequest)
+
+	router.GET(
+		"/swagger/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler),
+	)
 }
