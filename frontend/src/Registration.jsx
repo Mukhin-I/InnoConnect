@@ -1,5 +1,6 @@
 import './Registration.css'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import signUpBackground from './assets/signup-bg.svg'
 import CreationInput from './components/CreationInput'
 import avatarIcon from './assets/avatar.png'
@@ -16,6 +17,7 @@ function Registration() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate =useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,6 +45,7 @@ function Registration() {
             setName('');
             setEmail('');
             setPassword('');
+            navigate('/login');
         } else if (response.status === 400) {
             setError(data.message);
         }
