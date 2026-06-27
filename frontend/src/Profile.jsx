@@ -1,5 +1,6 @@
 import './Profile.css';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import BottomMenu from './components/BottomMenu.jsx';
 import logoIcon from './assets/logo.svg';
 import notificationIcon from './assets/notifications.svg';
@@ -17,18 +18,57 @@ import chevronIcon from './assets/chevron.svg';
 import thanksIcon from './assets/thanks.svg';
 import cityImg from './assets/city.svg';         
 
-function Profile() {
-  const user = {
-    name: 'Иван Петров',
-    location: 'Иннополис, Россия',
-    verified: true,
-    helped: 24,
-    requests: 16,
+ function Profile() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+   const useMockData = () => {
+    setUser({
+      name: 'Иван Петров',
+      location: 'Иннополис, Россия',
+      verified: true,
+      helped: 24,
+      requests: 16,
+    });
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:8080/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser({
+            name: data.name,
+            email: data.email,
+            location: 'Иннополис, Россия',
+            verified: true,
+            helped: 24,
+            requests: 16,
+          });
+        } else {
+          useMockData();
+        }
+      } catch (error) {
+        useMockData();
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const handleLogout = () => {
-    console.log('logout');
+    localStorage.removeItem('token');
+    navigate('/login');
   };
+
+  if (loading) return <div className="rtr-loading">Загрузка...</div>;
+  if (!user) return <div className="rtr-error">Профиль не найден</div>;
 
   return (
     <div className="profile-page">
