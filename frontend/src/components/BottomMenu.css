@@ -1,0 +1,36 @@
+.bottom-menu {
+    background: #fff;
+    width: 100vw;
+    height: 17.957vw;
+    position: fixed;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    justify-self: anchor-center;
+    padding: 5.882vw 13.313vw;
+    justify-content: center;
+}
+
+.menu-links {
+    display: flex;
+    align-items: center;
+    gap: 18.576vw;
+    text-decoration: none;
+}
+
+.menu-links img {
+    margin-bottom: 2.786vw;
+    opacity: 0.4;
+}
+
+.selected-underline {
+    background-color: #343434;
+    width: 6.502vw;
+    height: 0.31vw;
+    margin-top: 2.786vw;
+}
+
+.page-selected {
+    margin-bottom: 0 !important;
+    opacity: 1 !important;
+}

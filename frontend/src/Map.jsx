@@ -9,7 +9,8 @@ import studyIcon from './assets/books.svg';
 import notificationIcon from './assets/notifications.svg';
 import settingsIcon from './assets/settings.svg';
 import MapBox from './components/MapBox';
-import EventCard from './EventCard.jsx'
+import EventCard from './EventCard.jsx';
+import BottomMenu from './components/BottomMenu.jsx';
 
 function Map() {
   const [meetings, setMeetings] = useState([]);
@@ -113,7 +114,7 @@ function Map() {
           />
         )}
       </div>
-
+      <BottomMenu />
     </div>
   );
 }
