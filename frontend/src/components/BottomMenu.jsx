@@ -6,9 +6,9 @@ import toReqs from './requests-nav.svg'
 import toChats from './chat-nav.svg'
 import toProfile from './profile-nav.svg'
 
-function BottomMenu() {
+function BottomMenu( {initialSelected} ) {
 
-    const [selected, setSelected] = useState('map')
+    const [selected, setSelected] = useState(initialSelected);
 
     return (
         <>

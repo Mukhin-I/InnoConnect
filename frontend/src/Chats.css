@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+.chats-page {
+    font-family: 'Montserrat', sans-serif;
+    width: 100vw;
+    height: 100vh;
+    padding: 0.5vh 4vw;
+    padding-top: 5.5vh;
+    background-color: #f5f5f5;
+    background-image: url('./assets/bg.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;      
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.chats-header {
+    font-weight: 700;
+    font-size: 20px;
+    color: #243D34;
+    text-align: left;
+    margin-top: 5.5vh;
+}
+
+.chats-top-bar {
+    margin-top: 2.5vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chats-filter-container {
+    width: 69.04vw;
+    height: 11.146vw;
+    border-radius: 45px;
+    background-color: #fff;
+    padding: 4px 7px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 3.096vw 6.192vw 0 rgba(52, 52, 52, 0.05);
+}
+
+.chat-filter-item {
+    background-color: #fff;
+    border-radius: 500px;
+    width: 24.458vw;
+    height: 8.669vw;
+    color: #343434;
+    font-weight: 500;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    gap: 3.096vw;
+    padding: 2.477vw 4.954vw;
+
+    transition: 
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.chat-filter-item img {
+    visibility: hidden;
+}
+
+.chat-selected {
+    background-color: #799855;
+    color: #fff;
+}
+
+.chat-selected-unread {
+    width: 42.105vw;
+}
+
+.chat-selected img {
+    visibility: visible;
+}
