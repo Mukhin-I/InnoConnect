@@ -1,29 +1,21 @@
 import './Profile.css';
 import { Link } from 'react-router-dom';
 import BottomMenu from './components/BottomMenu.jsx';
-
-// header
 import logoIcon from './assets/logo.svg';
 import notificationIcon from './assets/notifications.svg';
 import settingsIcon from './assets/settings.svg';
-
-// profile card
-import avatarImg from './assets/mock_ava.svg';        // фото профиля — заменишь своим
+import avatarImg from './assets/mock_ava.svg';    
 import pinIcon from './assets/location.svg';
 import verifiedIcon from './assets/verified_prof.svg';
 import helpedIcon from './assets/helped.svg';
 import requestsIcon from './assets/requests.svg';
 import rightArrowIcon from './assets/right-arrow.svg';
-
-// menu
 import personalIcon from './assets/personal.svg';
 import supportIcon from './assets/support.svg';
 import logoutIcon from './assets/logout.svg';
 import chevronIcon from './assets/chevron.svg';
-
-// thanks card
 import thanksIcon from './assets/thanks.svg';
-import cityImg from './assets/city.svg';            // иллюстрация — заменишь своей
+import cityImg from './assets/city.svg';         
 
 function Profile() {
   const user = {
