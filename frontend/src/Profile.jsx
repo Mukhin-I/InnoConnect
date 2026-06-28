@@ -173,7 +173,7 @@ import cityImg from './assets/city.svg';
         </div>
       </section>
 
-      <BottomMenu />
+      <BottomMenu initialSelected={'profile'} />
     </div>
   );
 }
