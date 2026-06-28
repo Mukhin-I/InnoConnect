@@ -13,6 +13,43 @@ import ChatPreview from './components/ChatPreview.jsx';
 function Chats() {
     const [filter, setFilter] = useState('all');
 
+    const [chats, setChats] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchChats = async () => {
+            setLoading(true);
+
+            try {
+                const response = await fetch("http://localhost:8080/chats");
+
+                if (!response.ok) {
+                    throw new Error("Ошибка загрузки");
+                }
+
+                const data = await response.json();
+                setChats(data.chats);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchChats();
+
+
+    }, []);
+
+    const filteredChats = chats.filter(chat => {
+        if (filter === 'all') {
+            return true;
+        }
+
+        return chat.unread_count > 0;
+    });
+
     return (
         <>
             <div className="chats-page">
@@ -56,7 +93,12 @@ function Chats() {
                     </div>
 
                     <div className="list-of-chats">
-                        <ChatPreview />
+                        {filteredChats.map(chat => (
+                            <ChatPreview
+                                key={chat.chat_id}
+                                chat={chat}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>
