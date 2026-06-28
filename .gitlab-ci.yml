@@ -15,7 +15,10 @@
 # https://docs.gitlab.com/development/cicd/templates/
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+image: alpine:latest
 
+before_script:
+  - echo "$DOCKER_HUB_TOKEN" | docker login -u "$DOCKER_HUB_USER" --password-stdin
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
