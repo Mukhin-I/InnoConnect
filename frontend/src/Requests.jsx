@@ -128,8 +128,8 @@ function Requests() {
                         <p>Загрузка...</p>
                     </div>
                 </div>
-                <BottomMenu />
             </div>
+            <BottomMenu initialSelected={'requests'} />
             </>
         );
     }
@@ -216,8 +216,8 @@ function Requests() {
                         <p>Ошибка: {error}</p>
                     </div>
                 </div>
-                <BottomMenu />
             </div>
+            <BottomMenu initialSelected={'requests'} />
             </>
         );
     }
@@ -316,8 +316,8 @@ function Requests() {
                         ))}
                     </div>
                 </div>
-                <BottomMenu />
             </div>
+            <BottomMenu initialSelected={'requests'} />
         </>
     );
 }

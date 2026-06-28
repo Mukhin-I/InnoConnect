@@ -8,7 +8,7 @@ import toProfile from './profile-nav.svg'
 
 function BottomMenu( {initialSelected} ) {
 
-    const [selected, setSelected] = useState(initialSelected)
+    const [selected, setSelected] = useState(initialSelected);
 
     return (
         <>
