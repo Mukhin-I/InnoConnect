@@ -8,7 +8,6 @@ import attachIcon from './assets/paperclip.svg';
 import sendIcon from './assets/send.svg';
 import receivedIcon from './assets/received_mess.svg';
 import placeIcon from './assets/location.svg';
-import heartIcon from './assets/hearts.svg';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -101,10 +100,10 @@ function GroupChat() {
     ]);
     setMessages([
       { type: 'out', text: 'Всем привет!\nНапоминаю, всчтречаемся у входа в 7:25', time: '6:45' },
-      { type: 'in', name: 'Анна', text: 'Привет! Я буду чуть раньше', time: '7:00', reaction: 2 },
+      { type: 'in', name: 'Анна', text: 'Привет! Я буду чуть раньше', time: '7:00'},
       { type: 'in', name: 'Дмитрий', text: 'Привет! Буду впервые.\nСильно высокий темп?', time: '7:01' },
       { type: 'out', text: 'Да не, чисто так по кайфу', time: '6:45' },
-      { type: 'in', name: 'Марина', text: 'Возьму с собой воду. Кому еще надо - пишите', time: '7:01', reaction: 3 },
+      { type: 'in', name: 'Марина', text: 'Возьму с собой воду. Кому еще надо - пишите', time: '7:01'},
     ]);
   };
 
@@ -204,12 +203,6 @@ function GroupChat() {
             <div className={`bubble ${m.type}`}>
               {m.type === 'in' && <span className="bubble-name">{m.name}</span>}
               <p className="bubble-text">{m.text}</p>
-              {m.reaction && (
-                <span className="bubble-reaction">
-                  <img src={heartIcon} alt="" className="reaction-icon" />
-                  {m.reaction}
-                </span>
-              )}
               <span className="bubble-meta">
                 <span className="bubble-time">{m.time}</span>
                 {m.type === 'out' && <img src={receivedIcon} alt="" className="bubble-check" />}
