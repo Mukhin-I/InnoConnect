@@ -1,0 +1,129 @@
+.group-chat .rtr-place {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+  font-weight: 500;
+  color: rgba(26, 29, 30, 0.5);
+  text-align: left;
+  margin-top: 5px;
+}
+.group-chat .rtr-place-icon {
+  width: 10px;
+  height: 10px;
+}
+.group-chat .rtr-task-chevron {
+  width: 12px;
+  height: 12px;
+  margin-left: auto;
+  flex: none;
+  opacity: 0.6;
+}
+
+.group-chat .participants-card {
+  display: flex;
+  flex-direction: column;
+}
+.group-chat .participants-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.group-chat .participants-title {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.4);
+}
+.group-chat .participants-count {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.group-chat .participants-list {
+  display: flex;
+  gap: 8px;
+}
+.group-chat .participant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+.group-chat .participant-avatar {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex: none;
+}
+.group-chat .participant-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--tint-1);
+}
+.group-chat .participant-dot {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #7ba05b;
+  border: 2px solid #ffffff;
+}
+.group-chat .participant-more {
+  background: #eff4e9;
+  display: grid;
+  place-items: center;
+  color: #84a886;
+  font-size: 11px;
+  font-weight: 700;
+}
+.group-chat .participant-name {
+  font-size: 7px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.group-chat .msg-row.in {
+  align-items: flex-end;
+  gap: 6px;
+}
+.group-chat .msg-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--tint-1);
+  flex: none;
+}
+.group-chat .bubble-text {
+  white-space: pre-line;
+}
+.group-chat .bubble-name {
+  display: block;
+  font-size: 8px;
+  font-weight: 700;
+  color: #84a886;
+  margin-bottom: 4px;
+}
+.group-chat .bubble-reaction {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 6px;
+  padding: 3px 7px;
+  border-radius: 10px;
+  background: #f3f6ee;
+  font-size: 8px;
+  font-weight: 700;
+  color: #84a886;
+}
+.group-chat .reaction-icon {
+  width: 9px;
+  height: 9px;
+}

@@ -9,6 +9,7 @@ import RequestCreation from './RequestCreation.jsx'
 import Requests from './Requests.jsx'
 import Profile from './Profile.jsx'
 import Chats from './Chats.jsx'
+import GroupChats from './GroupChats.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/requests" element={<Requests />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/chats" element={<Chats />} />
+        <Route path="/chats/:id" element={<GroupChats />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
