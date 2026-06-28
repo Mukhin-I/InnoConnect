@@ -8,6 +8,7 @@ import RespondToRequest from './RespondToRequest.jsx'
 import RequestCreation from './RequestCreation.jsx'
 import Requests from './Requests.jsx'
 import Chat from './Chat.jsx'
+import Chats from './Chats.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/request/:id" element={<RespondToRequest />} />
         <Route path="/create-request" element={<RequestCreation />} />
         <Route path="/requests" element={<Requests />} />
+        <Route path="/chats" element={<Chats />} />
         <Route path="/chat/:id" element={<Chat />} />
       </Routes>
     </BrowserRouter>
