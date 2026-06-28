@@ -1,5 +1,4 @@
 import './Chat.css';
-import { useNavigate } from 'react-router-dom';
 import logoIcon from './assets/logo.svg';
 import notificationIcon from './assets/notifications.svg';
 import settingsIcon from './assets/settings.svg';
@@ -9,30 +8,108 @@ import contactIcon from './assets/calling.svg';
 import attachIcon from './assets/paperclip.svg';
 import sendIcon from './assets/send.svg';
 import receivedIcon from './assets/received_mess.svg';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function Chat() {
-
-
-  const contact = {
-    name: 'Иван Петров',
-    role: 'Житель Иннополиса',
-  };
 const navigate = useNavigate();
+  const { id: chatId } = useParams();
+
+  const [contact, setContact] = useState({ name: 'Иван Петров', role: 'Житель Иннополиса' });
+  const [messages, setMessages] = useState([]);
+  const [myId, setMyId] = useState(null);
+  const [draft, setDraft] = useState('');
+  const [loading, setLoading] = useState(true);
+
   const task = {
     category: 'Помощь',
     title: 'Помочь с выносом мусора',
     time: 'Сегодня, 15:45',
   };
 
-  const messages = [
-    { type: 'date', label: 'Сегодня' },
-    { type: 'out', text: 'Здравствуйте! Могу помочь с выносом мусора', time: '15:45' },
-    { type: 'in', text: 'Здравствуйте! Отлично, буду очень благодарен', time: '15:45' },
-    { type: 'new', label: 'Новые сообщения' },
-    { type: 'in', text: 'Буду дома в 20:00, подойдет?', time: '16:45' },
-    { type: 'out', text: 'Ну если будешь дома значит сам и выкинешь', time: '16:47' },
-    { type: 'in', text: 'Да пошел ты', time: '16:45' },
-  ];
+  const token = localStorage.getItem('token');
+
+  const formatTime = (iso) =>
+    new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+  const toView = (list, meId) =>
+    list.map((m) => ({
+      id: m.id,
+      type: m.sender.id === meId ? 'out' : 'in',
+      text: m.text,
+      time: formatTime(m.sent_at),
+    }));
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const meRes = await fetch('http://localhost:8080/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const me = meRes.ok ? await meRes.json() : null;
+        const meId = me ? me.id : null;
+        setMyId(meId);
+
+        const infoRes = await fetch(`http://localhost:8080/chats/${chatId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (infoRes.ok) {
+          const info = await infoRes.json();
+          const other = info.participants.find((p) => p.id !== meId) || info.participants[0];
+          if (other) setContact({ name: other.name, role: 'Житель Иннополиса' });
+        }
+
+        const msgRes = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (msgRes.ok) {
+          const data = await msgRes.json();
+          setMessages(toView(data.messages, meId));
+        } else {
+          useMockData();
+        }
+      } catch (error) {
+        useMockData();
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [chatId]);
+
+  const useMockData = () => {
+    setMessages([
+      { type: 'out', text: 'Здравствуйте! Могу помочь с выносом мусора', time: '15:45' },
+      { type: 'in', text: 'Здравствуйте! Отлично, буду очень благодарен', time: '15:45' },
+      { type: 'in', text: 'Буду дома в 20:00, подойдет?', time: '16:45' },
+      { type: 'out', text: 'Ну если будешь дома значит сам и выкинешь', time: '16:47' },
+      { type: 'in', text: 'Да пошел ты', time: '16:45' },
+    ]);
+  };
+
+  const handleSend = async () => {
+    const text = draft.trim();
+    if (!text) return;
+    setDraft('');
+    try {
+      const res = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text }),
+      });
+      if (res.ok) {
+        const m = await res.json();
+        setMessages((prev) => [...prev, ...toView([m], myId)]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (loading) return <div className="rtr-loading">Загрузка...</div>;
 
   return (
     <div className="chat-page">
@@ -84,35 +161,37 @@ const navigate = useNavigate();
 
 
       <div className="chat-messages">
-        {messages.map((m, i) => {
-          if (m.type === 'date') {
-            return <div key={i} className="date-divider"><span>{m.label}</span></div>;
-          }
-          if (m.type === 'new') {
-            return <div key={i} className="new-divider"><span>{m.label}</span></div>;
-          }
-          return (
-            <div key={i} className={`msg-row ${m.type}`}>
-              <div className={`bubble ${m.type}`}>
-                <p className="bubble-text">{m.text}</p>
-                <span className="bubble-meta">
-                  <span className="bubble-time">{m.time}</span>
-                  {m.type === 'out' && <img src={receivedIcon} alt="" className="bubble-check" />}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+  <div className="date-divider"><span>Сегодня</span></div>
+  {messages.map((m, i) => {
+    return (
+      <div key={m.id ?? i} className={`msg-row ${m.type}`}>
+        <div className={`bubble ${m.type}`}>
+          <p className="bubble-text">{m.text}</p>
+          <span className="bubble-meta">
+            <span className="bubble-time">{m.time}</span>
+            {m.type === 'out' && <img src={receivedIcon} alt="" className="bubble-check" />}
+          </span>
+        </div>
       </div>
+    );
+  })}
+</div>
 
       <div className="chat-input">
         <span className="input-attach">
           <img src={attachIcon} alt="" className="input-attach-icon" />
         </span>
-        <input type="text" className="input-field" placeholder="Напишите сообщение..." />
-        <button className="input-send">
-          <img src={sendIcon} alt="Отправить" className="input-send-icon" />
-        </button>
+        <input
+  type="text"
+  className="input-field"
+  placeholder="Напишите сообщение..."
+  value={draft}
+  onChange={(e) => setDraft(e.target.value)}
+  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+/>
+<button className="input-send" onClick={handleSend}>
+  <img src={sendIcon} alt="Отправить" className="input-send-icon" />
+</button>
       </div>
     </div>
   );

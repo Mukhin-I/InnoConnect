@@ -19,7 +19,6 @@ createRoot(document.getElementById('root')).render(
         <Route path="/create-request" element={<RequestCreation />} />
         <Route path="/requests" element={<Requests />} />
         <Route path="/chat/:id" element={<Chat />} />
-        <Route path="/chat" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
