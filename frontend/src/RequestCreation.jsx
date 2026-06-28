@@ -24,7 +24,7 @@ import CreateButton from './components/CreateButton';
 function RequestCreation() {
   const navigate = useNavigate();
   const handleClose = () => {
-    navigate('/');
+    navigate('/requests');
   };
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -212,7 +212,7 @@ function RequestCreation() {
       setEndDate('');
       setEndTime('');
       setSelected('Помощь');
-      navigate('/');
+      navigate('/requests');
       
     } catch (err) {
       setError(err.message || 'Ошибка при создании просьбы. Попробуйте еще раз.');
