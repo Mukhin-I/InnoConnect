@@ -60,6 +60,10 @@ function Registration() {
     }
     };
 
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
   return (
     <>
       <div className="registration-page">
@@ -121,7 +125,8 @@ function Registration() {
                 </form>
                 <div className="already-account">
                     <p>Уже есть аккаунт?</p>
-                    <button className="already-login-button">Войти</button>
+                    <button type="button" className="already-login-button"
+                    onClick={handleLoginClick}>Войти</button>
                 </div>
             </div>
         </div>
