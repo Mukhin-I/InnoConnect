@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.chat-card {
+    background-color: #fff;
+    width: 100%;
+    height: 17.028vw;
+    border-radius: 8px;
+    padding: 2.786vw 3.406vw;
+    font-family: 'Montserrat', sans-serif !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.avatar {
+    width: 11.765vw;
+    height: 11.765vw;
+    border-radius: 1000px;
+}
+
+.chat-info h2 {
+    font-weight: 700;
+    font-size: 3.096vw;
+    color: #343434;
+}
+
+.last-message {
+    font-weight: 500;
+    font-size: 2.167vw;
+    color: rgba(52, 52, 52, 0.5);
+    margin-top: 3.096vw;
+}
+
+.request-associated {
+    width: fit-content;
+    height: 3.406vw;
+    border-radius: 1000px;
+    background-color: #F1F9E7;
+    padding: 0.619vw 2.167vw;
+    margin-left: 3.096vw;
+}
+
+.request-associated p {
+    font-weight: 700;
+    font-size: 1.858vw;
+    color: #8CB669;
+}
+
+.chat-info-top {
+    display: flex;
+    align-items: center;
+}
+
+.chat-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.chat-left {
+    display: flex;
+    align-items: center;
+    gap: 4.025vw;
+}
+
+.sent-at {
+    font-weight: 500;
+    font-size: 2.167vw;
+    color: rgba(52, 52, 52, 0.5);
+}
+
+.num-of-unread {
+    width: 3.715vw;
+    height: 3.715vw;
+    border-radius: 1000px;
+    background-color: #88A962;
+    padding: 0.719vw 0.929vw;
+    color: #fff;
+    font-size: 2.167vw;
+    font-weight: 700;
+}
+
+.chat-right {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 3.096vw;
+}

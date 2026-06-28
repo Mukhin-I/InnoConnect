@@ -8,6 +8,7 @@ import BottomMenu from './components/BottomMenu.jsx';
 import IconButton from './components/IconButton';
 import allIcon from './assets/all.svg';
 import unreadIcon from './assets/unread.svg';
+import ChatPreview from './components/ChatPreview.jsx';
 
 function Chats() {
     const [filter, setFilter] = useState('all');
@@ -52,6 +53,10 @@ function Chats() {
                         {/* <Link to="/create-request" className="add-request">
                             <span>+</span>
                         </Link> */}
+                    </div>
+
+                    <div className="list-of-chats">
+                        <ChatPreview />
                     </div>
                 </div>
             </div>

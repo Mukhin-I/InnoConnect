@@ -12,7 +12,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .chats-page {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
     width: 100vw;
     height: 100vh;
     padding: 0.5vh 4vw;
@@ -24,6 +24,21 @@ h1, h2, h3, h4, h5, h6 {
     background-size: cover;      
     margin: 0 auto;
     overflow: hidden;
+}
+
+.chats-page {
+    height: 100vh;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.chats-page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .chats-header {
@@ -86,4 +101,33 @@ h1, h2, h3, h4, h5, h6 {
 
 .chat-selected img {
     visibility: visible;
+}
+
+/* .list-of-chats {
+    margin-top: 15.789vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1.548vw;
+    height: 95.907vw;
+    overflow-y: hidden;
+} */
+
+.list-of-chats {
+    margin-top: 15.789vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1.548vw;
+
+    height: 95.907vw;
+
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+
+    -ms-overflow-style: none;
+}
+
+.list-of-chats::-webkit-scrollbar {
+    display: none;
 }
