@@ -11,7 +11,7 @@ import Chat from './Chat.jsx'
 import Chats from './Chats.jsx'
 import Profile from './Profile.jsx'
 import Welcome from './Welcome.jsx'
-import Register from './Register.jsx'
+import Register from './Registration.jsx'
 import Login from './Login.jsx'
 
 createRoot(document.getElementById('root')).render(
