@@ -13,7 +13,8 @@ import Profile from './Profile.jsx'
 import Welcome from './Welcome.jsx'
 import Register from './Registration.jsx'
 import Login from './Login.jsx'
-import GroupChat from './GroupChat.jsx'
+import GroupChats from './GroupChats.jsx'
+import MeetingChatRedirect from './MeetingChatRedirect.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -27,7 +28,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/chats" element={<Chats />} />
         <Route path="/profile" element={<Profile />} />
        <Route path="/chats/:id" element={<Chat />} />
-        <Route path="/meetings/:id/chat" element={<GroupChat />} />
+        <Route path="/group-chats/:id" element={<GroupChats />} />
+        <Route path="/meetings/:id/chat" element={<MeetingChatRedirect />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

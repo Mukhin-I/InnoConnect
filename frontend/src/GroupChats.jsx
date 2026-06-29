@@ -13,8 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 function GroupChat() {
   const navigate = useNavigate();
-  const { id: meetingId } = useParams();
-  const [chatId, setChatId] = useState(null);
+const { id: chatId } = useParams();
   const [participants, setParticipants] = useState([]);
   const [messages, setMessages] = useState([]);
   const [myId, setMyId] = useState(null);
@@ -45,15 +44,7 @@ function GroupChat() {
   useEffect(() => {
   const load = async () => {
     try {
-      // 1. встреча -> chat_id
-      const chatRes = await fetch(`http://localhost:8080/meetings/${meetingId}/chat`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!chatRes.ok) { useMockData(); return; }
-      const { chat_id } = await chatRes.json();
-      setChatId(chat_id);
-
-      // 2. кто я (нужно для in/out)
+      // кто я (для in/out)
       const meRes = await fetch('http://localhost:8080/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -61,8 +52,8 @@ function GroupChat() {
       const meId = me ? me.id : null;
       setMyId(meId);
 
-      // 3. инфа о чате (участники)
-      const infoRes = await fetch(`http://localhost:8080/chats/${chat_id}`, {
+      // участники
+      const infoRes = await fetch(`http://localhost:8080/chats/${chatId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (infoRes.ok) {
@@ -75,8 +66,8 @@ function GroupChat() {
         );
       }
 
-      // 4. сообщения
-      const msgRes = await fetch(`http://localhost:8080/chats/${chat_id}/messages`, {
+      // сообщения
+      const msgRes = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (msgRes.ok) {
@@ -92,7 +83,7 @@ function GroupChat() {
     }
   };
   load();
-}, [meetingId]);
+}, [chatId]);
 
   const useMockData = () => {
     setParticipants([
