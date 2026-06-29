@@ -7,7 +7,9 @@ import MeetingCreation from './MeetingCreation.jsx'
 import RespondToRequest from './RespondToRequest.jsx'
 import RequestCreation from './RequestCreation.jsx'
 import Requests from './Requests.jsx'
-import Welcome from './Welcome.jsx'
+import Chat from './Chat.jsx'
+import Chats from './Chats.jsx'
+import Profile from './Profile.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,7 +20,9 @@ createRoot(document.getElementById('root')).render(
         <Route path="/request/:id" element={<RespondToRequest />} />
         <Route path="/create-request" element={<RequestCreation />} />
         <Route path="/requests" element={<Requests />} />
-        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/chats" element={<Chats />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/chat/:id" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
