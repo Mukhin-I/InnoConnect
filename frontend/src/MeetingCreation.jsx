@@ -196,7 +196,7 @@ function MeetingCreation() {
           </div>
           <div className="text-header">
             <h1>Создание мероприятия</h1>
-            <p>Расскажите о вашем мероприятии, чтобы другие пользователи могли присоединиться.</p>
+            <p className="text-header-p">Расскажите о вашем мероприятии, чтобы другие пользователи могли присоединиться.</p>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="creation-card">
