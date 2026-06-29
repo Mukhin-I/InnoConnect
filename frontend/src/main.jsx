@@ -13,6 +13,7 @@ import Profile from './Profile.jsx'
 import Welcome from './Welcome.jsx'
 import Register from './Registration.jsx'
 import Login from './Login.jsx'
+import GroupChats from './GroupChats.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/create-request" element={<RequestCreation />} />
         <Route path="/requests" element={<Requests />} />
         <Route path="/chats" element={<Chats />} />
+        <Route path="/group-chat/:id" element={<GroupChats />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/chat/:id" element={<Chat />} />
         <Route path="/welcome" element={<Welcome />} />
