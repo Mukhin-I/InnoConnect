@@ -25,6 +25,9 @@ service ChatService {
   // POST /chats/{chat_id}/messages
   rpc SendMessage(SendMessageRequest)
       returns (Message);
+
+  rpc GetChats(GetChatsRequest)
+    returns (GetChatsResponse);
 }
 
 enum ChatType {
@@ -99,4 +102,29 @@ message SendMessageRequest {
   int64 user_id = 2;
 
   string text = 3;
+}
+
+message GetChatsRequest {
+  // extracted from JWT by Gateway
+  int64 user_id = 1;
+}
+
+message ChatPreview {
+  int64 chat_id = 1;
+
+  ChatType type = 2;
+
+  // Other participants in the chat.
+  // For private chats this will contain one user.
+  // For meeting chats it contains all participants except the requester.
+  repeated User participants = 3;
+
+  // Title of the related request or meeting.
+  string title = 4;
+
+  Message last_message = 5;
+}
+
+message GetChatsResponse {
+  repeated ChatPreview chats = 1;
 }
