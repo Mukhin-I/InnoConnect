@@ -9,6 +9,7 @@ import socialIcon from './assets/socialActiveIcon.png';
 import studyIcon from './assets/learningActiveIcon.png';
 import { useState, useEffect } from 'react';
 import Category from './components/Category';
+import { useNavigate } from 'react-router-dom';
 
 const CATEGORY_ITEMS = {
   "Спорт": sportIcon,
@@ -20,6 +21,8 @@ function EventCard({ eventId, onClose }) {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   // Date in such format: day.month, hour:minutes like 02.02, 15:05
   const formatDate = (dateString) => {
@@ -36,6 +39,27 @@ function EventCard({ eventId, onClose }) {
       return `${currentPeople}/${maxPeople} мест`;
     } else {
       return `${currentPeople} зарегистрировано`;
+    }
+  };
+
+  const handleOpenChat = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/meetings/${eventId}/chat`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        navigate(`/group-chat/${data.chat_id}`);
+      } else {
+        console.error('Ошибка при получении чата');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
     }
   };
 
@@ -111,7 +135,8 @@ function EventCard({ eventId, onClose }) {
             </div>
             <div className="button-container">
               <button className="sign-button">Записаться</button>
-              <button className="chat-button">
+              <button className="chat-button"
+              onClick={handleOpenChat}>
                 <img src={chatIcon} alt="chat" />
               </button>
             </div>

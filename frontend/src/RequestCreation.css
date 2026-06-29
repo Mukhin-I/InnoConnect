@@ -8,7 +8,7 @@
 
 .request-creation-page {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     padding: 0.5vh 4vw;
     background-color: #f5f5f5;
     background-image: url('./assets/bg.png');
@@ -16,6 +16,7 @@
     background-position: center;
     background-size: cover;      
     margin: 0 auto;
+    padding-bottom: 30px;
 }
 
 .close-button-creation {
@@ -43,11 +44,8 @@
     flex-direction: column;
     text-align: left;
     width: 68vw;
-}
-
-.header-icon{
-width: 18px;
-  height: 18px;
+    margin-top: 40px;
+    padding-left: 0 !important;
 }
 
 .header-top h2 {
@@ -61,7 +59,7 @@ width: 18px;
 .text-header h1 {
     font-family: 'Montserrat', sans-serif !important;
     font-size: 4vw;
-    font-weight: 600;
+    font-weight: 700 !important;
     color: #000000;
     margin-bottom: 3vh;
     letter-spacing: 0.5vw;
@@ -75,6 +73,7 @@ width: 18px;
     line-height: 1.2;
     margin-top: 0;
     margin-bottom: 2.25vh;
+    width: 65%;
 }
 
 .creation-card {

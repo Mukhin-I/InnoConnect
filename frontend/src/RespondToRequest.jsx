@@ -16,6 +16,7 @@ const RespondToRequest = () => {
   const navigate = useNavigate();
   const [requestData, setRequestData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -49,6 +50,27 @@ const RespondToRequest = () => {
       type: 'Помощь',
       deadline: 'Сегодня, 15:45',
     });
+  };
+
+  const handleOpenChat = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/requests/${id}/chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        navigate(`/chat/${data.chat_id}`);
+      } else {
+        console.error('Ошибка при создании/получении чата');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
   };
 
   if (loading) return <div className="rtr-loading">Загрузка...</div>;
@@ -122,7 +144,8 @@ const RespondToRequest = () => {
          <img src={heartIcon} alt="Heart" className="rtr-iconbox-icon" />
           Откликнуться
         </button>
-        <button className="rtr-btn-secondary">
+        <button className="rtr-btn-secondary"
+        onClick={handleOpenChat}>
          <img src={messIcon} alt="Mess" className="rtr-iconbox-icon" />
           Написать автору
         </button>
