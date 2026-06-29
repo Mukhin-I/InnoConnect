@@ -67,7 +67,28 @@ import cityImg from './assets/city.svg';
     navigate('/login');
   };
 
-  if (loading) return <div className="rtr-loading">Загрузка...</div>;
+  if (loading) 
+    return (
+      <>
+        <div className="profile-page">
+        <header className="profile-header">
+          <div className="logo-container">
+            <img src={logoIcon} alt="Logo" className="logo-icon" />
+          </div>
+          <div className="header-icons">
+            <img src={notificationIcon} alt="Notifications" className="header-icon" />
+            <img src={settingsIcon} alt="Settings" className="header-icon" />
+          </div>
+        </header>
+
+        <h1 className="page-title">Профиль</h1>
+        <p className="rtr-loading">Загрузка...</p>
+
+        
+      </div>
+      <BottomMenu initialSelected={'profile'} />
+      </>
+    );
   if (!user) return <div className="rtr-error">Профиль не найден</div>;
 
   return (
