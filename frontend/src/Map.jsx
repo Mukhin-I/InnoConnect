@@ -9,7 +9,8 @@ import studyIcon from './assets/books.svg';
 import notificationIcon from './assets/notifications.svg';
 import settingsIcon from './assets/settings.svg';
 import MapBox from './components/MapBox';
-import EventCard from './EventCard.jsx'
+import EventCard from './EventCard.jsx';
+import BottomMenu from './components/BottomMenu.jsx';
 
 function Map() {
   const [meetings, setMeetings] = useState([]);
@@ -61,60 +62,62 @@ function Map() {
   }, [activeFilter]);
 
   return (
-    <div className="map-page">
-      <header className="map-header">
-        <div className="logo-container">
-          <img src={logoIcon} alt="Logo" className="logo-icon" />
-        </div>
-        <div className="header-icons">
-          <img src={notificationIcon} alt="Notifications" className="header-icon" />
-            <img src={settingsIcon} alt="Settings" className="header-icon" />
-        </div>
-      </header>
+    <>
+      <div className="map-page">
+        <header className="map-header">
+          <div className="logo-container">
+            <img src={logoIcon} alt="Logo" className="logo-icon" />
+          </div>
+          <div className="header-icons">
+            <img src={notificationIcon} alt="Notifications" className="header-icon" />
+              <img src={settingsIcon} alt="Settings" className="header-icon" />
+          </div>
+        </header>
 
-      <div className="filters-bar">
-        <div className="filters-group" ref={containerRef}>
-          <div className="highlight-pill" style={highlightStyle}></div>
-          <button className="filter-btn filter-settings">
-            <img src={filterIcon} alt="Filter" className="filter-icon" />
-            Фильтры
-          </button>
-        
-          <button className={`filter-btn category-btn ${activeFilter === 'Спорт' ? 'active-filter' : ''}`} onClick={() => handleFilterClick('Спорт')}>
-            <img src={sportIcon} alt="Sport" className="filter-icon" />
-            Спорт
-          </button>
-          <button className={`filter-btn category-btn ${activeFilter === 'Соц' ? 'active-filter' : ''}`} onClick={() => handleFilterClick('Соц')}>
-            <img src={coffeeIcon} alt="Soc" className="filter-icon" />
-            Соц
-          </button>
-          <button className={`filter-btn category-btn ${activeFilter === 'Учеба' ? 'active-filter' : ''}`} onClick={() => handleFilterClick('Учеба')}>
-            <img src={studyIcon} alt="Study" className="filter-icon" />
-            Учеба
-          </button>
+        <div className="filters-bar">
+          <div className="filters-group" ref={containerRef}>
+            <div className="highlight-pill" style={highlightStyle}></div>
+            <button className="filter-btn filter-settings">
+              <img src={filterIcon} alt="Filter" className="filter-icon" />
+              Фильтры
+            </button>
+          
+            <button className={`filter-btn category-btn ${activeFilter === 'Спорт' ? 'active-filter' : ''}`} onClick={() => handleFilterClick('Спорт')}>
+              <img src={sportIcon} alt="Sport" className="filter-icon" />
+              Спорт
+            </button>
+            <button className={`filter-btn category-btn ${activeFilter === 'Соц' ? 'active-filter' : ''}`} onClick={() => handleFilterClick('Соц')}>
+              <img src={coffeeIcon} alt="Soc" className="filter-icon" />
+              Соц
+            </button>
+            <button className={`filter-btn category-btn ${activeFilter === 'Учеба' ? 'active-filter' : ''}`} onClick={() => handleFilterClick('Учеба')}>
+              <img src={studyIcon} alt="Study" className="filter-icon" />
+              Учеба
+            </button>
+          </div>
+      
+          <Link to="/create-meeting" className="add-btn">
+            <span>+</span>
+          </Link>
         </div>
-    
-        <Link to="/create-meeting" className="add-btn">
-          <span>+</span>
-        </Link>
-      </div>
 
-      <div className="map-container-placeholder">
-        <MapBox 
-          meetings={meetings}
-          selectedMeetingId={selectedMeetingId}
-          setSelectedMeetingId={setSelectedMeetingId}
-        />
-
-        {selectedMeetingId !== null && (
-          <EventCard
-            eventId={selectedMeetingId}
-            onClose={() => setSelectedMeetingId(null)}
+        <div className="map-container-placeholder">
+          <MapBox 
+            meetings={meetings}
+            selectedMeetingId={selectedMeetingId}
+            setSelectedMeetingId={setSelectedMeetingId}
           />
-        )}
-      </div>
 
-    </div>
+          {selectedMeetingId !== null && (
+            <EventCard
+              eventId={selectedMeetingId}
+              onClose={() => setSelectedMeetingId(null)}
+            />
+          )}
+        </div>
+      </div>
+      <BottomMenu initialSelected={'map'} />
+    </>
   );
 }
 
