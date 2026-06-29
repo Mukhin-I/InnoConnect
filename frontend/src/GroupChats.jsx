@@ -13,8 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 function GroupChat() {
   const navigate = useNavigate();
-  const { id: chatId } = useParams();
-
+const { id: chatId } = useParams();
   const [participants, setParticipants] = useState([]);
   const [messages, setMessages] = useState([]);
   const [myId, setMyId] = useState(null);
@@ -43,45 +42,48 @@ function GroupChat() {
     }));
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const meRes = await fetch('http://localhost:8080/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const me = meRes.ok ? await meRes.json() : null;
-        const meId = me ? me.id : null;
-        setMyId(meId);
+  const load = async () => {
+    try {
+      // кто я (для in/out)
+      const meRes = await fetch('http://localhost:8080/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const me = meRes.ok ? await meRes.json() : null;
+      const meId = me ? me.id : null;
+      setMyId(meId);
 
-        const infoRes = await fetch(`http://localhost:8080/chats/${chatId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (infoRes.ok) {
-          const info = await infoRes.json();
-          setParticipants(
-            info.participants.map((p) => ({
-              id: p.id,
-              name: p.id === meId ? 'Вы' : p.name,
-            }))
-          );
-        }
-
-        const msgRes = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (msgRes.ok) {
-          const data = await msgRes.json();
-          setMessages(toView(data.messages, meId));
-        } else {
-          useMockData();
-        }
-      } catch (error) {
-        useMockData();
-      } finally {
-        setLoading(false);
+      // участники
+      const infoRes = await fetch(`http://localhost:8080/chats/${chatId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (infoRes.ok) {
+        const info = await infoRes.json();
+        setParticipants(
+          info.participants.map((p) => ({
+            id: p.id,
+            name: p.id === meId ? 'Вы' : p.name,
+          }))
+        );
       }
-    };
-    load();
-  }, [chatId]);
+
+      // сообщения
+      const msgRes = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (msgRes.ok) {
+        const data = await msgRes.json();
+        setMessages(toView(data.messages, meId));
+      } else {
+        useMockData();
+      }
+    } catch (error) {
+      useMockData();
+    } finally {
+      setLoading(false);
+    }
+  };
+  load();
+}, [chatId]);
 
   const useMockData = () => {
     setParticipants([

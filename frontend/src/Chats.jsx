@@ -22,7 +22,11 @@ function Chats() {
             setLoading(true);
 
             try {
-                const response = await fetch("http://localhost:8080/chats");
+                const token = localStorage.getItem('token');
+
+                const response = await fetch("http://localhost:8080/chats", {
+                headers: { Authorization: `Bearer ${token}` },
+                });
 
                 if (!response.ok) {
                     throw new Error("Ошибка загрузки");

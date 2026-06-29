@@ -393,7 +393,7 @@ span, div, p, h1{
 }
 
 .out p {
-  text-align: right;
+  text-align: left;
 }
 
 .bubble.out {
