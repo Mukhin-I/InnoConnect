@@ -1,0 +1,63 @@
+.category-oval {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border-radius: 500px;
+  gap: 1vw;
+  padding: 1.5vh 0.8vh;
+  white-space: nowrap;
+  height: 3vh;
+  flex: 1;
+}
+
+.icon {
+  width: 4vw;
+  height: 4vh;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 2.5vw;
+  color: #000000;
+}
+
+/* For tablets: adaptive layout (вёрстка) */
+@media (min-height: 901px) and (max-height: 1400px) {
+  .label {
+    font-size: 2vw;
+  }
+
+  @media (min-width: 400px) and (max-width: 600px) {
+    .label {
+      font-size: 2.8vw;
+    }
+  }
+
+  @media (min-width: 900px) and (max-width: 1500px) {
+    .label {
+      font-size: 2.2vw;
+    }
+  }
+}
+
+/* For laptops: adaptive layout (вёрстка) */
+@media (min-height: 700px) and (max-height: 1080px) and (min-width: 1200px) and (max-width: 2048px) {
+  .category-oval {
+    height: 4vh;
+    gap: 0.3vw;
+  }
+  
+  .label {
+    font-size: 1vw;
+  }
+
+  .icon {
+    height: 2.5vh;
+    width: 2.5vh;
+  }
+}

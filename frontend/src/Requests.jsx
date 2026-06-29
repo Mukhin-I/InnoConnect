@@ -9,6 +9,7 @@ import allIcon from './assets/all.svg';
 import mineIcon from './assets/mine.svg';
 import allRequestsIcon from './assets/allrequests.svg'
 import CardOfRequest from './components/CardOfRequest.jsx'
+import BottomMenu from './components/BottomMenu.jsx';
 
 function Requests() {
     const navigate = useNavigate();
@@ -128,6 +129,7 @@ function Requests() {
                     </div>
                 </div>
             </div>
+            <BottomMenu initialSelected={'requests'} />
             </>
         );
     }
@@ -215,6 +217,7 @@ function Requests() {
                     </div>
                 </div>
             </div>
+            <BottomMenu initialSelected={'requests'} />
             </>
         );
     }
@@ -314,6 +317,7 @@ function Requests() {
                     </div>
                 </div>
             </div>
+            <BottomMenu initialSelected={'requests'} />
         </>
     );
 }

@@ -14,10 +14,10 @@ function CardOfRequest({ request }) {
     };
 
     const typeOfReq = {
-        "Help": "helpreq",
-        "Things": "stuffreq",
-        "Transport": "transportreq",
-        "Other": "otherreq",
+        "Помощь": "helpreq",
+        "Вещи": "stuffreq",
+        "Транспорт": "transportreq",
+        "Прочее": "otherreq",
     }
 
     return (
