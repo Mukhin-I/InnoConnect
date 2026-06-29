@@ -31,6 +31,7 @@
   margin-left: auto;
 }
 
+
 .header-top {
     display: flex;
     flex-direction: row;
@@ -42,7 +43,11 @@
     flex-direction: column;
     text-align: left;
     width: 68vw;
-    margin-top: 40px;
+}
+
+.header-icon{
+width: 18px;
+  height: 18px;
 }
 
 .header-top h2 {
