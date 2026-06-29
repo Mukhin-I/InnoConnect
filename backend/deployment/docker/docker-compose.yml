@@ -239,13 +239,14 @@ services:
       args:
       - DB_PORT=${DB_CHAT_PORT}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_CHAT_USER}", "-d", "postgres", "-p", "${DB_CHAT_PORT}"]
+      test: ["CMD-SHELL", "psql -U ${DB_CHAT_USER} -d request -p ${DB_CHAT_PORT} -c 'SELECT 1 FROM chats LIMIT 1'"]
       interval: 3s
       timeout: 10s
       retries: 5
       start_period: 10s
     volumes:
       - pgdata_chat:/var/lib/postgresql
+      - ../../db/init-chats.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - chat
     depends_on:
