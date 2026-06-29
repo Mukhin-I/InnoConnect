@@ -26,8 +26,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/requests" element={<Requests />} />
         <Route path="/chats" element={<Chats />} />
         <Route path="/profile" element={<Profile />} />
-       <Route path="/chat/:id" element={<Chat />} />
-        <Route path="/meeting/:id/chat" element={<GroupChat />} />
+       <Route path="/chats/:id" element={<Chat />} />
+        <Route path="/meetings/:id/chat" element={<GroupChat />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
