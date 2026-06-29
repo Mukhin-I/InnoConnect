@@ -13,7 +13,7 @@ import carActiveIcon from './assets/carActiveIcon.png'
 import carNotActiveIcon from './assets/carNotActiveIcon.png'
 import otherActiveIcon from './assets/otherActiveIcon.png'
 import otherNotActiveIcon from './assets/otherNotActiveIcon.png'
-import IconButton from './components/IconButton';
+import logoIcon from './assets/logo.svg';
 import CreationInput from './components/CreationInput';
 import pencilIcon from './assets/pencil.png';
 import TextareaCounter from './components/TextareaCounter'
@@ -224,19 +224,23 @@ function RequestCreation() {
   return (
     <>
       <div className="request-creation-page">
+        <header className="chat-header">
+                <div className="header-left">
+                <button className="rtr-back-btn" onClick={() => navigate('/chats')}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                  <div className="logo-container">
+                    <img src={logoIcon} alt="Logo" className="logo-icon" />
+                  </div>
+                </div>
+                <div className="header-icons">
+                  <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                  <img src={settingsIcon} alt="Settings" className="header-icon" />
+                </div>
+              </header>
         <div className="request-creation-page-content">
-            <button className="close-button-creation" onClick={handleClose}>×</button>
-            <div className="header-top">
-              <h2>InnoConnect</h2>
-              <IconButton 
-                icon={notificationIcon} 
-                alt=""
-              />
-              <IconButton 
-                icon={settingsIcon} 
-                alt=""
-              />
-            </div>
             <div className="text-header">
               <h1>Создание просьбы</h1>
               <p>Расскажите соседям, какая помощь вам нужна.</p>

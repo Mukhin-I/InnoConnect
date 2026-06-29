@@ -50,19 +50,17 @@ function Requests() {
         return(
             <>
                 <div className="requests-page">
+                     <header className="profile-header">
+                                              <div className="logo-container">
+                                                <img src={logoIcon} alt="Logo" className="logo-icon" />
+                                              </div>
+                                              <div className="header-icons">
+                                                <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                                                <img src={settingsIcon} alt="Settings" className="header-icon" />
+                                              </div>
+                                    </header>
                 <div className="requests-page-content">
-                    <div className="header-top">
-                    <h2>InnoConnect</h2>
-                    <IconButton 
-                        icon={notificationIcon} 
-                        alt=""
-                    />
-                    <IconButton 
-                        icon={settingsIcon} 
-                        alt=""
-                    />
-                    </div>
-
+    
                     <h1 className="requests-header">Просьбы</h1>
 
                     <div className="requests-top-bar">
@@ -138,19 +136,17 @@ function Requests() {
         return(
             <>
                 <div className="requests-page">
+                     <header className="profile-header">
+                                              <div className="logo-container">
+                                                <img src={logoIcon} alt="Logo" className="logo-icon" />
+                                              </div>
+                                              <div className="header-icons">
+                                                <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                                                <img src={settingsIcon} alt="Settings" className="header-icon" />
+                                              </div>
+                                    </header>
                 <div className="requests-page-content">
-                    <div className="header-top">
-                    <h2>InnoConnect</h2>
-                    <IconButton 
-                        icon={notificationIcon} 
-                        alt=""
-                    />
-                    <IconButton 
-                        icon={settingsIcon} 
-                        alt=""
-                    />
-                    </div>
-
+    
                     <h1 className="requests-header">Просьбы</h1>
 
                     <div className="requests-top-bar">
@@ -232,20 +228,18 @@ function Requests() {
 
     return(
         <>
-            <div className="requests-page">
+                <div className="requests-page">
+                     <header className="profile-header">
+                                              <div className="logo-container">
+                                                <img src={logoIcon} alt="Logo" className="logo-icon" />
+                                              </div>
+                                              <div className="header-icons">
+                                                <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                                                <img src={settingsIcon} alt="Settings" className="header-icon" />
+                                              </div>
+                                    </header>
                 <div className="requests-page-content">
-                    <div className="header-top">
-                    <h2>InnoConnect</h2>
-                    <IconButton 
-                        icon={notificationIcon} 
-                        alt=""
-                    />
-                    <IconButton 
-                        icon={settingsIcon} 
-                        alt=""
-                    />
-                    </div>
-
+    
                     <h1 className="requests-header">Просьбы</h1>
 
                     <div className="requests-top-bar">
@@ -285,8 +279,8 @@ function Requests() {
                             <div className="type-request-icon helpreq"></div>
                             <p>Помощь</p>
                         </div>
-                        <div className={`type-of-request ${requestType === 'things' ? 'type-selected' : ''}`}
-                            onClick={() => setRequestType('things')}
+                        <div className={`type-of-request ${requestType === 'stuff' ? 'type-selected' : ''}`}
+                            onClick={() => setRequestType('stuff')}
                         >
                             <div className="type-request-icon stuffreq"></div>
                             <p>Вещи</p>
@@ -308,17 +302,12 @@ function Requests() {
 
                     {/* карточки просьб */}
                     <div className="list-of-reqs-container">
-                        {filteredRequests.map(request => (
-                            <CardOfRequest
-                                key={request.request_id}
-                                request={request}
-                            />
-                        ))}
+                        <p>Ошибка: {error}</p>
                     </div>
                 </div>
             </div>
             <BottomMenu initialSelected={'requests'} />
-        </>
+            </>
     );
 }
 
