@@ -19,6 +19,12 @@ import (
 
 func CreateServer() {
 	userPort := config.GetVar("USER_SERVICE_PORT")
+	jwtSecret := config.GetVar("JWT_SECRET")
+	if jwtSecret == "" {
+		logger.Error("JWT_SECRET is not set")
+		return
+	}
+
 	dbPool, err := pgxpool.New(context.Background(), userDatabaseURL())
 	if err != nil {
 		logger.Error("Failed to connect to user database: " + err.Error())
@@ -41,7 +47,7 @@ func CreateServer() {
 	}
 
 	userRepo := repo.New(dbPool)
-	userUsecase := usecase.New(userRepo)
+	userUsecase := usecase.New(userRepo, jwtSecret)
 	userServer := transport.NewUserServer(userUsecase)
 
 	listener, err := net.Listen("tcp", ":"+userPort)

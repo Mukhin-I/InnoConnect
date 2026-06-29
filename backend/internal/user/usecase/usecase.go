@@ -2,12 +2,12 @@ package usecase
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"errors"
+	"time"
 
 	"innoconnect/internal/user/entity"
 
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -31,12 +31,14 @@ type LoginResult struct {
 }
 
 type Usecase struct {
-	repo UserRepository
+	repo      UserRepository
+	jwtSecret string
 }
 
-func New(repo UserRepository) *Usecase {
+func New(repo UserRepository, jwtSecret string) *Usecase {
 	return &Usecase{
-		repo: repo,
+		repo:      repo,
+		jwtSecret: jwtSecret,
 	}
 }
 
@@ -63,7 +65,7 @@ func (u *Usecase) Login(ctx context.Context, email, password string) (LoginResul
 		return LoginResult{}, ErrInvalidCredentials
 	}
 
-	token, err := generateToken()
+	token, err := u.generateToken(user.ID)
 	if err != nil {
 		return LoginResult{}, err
 	}
@@ -79,11 +81,14 @@ func (u *Usecase) GetCurrentUser(ctx context.Context, id int64) (entity.User, er
 	return u.repo.GetByID(ctx, id)
 }
 
-func generateToken() (string, error) {
-	bytes := make([]byte, 32)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
+func (u *Usecase) generateToken(userID int64) (string, error) {
+	now := time.Now()
+	claims := jwt.MapClaims{
+		"user_id": userID,
+		"iat":     now.Unix(),
+		"exp":     now.Add(time.Duration(tokenExpiresIn) * time.Second).Unix(),
 	}
 
-	return hex.EncodeToString(bytes), nil
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(u.jwtSecret))
 }
