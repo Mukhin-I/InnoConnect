@@ -113,7 +113,7 @@ body {
     margin: auto auto 15px auto;
     background-color: #FFFFFF;
     border-radius: 25px;
-    width: 345px;
+    width: 91vw;
     height: 250px;
     padding: 18px 15px;
     box-sizing: border-box;
@@ -137,7 +137,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 7px;
-    margin-bottom: 7px;
+    margin-bottom: 21px;
 }
 
 .already-account {
