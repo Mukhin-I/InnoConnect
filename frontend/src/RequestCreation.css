@@ -42,10 +42,11 @@
     flex-direction: column;
     text-align: left;
     width: 68vw;
+    margin-top: 40px;
 }
 
 .header-top h2 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
     font-size: 4.7vw;
     font-weight: 600;
     color: #00130c;
@@ -53,7 +54,7 @@
 }
 
 .text-header h1 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
     font-size: 4vw;
     font-weight: 600;
     color: #000000;

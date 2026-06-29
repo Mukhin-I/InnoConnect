@@ -52,7 +52,7 @@
 }
 
 body {
-  margin: 0;
+  font-family: 'Montserrat', sans-serif !important;
 }
 
 #root {
@@ -67,12 +67,12 @@ body {
   box-sizing: border-box;
 }
 
-h1,
+/* h1,
 h2 {
   font-family: var(--heading);
   font-weight: 500;
   color: var(--text-h);
-}
+} */
 
 h1 {
   font-size: 56px;
