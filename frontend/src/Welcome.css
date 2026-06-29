@@ -25,6 +25,14 @@
 }
 
 body {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.welcome-page {
   background-image: 
     linear-gradient(
       0deg,
@@ -37,12 +45,6 @@ body {
       rgba(191, 218, 146, 0.2)
     );
   background-color: rgba(191, 218, 146, 0.2);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .header-top h2 {
