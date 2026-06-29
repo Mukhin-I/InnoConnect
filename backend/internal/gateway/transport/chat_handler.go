@@ -194,6 +194,6 @@ func extractUserID(c *gin.Context) (int64, error) {
 		return 0, errors.New("missing authorization header")
 	}
 
-	// TODO: parse JWT and extract user id.
+	// TODO: merge with auth
 	return 1, nil
 }
