@@ -13,8 +13,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 function GroupChat() {
   const navigate = useNavigate();
-  const { id: chatId } = useParams();
-
+  const { id: meetingId } = useParams();
+  const [chatId, setChatId] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [messages, setMessages] = useState([]);
   const [myId, setMyId] = useState(null);
@@ -43,45 +43,56 @@ function GroupChat() {
     }));
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const meRes = await fetch('http://localhost:8080/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const me = meRes.ok ? await meRes.json() : null;
-        const meId = me ? me.id : null;
-        setMyId(meId);
+  const load = async () => {
+    try {
+      // 1. встреча -> chat_id
+      const chatRes = await fetch(`http://localhost:8080/meetings/${meetingId}/chat`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!chatRes.ok) { useMockData(); return; }
+      const { chat_id } = await chatRes.json();
+      setChatId(chat_id);
 
-        const infoRes = await fetch(`http://localhost:8080/chats/${chatId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (infoRes.ok) {
-          const info = await infoRes.json();
-          setParticipants(
-            info.participants.map((p) => ({
-              id: p.id,
-              name: p.id === meId ? 'Вы' : p.name,
-            }))
-          );
-        }
+      // 2. кто я (нужно для in/out)
+      const meRes = await fetch('http://localhost:8080/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const me = meRes.ok ? await meRes.json() : null;
+      const meId = me ? me.id : null;
+      setMyId(meId);
 
-        const msgRes = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (msgRes.ok) {
-          const data = await msgRes.json();
-          setMessages(toView(data.messages, meId));
-        } else {
-          useMockData();
-        }
-      } catch (error) {
-        useMockData();
-      } finally {
-        setLoading(false);
+      // 3. инфа о чате (участники)
+      const infoRes = await fetch(`http://localhost:8080/chats/${chat_id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (infoRes.ok) {
+        const info = await infoRes.json();
+        setParticipants(
+          info.participants.map((p) => ({
+            id: p.id,
+            name: p.id === meId ? 'Вы' : p.name,
+          }))
+        );
       }
-    };
-    load();
-  }, [chatId]);
+
+      // 4. сообщения
+      const msgRes = await fetch(`http://localhost:8080/chats/${chat_id}/messages`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (msgRes.ok) {
+        const data = await msgRes.json();
+        setMessages(toView(data.messages, meId));
+      } else {
+        useMockData();
+      }
+    } catch (error) {
+      useMockData();
+    } finally {
+      setLoading(false);
+    }
+  };
+  load();
+}, [meetingId]);
 
   const useMockData = () => {
     setParticipants([
