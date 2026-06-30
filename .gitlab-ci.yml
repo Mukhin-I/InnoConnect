@@ -41,6 +41,26 @@ test:
     - ls
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
     - echo "Testing"
+    
+test_autorization:
+  stage: test
+  image: docker:27
+  before_script:
+    - cp .env.example .env
+  script:
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
+    - apk add --no-cache curl
+    - |
+      status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/meetings)
+      echo "Got status: $status"
+      if [ "$status" -ne 403 ]; then
+        echo "FAIL: expected 403, got $status"
+        exit 1
+      fi
+      echo "PASS: /meetings returned 403 as expected"
+  after_script:
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
 
 deploy:
   stage: deploy
