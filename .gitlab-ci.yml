@@ -18,7 +18,7 @@ variables:
     - mkdir backend/db/pgdata_meeting
     - mkdir backend/db/pgdata_request
     - mkdir backend/db/pgdata_user
-    - cp backend/.env.example backend/.env
+    - cp .env.example .env
 
 build_backend:
   <<: *docker_setup
