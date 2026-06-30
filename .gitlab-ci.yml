@@ -35,6 +35,7 @@ build_frontend:
       "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$CI_FILE_ID/download"
     - cd frontend
     - ls
+    - npm install && npm install mapbox-gl && npm install react-router-dom
     - npm run build
   # optional: catch build failures early without pushing anywhere
 
