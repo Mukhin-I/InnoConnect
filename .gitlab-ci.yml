@@ -19,7 +19,6 @@ build_backend:
   stage: build
   script:
     - ls
-    - cd innoconnect
     - cp .env.example .env
     - cp frontend/.env.example frontend/.env
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
