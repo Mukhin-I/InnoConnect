@@ -6,10 +6,12 @@ import (
 	"innoconnect/pkg/logger"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GetUserIDFromToken(tokenStringUnparsed string) (int64, error) {
+func GetUserIDFromToken(c *gin.Context) (int64, error) {
+	tokenStringUnparsed := c.GetHeader("Authorization")
 	secret := config.GetVar("JWT_SECRET")
 	logger.Info("JWT token " + tokenStringUnparsed)
 	const prefix = "Bearer "

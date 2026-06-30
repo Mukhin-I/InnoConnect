@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
-
+	
 	"github.com/jackc/pgx/v5"
 
 	"innoconnect/internal/chat/entity"

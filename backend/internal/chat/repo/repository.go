@@ -30,6 +30,7 @@ func (r *Repository) GetChatByID(
 	defer cancel()
 
 	var chat entity.Chat
+	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
@@ -37,8 +38,10 @@ func (r *Repository) GetChatByID(
 		WHERE id = $1
 	`, chatID).Scan(
 		&chat.ID,
-		&chat.Type,
+		&chatType,
 	)
+	
+	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
 		return entity.Chat{}, err
@@ -187,13 +190,16 @@ func (r *Repository) GetRequestChat(
 	defer cancel()
 
 	var chat entity.Chat
+	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
 		FROM chats
 		WHERE type = 'REQUEST'
 		AND related_id = $1
-	`, requestID).Scan(&chat.ID, &chat.Type)
+	`, requestID).Scan(&chat.ID, &chatType)
+
+	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
 		return entity.Chat{}, err
@@ -325,6 +331,7 @@ func (r *Repository) GetMeetingChat(
 	defer cancel()
 
 	var chat entity.Chat
+	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
@@ -333,8 +340,10 @@ func (r *Repository) GetMeetingChat(
 		  AND related_id = $1
 	`, meetingID).Scan(
 		&chat.ID,
-		&chat.Type,
+		&chatType,
 	)
+
+	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
 		return entity.Chat{}, err

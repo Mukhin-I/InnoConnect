@@ -66,10 +66,12 @@ const navigate = useNavigate();
           const data = await msgRes.json();
           setMessages(toView(data.messages, meId));
         } else {
-          useMockData();
+          //useMockData();
+          setMessages([]);
         }
       } catch (error) {
-        useMockData();
+        //useMockData();
+        setMessages([]);
       } finally {
         setLoading(false);
       }

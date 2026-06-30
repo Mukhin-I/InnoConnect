@@ -46,7 +46,7 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 
 	logger.Info("Sending gRPC request to create meeting")
 
-	userID, err := usecase.GetUserIDFromToken(authHeader)
+	userID, err := usecase.GetUserIDFromToken(c)
 	if err != nil {
 		logger.Error(err.Error())
 		return

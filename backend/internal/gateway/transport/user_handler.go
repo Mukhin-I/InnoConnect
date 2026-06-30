@@ -72,7 +72,7 @@ func (h *Handler) GetCurrentUser(c *gin.Context) {
         return
     }
 
-    userid, err := usecase.GetUserIDFromToken(authHeader)
+    userid, err := usecase.GetUserIDFromToken(c)
     logger.Info("Logginning with a user " + strconv.FormatInt(userid, 10))
     resp, err := h.userClient.GetCurrentUser(c.Request.Context(), &userpb.GetCurrentUserRequest{
         UserId: userid,
