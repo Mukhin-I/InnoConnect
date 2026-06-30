@@ -47,19 +47,22 @@ test:
 test_autorization:
   stage: test
   image: docker:27
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
   before_script:
     - cp .env.example .env
   script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && sleep 60
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
     - apk add --no-cache curl
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps
     - |
-      status=$(curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://localhost:8080/meetings || echo "000")
+      status=$(curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://docker:8080/meetings)
       echo "Got status: $status"
       if [ "$status" -ne 403 ]; then
         echo "FAIL: expected 403, got $status"
-        echo "----- gateway logs -----"
         docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
         exit 1
       fi
