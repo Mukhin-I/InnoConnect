@@ -13,13 +13,18 @@ variables:
   image: docker:27
   services:
     - docker:27-dind
+  before_script:
+    - mkdir backend/db/pgdata_chat
+    - mkdir backend/db/pgdata_meeting
+    - mkdir backend/db/pgdata_request
+    - mkdir backend/db/pgdata_user
+    - cp backend/.env.example backend/.env
 
 build_backend:
   <<: *docker_setup
   stage: build
   script:
     - ls
-    - cp .env.example .env
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
   # optional: catch build failures early without pushing anywhere
 build_frontend:
@@ -47,7 +52,6 @@ test:
     paths:
       - .docker-cache/
   script:
-    - cp .env.example .env
     - ls
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build --build-arg BUILDKIT_INLINE_CACHE=1
     - echo "Testing"
