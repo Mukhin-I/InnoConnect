@@ -22,26 +22,20 @@ build_backend:
     - cp .env.example .env
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
   # optional: catch build failures early without pushing anywhere
-list_secure_files:
-  stage: build
-  image: alpine:latest
-  script:
-    - apk add --no-cache curl jq
-    - >
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN"
-      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files" | jq .
 build_frontend:
   <<: *docker_setup
-  image: registry.gitlab.com/gitlab-org/cli:latest
+  image: node:20
   stage: build
   
   script:
-    
-    - glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_FQDN --api-protocol $CI_SERVER_PROTOCOL
-    - glab -R $CI_PROJECT_PATH securefile download $.env --path="frontend/.env"
-    - chmod 600 /cd
+    - apk add --no-cache curl jq || apt-get update && apt-get install -y curl jq
+    - >
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN"
+      --output frontend/.env
+      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$CI_FILE_ID/download"
+    - cd frontend
     - ls
-    - cd frontend && npm run build
+    - npm run build
   # optional: catch build failures early without pushing anywhere
 
 test:
@@ -58,16 +52,19 @@ test:
   
 deploy:
   stage: deploy
-  image: registry.gitlab.com/gitlab-org/cli:latest
+  image: alpine:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
     - if: '$CI_COMMIT_BRANCH == "feat/36-CI/CD"'
   before_script:
-    - glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_FQDN --api-protocol $CI_SERVER_PROTOCOL
-    - glab -R $CI_PROJECT_PATH securefile download $SECURE_FILE_ID --path="/cd"
-    - chmod 600 /cd
+    - apk add --no-cache curl openssh-client
+    - >
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN"
+      --output deploy_key
+      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$SSH_KEY_FILE_ID/download"
+    - chmod 600 deploy_key
     - eval $(ssh-agent -s)
-    - ssh-add /cd
+    - ssh-add deploy_key
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
