@@ -19,7 +19,7 @@ type ChatUsecase interface {
 	GetChats(ctx context.Context, userID int64) ([]entity.ChatPreview, error)
 	GetMessages(ctx context.Context, chatID, userID int64) ([]entity.Message, error)
 	SendMessage(ctx context.Context, chatID, userID int64, text string) (entity.Message, error)
-	CreateMeetingChat(ctx context.Context, meetingID int64, creator_id int64) (entity.Chat, error)
+	CreateMeetingChat(ctx context.Context, meetingID int64, creator_id int64, creator_name string) (entity.Chat, error)
 }
 
 type ChatServer struct {
@@ -60,7 +60,7 @@ func (s *ChatServer) CreateMeetingChat(
 		return nil, status.Error(codes.InvalidArgument, "meeting_id is required")
 	}
 
-	if req.GetUserId() == 0 {
+	if req.GetCreatorId() == 0 {
 		return nil, status.Error(codes.Unauthenticated, "user_id is required")
 	}
 
@@ -68,7 +68,8 @@ func (s *ChatServer) CreateMeetingChat(
 	chat, err := s.usecase.CreateMeetingChat(
 		ctx,
 		req.GetMeetingId(),
-		req.GetUserId(),
+		req.GetCreatorId(),
+		req.GetCreatorName(),
 	)
 
 	if err != nil {
@@ -90,7 +91,7 @@ func (s *ChatServer) GetMeetingChat(
 	chat, err := s.usecase.GetMeetingChat(
 		ctx,
 		req.GetMeetingId(),
-		req.GetUserId(),
+		req.GetCreatorId(),
 	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

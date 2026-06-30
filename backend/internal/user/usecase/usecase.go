@@ -67,7 +67,7 @@ func (u *Usecase) Login(ctx context.Context, email, password string) (LoginResul
 		return LoginResult{}, ErrInvalidCredentials
 	}
 	logger.Info("Generating jwt for a user " + strconv.FormatInt(user.ID, 10))
-	token, err := u.generateToken(user.ID)
+	token, err := u.generateToken(user.ID, user.Name)
 	if err != nil {
 		return LoginResult{}, err
 	}
@@ -83,10 +83,11 @@ func (u *Usecase) GetCurrentUser(ctx context.Context, id int64) (entity.User, er
 	return u.repo.GetByID(ctx, id)
 }
 
-func (u *Usecase) generateToken(userID int64) (string, error) {
+func (u *Usecase) generateToken(userID int64, name string) (string, error) {
 	now := time.Now()
 	claims := jwt.MapClaims{
 		"user_id": userID,
+		"name":    name,
 		"iat":     now.Unix(),
 		"exp":     now.Add(time.Duration(tokenExpiresIn) * time.Second).Unix(),
 	}

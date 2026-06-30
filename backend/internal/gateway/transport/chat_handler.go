@@ -22,7 +22,7 @@ func (h *Handler) GetOrCreateRequestChat(c *gin.Context) {
 		return
 	}
 
-	userID, err := usecase.GetUserIDFromToken(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -52,7 +52,7 @@ func (h *Handler) GetMeetingChat(c *gin.Context) {
 		return
 	}
 
-	userID, err := usecase.GetUserIDFromToken(c)
+	userID, name, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		logger.Error(err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -63,7 +63,8 @@ func (h *Handler) GetMeetingChat(c *gin.Context) {
 		c.Request.Context(),
 		&chatpb.GetMeetingChatRequest{
 			MeetingId: meetingID,
-			UserId:    userID,
+			CreatorId:    userID,
+			CreatorName: name,
 		},
 	)
 	if err != nil {
@@ -83,7 +84,7 @@ func (h *Handler) GetChat(c *gin.Context) {
 		return
 	}
 
-	userID, err := usecase.GetUserIDFromToken(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		logger.Error(err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -107,7 +108,7 @@ func (h *Handler) GetChat(c *gin.Context) {
 }
 
 func (h *Handler) GetChats(c *gin.Context) {
-	userID, err := usecase.GetUserIDFromToken(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -133,7 +134,7 @@ func (h *Handler) GetMessages(c *gin.Context) {
 		return
 	}
 
-	userID, err := usecase.GetUserIDFromToken(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -168,7 +169,7 @@ func (h *Handler) SendMessage(c *gin.Context) {
 		return
 	}
 
-	userID, err := usecase.GetUserIDFromToken(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return

@@ -359,7 +359,7 @@ func (r *Repository) GetMeetingChat(
 	return chat, nil
 }
 
-func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, creatorID int64) (entity.Chat, error) {
+func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, creatorID int64, creatorName string) (entity.Chat, error) {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return entity.Chat{}, err
@@ -387,7 +387,7 @@ func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, cre
 	}
 
 	// TODO: add name saving into gateway
-	r.AddParticipant(ctx, tx, chat.ID, creatorID, "Pavel Khramov")
+	r.AddParticipant(ctx, tx, chat.ID, creatorID, creatorName)
 
 	if err := tx.Commit(ctx); err != nil {
 		logger.Error(err.Error())

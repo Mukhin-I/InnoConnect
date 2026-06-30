@@ -92,7 +92,7 @@ func (u *ChatUsecase) GetOrCreateRequestChat(
 	return u.repo.CreateRequestChat(ctx, requestID, userID)
 }
 
-func (u *ChatUsecase) CreateMeetingChat(ctx context.Context, meetingID, userID int64) (entity.Chat, error) {
+func (u *ChatUsecase) CreateMeetingChat(ctx context.Context, meetingID, creatorID int64, creatorName string) (entity.Chat, error) {
 
 	// 1. try find existing chat
 	chat, err := u.repo.GetMeetingChat(ctx, meetingID)
@@ -101,7 +101,7 @@ func (u *ChatUsecase) CreateMeetingChat(ctx context.Context, meetingID, userID i
 	}
 
 	// 2. create new chat
-	chat, err = u.repo.CreateMeetingChat(ctx, meetingID, userID)
+	chat, err = u.repo.CreateMeetingChat(ctx, meetingID, creatorID, creatorName)
 	if err != nil {
 		return entity.Chat{}, err
 	}

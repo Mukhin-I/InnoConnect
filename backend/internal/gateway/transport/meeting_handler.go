@@ -46,7 +46,8 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 
 	logger.Info("Sending gRPC request to create meeting")
 
-	userID, err := usecase.GetUserIDFromToken(c)
+	userID, name, err := usecase.GetUserFromToken(c)
+	logger.Info("Username " + name)
 	if err != nil {
 		logger.Error(err.Error())
 		return
@@ -56,7 +57,7 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 		c.Request.Context(),
 		&meeting.CreateMeetingRequest{
 			CreatorId: userID,
-			CreatorName: "Pavel", // temporary
+			CreatorName: name,
 			Title: req.Title,
 			Description: req.Description,
 			Address: req.Address,
@@ -72,7 +73,8 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 		c.Request.Context(),
 		&chat.CreateMeetingChatRequest{
 			MeetingId: meeting.Id,
-			UserId: userID,
+			CreatorId: userID,
+			CreatorName: name,
 		},
 	)
 

@@ -231,7 +231,8 @@ type CreateMeetingChatRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	MeetingId int64                  `protobuf:"varint,1,opt,name=meeting_id,json=meetingId,proto3" json:"meeting_id,omitempty"`
 	// extracted from JWT by Gateway
-	UserId        int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CreatorId     int64  `protobuf:"varint,2,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	CreatorName   string `protobuf:"bytes,3,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -273,18 +274,26 @@ func (x *CreateMeetingChatRequest) GetMeetingId() int64 {
 	return 0
 }
 
-func (x *CreateMeetingChatRequest) GetUserId() int64 {
+func (x *CreateMeetingChatRequest) GetCreatorId() int64 {
 	if x != nil {
-		return x.UserId
+		return x.CreatorId
 	}
 	return 0
+}
+
+func (x *CreateMeetingChatRequest) GetCreatorName() string {
+	if x != nil {
+		return x.CreatorName
+	}
+	return ""
 }
 
 type GetMeetingChatRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	MeetingId int64                  `protobuf:"varint,1,opt,name=meeting_id,json=meetingId,proto3" json:"meeting_id,omitempty"`
 	// extracted from JWT by Gateway
-	UserId        int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CreatorId     int64  `protobuf:"varint,2,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	CreatorName   string `protobuf:"bytes,3,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -326,18 +335,26 @@ func (x *GetMeetingChatRequest) GetMeetingId() int64 {
 	return 0
 }
 
-func (x *GetMeetingChatRequest) GetUserId() int64 {
+func (x *GetMeetingChatRequest) GetCreatorId() int64 {
 	if x != nil {
-		return x.UserId
+		return x.CreatorId
 	}
 	return 0
+}
+
+func (x *GetMeetingChatRequest) GetCreatorName() string {
+	if x != nil {
+		return x.CreatorName
+	}
+	return ""
 }
 
 type GetChatRequest struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	ChatId int64                  `protobuf:"varint,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
 	// requester
-	UserId        int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CreatorName   string `protobuf:"bytes,3,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -384,6 +401,13 @@ func (x *GetChatRequest) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *GetChatRequest) GetCreatorName() string {
+	if x != nil {
+		return x.CreatorName
+	}
+	return ""
 }
 
 type GetChatResponse struct {
@@ -855,18 +879,23 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\x1dGetOrCreateRequestChatRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"R\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"{\n" +
 	"\x18CreateMeetingChatRequest\x12\x1d\n" +
 	"\n" +
-	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"O\n" +
+	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x1d\n" +
+	"\n" +
+	"creator_id\x18\x02 \x01(\x03R\tcreatorId\x12!\n" +
+	"\fcreator_name\x18\x03 \x01(\tR\vcreatorName\"x\n" +
 	"\x15GetMeetingChatRequest\x12\x1d\n" +
 	"\n" +
-	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"B\n" +
+	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x1d\n" +
+	"\n" +
+	"creator_id\x18\x02 \x01(\x03R\tcreatorId\x12!\n" +
+	"\fcreator_name\x18\x03 \x01(\tR\vcreatorName\"e\n" +
 	"\x0eGetChatRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"~\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +
+	"\fcreator_name\x18\x03 \x01(\tR\vcreatorName\"~\n" +
 	"\x0fGetChatResponse\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\"\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x0e.chat.ChatTypeR\x04type\x12.\n" +
