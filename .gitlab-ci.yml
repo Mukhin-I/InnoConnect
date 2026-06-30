@@ -13,20 +13,23 @@ variables:
   image: docker:27
   services:
     - docker:27-dind
-  before_script:
-    - docker info
 
 build_backend:
   <<: *docker_setup
   stage: build
   script:
-    - docker compose build
+    - ls
+    - cd innoconnect
+    - cp .env.example .env
+    - cp frontend/.env.example frontend/.env
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
   # optional: catch build failures early without pushing anywhere
 build_frontend:
   <<: *docker_setup
   stage: build
   script:
-    - cd /frontend && npm run dev
+    - ls
+    - cd frontend && npm run dev
   # optional: catch build failures early without pushing anywhere
 
 test:
@@ -37,7 +40,8 @@ test:
     paths:
       - .docker-cache/
   script:
-    - docker compose build --build-arg BUILDKIT_INLINE_CACHE=1
+    - ls
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build --build-arg BUILDKIT_INLINE_CACHE=1
     - echo "Testing"
   
 deploy:
