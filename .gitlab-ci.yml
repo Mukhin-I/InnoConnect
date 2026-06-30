@@ -51,13 +51,16 @@ test_autorization:
     - cp .env.example .env
   script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && sleep 10
     - apk add --no-cache curl
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps
     - |
-      status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/meetings)
+      status=$(curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://localhost:8080/meetings || echo "000")
       echo "Got status: $status"
       if [ "$status" -ne 403 ]; then
         echo "FAIL: expected 403, got $status"
+        echo "----- gateway logs -----"
+        docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
         exit 1
       fi
       echo "PASS: /meetings returned 403 as expected"
