@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"innoconnect/internal/request/entity"
+	"innoconnect/pkg/logger"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -69,6 +70,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Request, error) {
 
 	rows, err := r.pool.Query(ctx, query)
 	if err != nil {
+		logger.Error(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -89,6 +91,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Request, error) {
 			&request.Deadline,
 		)
 		if err != nil {
+			logger.Error(err.Error())
 			return nil, err
 		}
 
@@ -96,6 +99,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Request, error) {
 	}
 
 	if err := rows.Err(); err != nil {
+		logger.Error(err.Error())
 		return nil, err
 	}
 

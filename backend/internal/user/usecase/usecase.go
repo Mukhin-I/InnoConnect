@@ -3,9 +3,11 @@ package usecase
 import (
 	"context"
 	"errors"
+	"strconv"
 	"time"
 
 	"innoconnect/internal/user/entity"
+	"innoconnect/pkg/logger"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -64,7 +66,7 @@ func (u *Usecase) Login(ctx context.Context, email, password string) (LoginResul
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
 		return LoginResult{}, ErrInvalidCredentials
 	}
-
+	logger.Info("Generating jwt for a user " + strconv.FormatInt(user.ID, 10))
 	token, err := u.generateToken(user.ID)
 	if err != nil {
 		return LoginResult{}, err

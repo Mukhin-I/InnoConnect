@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"innoconnect/internal/request/entity"
+	"innoconnect/pkg/logger"
 	pb "innoconnect/pkg/pb/request"
 
 	"github.com/jackc/pgx/v5"
@@ -55,6 +56,7 @@ func (s *RequestServer) CreateRequest(ctx context.Context, req *pb.CreateRequest
 func (s *RequestServer) GetRequests(ctx context.Context, _ *pb.GetRequestsRequest) (*pb.GetRequestsResponse, error) {
 	requests, err := s.usecase.GetAll(ctx)
 	if err != nil {
+		logger.Error(err.Error())
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 

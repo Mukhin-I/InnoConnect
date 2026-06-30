@@ -10,6 +10,7 @@ const (
 type Chat struct {
 	ID           int64
 	Type         ChatType
+	RelatedID int64
 	Participants []User
 }
 

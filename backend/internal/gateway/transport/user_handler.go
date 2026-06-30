@@ -1,11 +1,15 @@
 package transport
 
 import (
-    "net/http"
-    "strings"
+	"net/http"
+	"strconv"
+	"strings"
 
-    "github.com/gin-gonic/gin"
-    userpb "innoconnect/pkg/pb/user"
+	"innoconnect/internal/gateway/usecase"
+	"innoconnect/pkg/logger"
+	userpb "innoconnect/pkg/pb/user"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) Register(c *gin.Context) {
@@ -56,18 +60,25 @@ func (h *Handler) Login(c *gin.Context) {
 func (h *Handler) GetCurrentUser(c *gin.Context) {
     authHeader := c.GetHeader("Authorization")
     if authHeader == "" {
+        logger.Error("No JWT token")
         c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
         return
     }
 
     parts := strings.SplitN(authHeader, " ", 2)
     if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" || parts[1] == "" {
+        logger.Error("Token issue")
         c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
         return
     }
 
-    resp, err := h.userClient.GetCurrentUser(c.Request.Context(), &userpb.GetCurrentUserRequest{})
+    userid, err := usecase.GetUserIDFromToken(authHeader)
+    logger.Info("Logginning with a user " + strconv.FormatInt(userid, 10))
+    resp, err := h.userClient.GetCurrentUser(c.Request.Context(), &userpb.GetCurrentUserRequest{
+        UserId: userid,
+    })
     if err != nil {
+        logger.Error(err.Error())
         c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
         return
     }

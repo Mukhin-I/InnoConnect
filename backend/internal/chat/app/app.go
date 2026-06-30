@@ -26,14 +26,14 @@ func CreateServer() {
 		return
 	}
 
-		dbPool, err := pgxpool.New(context.Background(), chatDatabaseURL())
+	dbPool, err := pgxpool.New(context.Background(), chatDatabaseURL())
 	if err != nil {
 		logger.Error("Failed to connect to chat database: " + err.Error())
 		return
 	}
 	defer dbPool.Close()
 
-		var pingErr error
+	var pingErr error
 	for i := 0; i < 10; i++ {
 		pingErr = dbPool.Ping(context.Background())
 		if pingErr == nil {
@@ -52,7 +52,7 @@ func CreateServer() {
 	chatUsecase := usecase.NewChatUsecase(chatRepo)
 	chatServer := transport.NewChatServer(chatUsecase)
 
-		grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer()
 
 	pb.RegisterChatServiceServer(grpcServer, chatServer)
 
