@@ -16,6 +16,7 @@ build_backend:
     - ls
     - ls backend/db
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
+    - docker ps -q --filter "publish=8080" | xargs -r docker rm -f || true
     - docker rm -f gateway meeting user request chat db_meeting db_user db_request db_chat 2>/dev/null || true
     - docker system prune -af --volumes
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
@@ -41,7 +42,7 @@ test:
     - ls
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
     - echo "Testing"
-    
+
 test_autorization:
   stage: test
   image: docker:27
@@ -79,5 +80,4 @@ deploy:
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && echo ALL OK"
-      #&& git pull && docker compose up -d --build && docker compose up -d --build"
+    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && git fetch origin main && git checkout main && git reset --hard origin/main && git clean -fd && sudo lsof -ti:80 | xargs -r kill -9; && cd innoconnect && cp .env.example .env && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down &&docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && cd frontend && cp /.env /innoconnect/frontend/.env && (npm run dev&)"
