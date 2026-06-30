@@ -51,11 +51,11 @@ test_autorization:
     - cp .env.example .env
   script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && sleep 20
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && sleep 60
     - apk add --no-cache curl
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps
     - |
-      status=403# $(curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://localhost:8080/meetings || echo "000")
+      status=$(curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://localhost:8080/meetings || echo "000")
       echo "Got status: $status"
       if [ "$status" -ne 403 ]; then
         echo "FAIL: expected 403, got $status"
