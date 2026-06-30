@@ -17,9 +17,9 @@ services:
     image: gateway:1.0
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $GATEWAY_SERVICE_PORT"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     networks:
       - local
@@ -38,9 +38,9 @@ services:
     image: meeting:1.0
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $MEETING_SERVICE_PORT"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     networks:
       - local
@@ -65,9 +65,9 @@ services:
     image: request:1.0
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $REQUEST_SERVICE_PORT"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     networks:
       - local
@@ -90,9 +90,9 @@ services:
     image: user:1.0
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $USER_SERVICE_PORT"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     networks:
       - local
@@ -115,9 +115,9 @@ services:
     image: chat:1.0
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost $CHAT_SERVICE_PORT"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     networks:
       - local
@@ -149,9 +149,9 @@ services:
       - SERVICE=meetings
     healthcheck:
       test: ["CMD-SHELL", "psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meetings LIMIT 1' && psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meeting_participants LIMIT 1'"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     volumes:
       - pgdata_meeting:/var/lib/postgresql
@@ -180,9 +180,9 @@ services:
       - SERVICE=requests
     healthcheck:
       test: ["CMD-SHELL", "psql -U ${DB_REQUEST_USER} -d request -p ${DB_REQUEST_PORT} -c 'SELECT 1 FROM requests LIMIT 1'"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     volumes:
       - pgdata_request:/var/lib/postgresql
@@ -211,9 +211,9 @@ services:
       - SERVICE=users
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER_USER}", "-d", "postgres", "-p", "${DB_USER_PORT}"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     volumes:
       - pgdata_user:/var/lib/postgresql
@@ -242,9 +242,9 @@ services:
       - SERVICE=chats
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_CHAT_USER}", "-d", "postgres", "-p", "${DB_CHAT_PORT}"]
-      interval: 5s
+      interval: 8s
       timeout: 10s
-      retries: 5
+      retries: 8
       start_period: 10s
     volumes:
       - pgdata_chat:/var/lib/postgresql
