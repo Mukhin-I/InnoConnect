@@ -20,7 +20,7 @@ build_backend:
   script:
     - ls
     - cp .env.example .env
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
   # optional: catch build failures early without pushing anywhere
 build_frontend:
   <<: *docker_setup
@@ -47,6 +47,7 @@ test:
     paths:
       - .docker-cache/
   script:
+    - cp .env.example .env
     - ls
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build --build-arg BUILDKIT_INLINE_CACHE=1
     - echo "Testing"
