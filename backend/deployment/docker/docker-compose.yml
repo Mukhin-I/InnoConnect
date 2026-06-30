@@ -209,13 +209,14 @@ services:
       args:
       - DB_PORT=${DB_USER_PORT}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER_USER}", "-d", "postgres", "-p", "${DB_USER_PORT}"]
+      test: ["CMD-SHELL", "psql -U ${DB_USER_USER} -d user -p ${DB_USER_PORT} -c 'SELECT 1 FROM users LIMIT 1'"]
       interval: 3s
       timeout: 10s
       retries: 5
       start_period: 10s
     volumes:
       - pgdata_user:/var/lib/postgresql
+      - ../../db/init-users.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - user
     depends_on:
