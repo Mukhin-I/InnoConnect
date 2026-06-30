@@ -28,6 +28,9 @@ service ChatService {
 
   rpc GetChats(GetChatsRequest)
     returns (GetChatsResponse);
+
+  rpc createMeetingChat(CreateMeetingChatRequest)
+    returns (ChatResponse);
 }
 
 enum ChatType {
@@ -53,11 +56,20 @@ message GetOrCreateRequestChatRequest {
   int64 user_id = 2;
 }
 
+message CreateMeetingChatRequest {
+  int64 meeting_id = 1;
+
+  // extracted from JWT by Gateway
+  int64 creator_id = 2;
+  string creator_name = 3;
+}
+
 message GetMeetingChatRequest {
   int64 meeting_id = 1;
 
   // extracted from JWT by Gateway
-  int64 user_id = 2;
+  int64 creator_id = 2;
+  string creator_name = 3;
 }
 
 message GetChatRequest {
@@ -65,6 +77,7 @@ message GetChatRequest {
 
   // requester
   int64 user_id = 2;
+  string creator_name = 3;
 }
 
 message GetChatResponse {
@@ -128,3 +141,4 @@ message ChatPreview {
 message GetChatsResponse {
   repeated ChatPreview chats = 1;
 }
+

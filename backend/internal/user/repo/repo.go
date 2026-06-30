@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"innoconnect/internal/user/entity"
+	"innoconnect/pkg/logger"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -38,6 +39,7 @@ func (r *Repository) Create(ctx context.Context, user entity.User) (entity.User,
 	).Scan(&user.ID)
 
 	if err != nil {
+		logger.Error(err.Error())
 		return entity.User{}, err
 	}
 
@@ -92,6 +94,7 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.User, error)
 	)
 
 	if err != nil {
+		logger.Error(err.Error())
 		return entity.User{}, err
 	}
 

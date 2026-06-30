@@ -1,10 +1,10 @@
 package transport
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
+	"innoconnect/internal/gateway/usecase"
 	"innoconnect/pkg/logger"
 	chatpb "innoconnect/pkg/pb/chat"
 
@@ -22,7 +22,7 @@ func (h *Handler) GetOrCreateRequestChat(c *gin.Context) {
 		return
 	}
 
-	userID, err := extractUserID(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -47,12 +47,14 @@ func (h *Handler) GetOrCreateRequestChat(c *gin.Context) {
 func (h *Handler) GetMeetingChat(c *gin.Context) {
 	meetingID, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
+		logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid meeting id"})
 		return
 	}
 
-	userID, err := extractUserID(c)
+	userID, name, err := usecase.GetUserFromToken(c)
 	if err != nil {
+		logger.Error(err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
@@ -61,7 +63,8 @@ func (h *Handler) GetMeetingChat(c *gin.Context) {
 		c.Request.Context(),
 		&chatpb.GetMeetingChatRequest{
 			MeetingId: meetingID,
-			UserId:    userID,
+			CreatorId:    userID,
+			CreatorName: name,
 		},
 	)
 	if err != nil {
@@ -76,12 +79,14 @@ func (h *Handler) GetMeetingChat(c *gin.Context) {
 func (h *Handler) GetChat(c *gin.Context) {
 	chatID, err := strconv.ParseInt(c.Param("chat_id"), 10, 64)
 	if err != nil {
+		logger.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chat id"})
 		return
 	}
 
-	userID, err := extractUserID(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
+		logger.Error(err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
@@ -103,7 +108,7 @@ func (h *Handler) GetChat(c *gin.Context) {
 }
 
 func (h *Handler) GetChats(c *gin.Context) {
-	userID, err := extractUserID(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -129,7 +134,7 @@ func (h *Handler) GetMessages(c *gin.Context) {
 		return
 	}
 
-	userID, err := extractUserID(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -164,7 +169,7 @@ func (h *Handler) SendMessage(c *gin.Context) {
 		return
 	}
 
-	userID, err := extractUserID(c)
+	userID, _, err := usecase.GetUserFromToken(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -185,15 +190,4 @@ func (h *Handler) SendMessage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resp)
-}
-
-func extractUserID(c *gin.Context) (int64, error) {
-	authHeader := c.GetHeader("Authorization")
-	if authHeader == "" {
-		logger.Error("missing authorization header")
-		return 0, errors.New("missing authorization header")
-	}
-
-	// TODO: merge with auth
-	return 1, nil
 }

@@ -33,7 +33,7 @@ function Chats() {
                 }
 
                 const data = await response.json();
-                setChats(data.chats);
+                setChats(data.chats ?? []);
             } catch (err) {
                 setError(err.message);
             } finally {

@@ -4,10 +4,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"innoconnect/internal/gateway/entity"
+	"innoconnect/internal/gateway/usecase"
 	"innoconnect/pkg/logger"
+	"innoconnect/pkg/pb/chat"
 	"innoconnect/pkg/pb/meeting"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CreateMeeting godoc
@@ -43,11 +46,18 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 
 	logger.Info("Sending gRPC request to create meeting")
 
+	userID, name, err := usecase.GetUserFromToken(c)
+	logger.Info("Username " + name)
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+
 	meeting, err := h.meetingClient.CreateMeeting(
 		c.Request.Context(),
 		&meeting.CreateMeetingRequest{
-			CreatorId:   1, // temporary
-			CreatorName: "Pavel", // temporary
+			CreatorId: userID,
+			CreatorName: name,
 			Title: req.Title,
 			Description: req.Description,
 			Address: req.Address,
@@ -56,6 +66,15 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 			Type: req.Type,
 			MeetingTime: req.MeetingTime,
 			MaxPeople: req.MaxPeople,
+		},
+	)
+
+	_, err = h.chatClient.CreateMeetingChat(
+		c.Request.Context(),
+		&chat.CreateMeetingChatRequest{
+			MeetingId: meeting.Id,
+			CreatorId: userID,
+			CreatorName: name,
 		},
 	)
 

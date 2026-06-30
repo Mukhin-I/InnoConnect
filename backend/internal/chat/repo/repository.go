@@ -3,12 +3,14 @@ package repository
 import (
 	"context"
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"innoconnect/internal/chat/entity"
+	"innoconnect/pkg/logger"
 )
 
 type Repository struct {
@@ -28,6 +30,7 @@ func (r *Repository) GetChatByID(
 	defer cancel()
 
 	var chat entity.Chat
+	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
@@ -35,8 +38,10 @@ func (r *Repository) GetChatByID(
 		WHERE id = $1
 	`, chatID).Scan(
 		&chat.ID,
-		&chat.Type,
+		&chatType,
 	)
+	
+	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
 		return entity.Chat{}, err
@@ -58,7 +63,7 @@ func (r *Repository) GetChatsByUserID(
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-
+	logger.Info("Getting chats for a user " + strconv.FormatInt(userID, 10))
 	rows, err := r.db.Query(ctx, `
 		SELECT 
 			c.id,
@@ -90,6 +95,7 @@ func (r *Repository) GetChatsByUserID(
 		lastMsg, _ := r.getLastMessage(ctx, chatID)
 		title := r.resolveTitle(chatType, relatedID)
 
+		logger.Info("Getting chatid: " + strconv.FormatInt(chatID, 10))
 		result = append(result, entity.ChatPreview{
 			ID:           chatID,
 			Type:         entity.ChatTypeFromString(chatType),
@@ -184,13 +190,16 @@ func (r *Repository) GetRequestChat(
 	defer cancel()
 
 	var chat entity.Chat
+	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
 		FROM chats
 		WHERE type = 'REQUEST'
 		AND related_id = $1
-	`, requestID).Scan(&chat.ID, &chat.Type)
+	`, requestID).Scan(&chat.ID, &chatType)
+
+	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
 		return entity.Chat{}, err
@@ -322,6 +331,7 @@ func (r *Repository) GetMeetingChat(
 	defer cancel()
 
 	var chat entity.Chat
+	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
@@ -330,8 +340,10 @@ func (r *Repository) GetMeetingChat(
 		  AND related_id = $1
 	`, meetingID).Scan(
 		&chat.ID,
-		&chat.Type,
+		&chatType,
 	)
+
+	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
 		return entity.Chat{}, err
@@ -347,6 +359,44 @@ func (r *Repository) GetMeetingChat(
 	return chat, nil
 }
 
+func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, creatorID int64, creatorName string) (entity.Chat, error) {
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		return entity.Chat{}, err
+	}
+	defer tx.Rollback(ctx)
+
+	var chat entity.Chat
+	var chatType string
+
+	err = tx.QueryRow(ctx, `
+		INSERT INTO chats (type, related_id)
+		VALUES ('MEETING', $1)
+		RETURNING id, type, related_id
+	`, meetingID).Scan(
+		&chat.ID,
+		&chatType,
+		&chat.RelatedID,
+	)
+
+	chat.Type = entity.ChatTypeFromString(chatType)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return entity.Chat{}, err
+	}
+
+	// TODO: add name saving into gateway
+	r.AddParticipant(ctx, tx, chat.ID, creatorID, creatorName)
+
+	if err := tx.Commit(ctx); err != nil {
+		logger.Error(err.Error())
+		return entity.Chat{}, err
+	}
+
+	return chat, nil
+}
+
 func (r *Repository) resolveTitle(chatType string, relatedID int64) string {
 	// MVP stub:
 	switch chatType {
@@ -357,4 +407,29 @@ func (r *Repository) resolveTitle(chatType string, relatedID int64) string {
 	default:
 		return "Chat"
 	}
+}
+
+func (r *Repository) AddParticipant(
+	ctx context.Context,
+	tx pgx.Tx,
+	chatID int64,
+	userID int64,
+	userName string,
+) error {
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	stmt := `
+		INSERT INTO chat_participants (chat_id, user_id, user_name)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (chat_id, user_id) DO NOTHING
+	`
+
+	_, err := tx.Exec(ctx, stmt, chatID, userID, userName)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

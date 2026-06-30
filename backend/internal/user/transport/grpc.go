@@ -6,6 +6,7 @@ import (
 
 	"innoconnect/internal/user/entity"
 	"innoconnect/internal/user/usecase"
+	"innoconnect/pkg/logger"
 	pb "innoconnect/pkg/pb/user"
 
 	"github.com/jackc/pgx/v5"
@@ -48,17 +49,21 @@ func (s *UserServer) Register(ctx context.Context, req *pb.RegisterRequest) (*pb
 func (s *UserServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	result, err := s.usecase.Login(ctx, req.GetEmail(), req.GetPassword())
 	if errors.Is(err, usecase.ErrInvalidCredentials) {
+		logger.Error(err.Error())
 		return nil, status.Error(codes.Unauthenticated, "invalid email or password")
 	}
 	if err != nil {
+		logger.Error(err.Error())
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &pb.LoginResponse{
+	resp := &pb.LoginResponse{
 		Token:     result.Token,
 		Type:      result.Type,
 		ExpiresIn: result.ExpiresIn,
-	}, nil
+	}
+
+	return resp, nil
 }
 
 func (s *UserServer) GetCurrentUser(ctx context.Context, req *pb.GetCurrentUserRequest) (*pb.User, error) {

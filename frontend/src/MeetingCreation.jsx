@@ -144,7 +144,7 @@ function MeetingCreation() {
     }
 
     try {
-      const token = 'temp';
+      const token = localStorage.getItem('token');
       
       const response = await fetch('http://localhost:8080/meetings', {
         method: 'POST',

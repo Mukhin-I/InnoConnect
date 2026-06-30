@@ -302,7 +302,12 @@ function Requests() {
 
                     {/* карточки просьб */}
                     <div className="list-of-reqs-container">
-                        <p>Ошибка: {error}</p>
+                        {filteredRequests.map((request) => (
+                            <CardOfRequest
+                                key={request.id}
+                                request={request}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

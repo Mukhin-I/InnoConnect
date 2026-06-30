@@ -35,9 +35,7 @@ func CreateServer() error {
 		return err
 	}
 
-	handler := transport.NewHandler(meetingClient, requestClient, chatClient)
-
-	handler := transport.NewHandler(meetingClient, requestClient, userClient)
+	handler := transport.NewHandler(meetingClient, requestClient, chatClient, userClient)
 
 	router := gin.Default()
 
@@ -92,10 +90,6 @@ func setEndpoints(router *gin.Engine, h *transport.Handler) {
     router.POST("/meetings", h.CreateMeeting)
     router.GET("/meetings", h.GetMeetings)
     router.GET("/meetings/:id", h.GetMeeting)
-
-    router.POST("/requests", h.CreateRequest)
-    router.GET("/requests", h.GetRequests)
-    router.GET("/requests/:id", h.GetRequest)
 
     router.GET(
         "/swagger/*any",

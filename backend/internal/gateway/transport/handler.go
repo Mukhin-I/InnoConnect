@@ -1,7 +1,6 @@
 package transport
 
 import (
-<<<<<<< backend/internal/gateway/transport/handler.go
 	chatpb "innoconnect/pkg/pb/chat"
 	meetingpb "innoconnect/pkg/pb/meeting"
 	requestpb "innoconnect/pkg/pb/request"

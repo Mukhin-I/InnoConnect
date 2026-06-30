@@ -37,7 +37,7 @@ function Login() {
 
         const data = await response.json();
 
-        if (response.status === 201) {
+        if (response.status === 200) {
             localStorage.setItem('token', data.token);
             localStorage.setItem('tokenType', data.type);
             localStorage.setItem('expiresIn', data.expiresIn);
