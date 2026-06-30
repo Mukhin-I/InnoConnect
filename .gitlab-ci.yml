@@ -19,7 +19,8 @@ build_backend:
     - docker ps -q --filter "publish=8080" | xargs -r docker rm -f || true
     - docker rm -f gateway meeting user request chat db_meeting db_user db_request db_chat 2>/dev/null || true
     - docker system prune -af --volumes
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait -y
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build #up -d --build --wait -y
+    # - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs -f db_user
 
 build_frontend:
   stage: build
@@ -50,7 +51,7 @@ test_autorization:
     - cp .env.example .env
   script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d
     - apk add --no-cache curl
     - |
       status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/meetings)
