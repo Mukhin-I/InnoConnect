@@ -20,7 +20,7 @@ build_backend:
     - docker rm -f gateway meeting user request chat db_meeting db_user db_request db_chat 2>/dev/null || true
     - docker system prune -af --volumes
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build #up -d --build --wait -y
-    # - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs -f db_user
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs db_user
 
 build_frontend:
   stage: build
