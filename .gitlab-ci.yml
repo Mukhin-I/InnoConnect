@@ -20,13 +20,15 @@ build_backend:
   script:
     - ls
     - cp .env.example .env
-    - cp frontend/.env.example frontend/.env
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
   # optional: catch build failures early without pushing anywhere
 build_frontend:
   <<: *docker_setup
   stage: build
   script:
+    - glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_FQDN --api-protocol $CI_SERVER_PROTOCOL
+    - glab -R $CI_PROJECT_PATH securefile download $.env --path="frontend/.env"
+    - chmod 600 /cd
     - ls
     - cd frontend && npm run dev
   # optional: catch build failures early without pushing anywhere
