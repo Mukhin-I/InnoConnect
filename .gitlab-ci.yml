@@ -25,6 +25,7 @@ build_backend:
   stage: build
   script:
     - ls
+    - ls backend/db
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
   # optional: catch build failures early without pushing anywhere
 build_frontend:
