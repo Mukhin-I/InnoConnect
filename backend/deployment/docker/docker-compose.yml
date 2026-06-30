@@ -146,6 +146,7 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_MEETING_PORT}
+      - SERVICE=meetings
     healthcheck:
       test: ["CMD-SHELL", "psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meetings LIMIT 1' && psql -U ${DB_MEETING_USER} -d meeting -p ${DB_MEETING_PORT} -c 'SELECT 1 FROM meeting_participants LIMIT 1'"]
       interval: 3s
@@ -177,6 +178,7 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_REQUEST_PORT}
+      - SERVICE=requests
     healthcheck:
       test: ["CMD-SHELL", "psql -U ${DB_REQUEST_USER} -d request -p ${DB_REQUEST_PORT} -c 'SELECT 1 FROM requests LIMIT 1'"]
       interval: 3s
@@ -208,6 +210,7 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_USER_PORT}
+      - SERVICE=users
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER_USER}", "-d", "postgres", "-p", "${DB_USER_PORT}"]
       interval: 3s
@@ -238,6 +241,7 @@ services:
       dockerfile: backend/deployment/docker/Dockerfile.db
       args:
       - DB_PORT=${DB_CHAT_PORT}
+      - SERVICE=chats
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_CHAT_USER}", "-d", "postgres", "-p", "${DB_CHAT_PORT}"]
       interval: 3s
