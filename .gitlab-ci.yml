@@ -15,6 +15,7 @@ build_backend:
   script:
     - ls
     - ls backend/db
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
 
 build_frontend:
