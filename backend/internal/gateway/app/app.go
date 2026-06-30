@@ -1,13 +1,13 @@
 package app
 
 import (
-	"github.com/gin-gonic/gin"
-	"innoconnect/internal/gateway/grpcclient"
-	"innoconnect/internal/gateway/transport"
-	"innoconnect/pkg/config"
-	"innoconnect/pkg/logger"
-	"github.com/gin-contrib/cors"
-	swaggerFiles "github.com/swaggo/files"
+    "github.com/gin-gonic/gin"
+    "innoconnect/internal/gateway/grpcclient"
+    "innoconnect/internal/gateway/transport"
+    "innoconnect/pkg/config"
+    "innoconnect/pkg/logger"
+    "github.com/gin-contrib/cors"
+    swaggerFiles "github.com/swaggo/files"
     ginSwagger "github.com/swaggo/gin-swagger"
 
     _ "innoconnect/docs"
@@ -27,7 +27,13 @@ func CreateServer() error {
 		return err
 	}
 
-	handler := transport.NewHandler(meetingClient, requestClient)
+	userClient, err := grpcclient.NewUserClient()
+	if err != nil {
+		logger.Error("Server startup failed" + err.Error())
+		return err
+	}
+
+	handler := transport.NewHandler(meetingClient, requestClient, userClient)
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
@@ -62,16 +68,20 @@ func CreateServer() error {
 }
 
 func setEndpoints(router *gin.Engine, h *transport.Handler) {
-	router.POST("/meetings", h.CreateMeeting)
-	router.GET("/meetings", h.GetMeetings)
-	router.GET("/meetings/:id", h.GetMeeting)
+    router.POST("/register", h.Register)
+    router.POST("/login", h.Login)
+    router.GET("/me", h.GetCurrentUser)
 
-	router.POST("/requests", h.CreateRequest)
-	router.GET("/requests", h.GetRequests)
-	router.GET("/requests/:id", h.GetRequest)
+    router.POST("/meetings", h.CreateMeeting)
+    router.GET("/meetings", h.GetMeetings)
+    router.GET("/meetings/:id", h.GetMeeting)
 
-	router.GET(
-		"/swagger/*any",
-		ginSwagger.WrapHandler(swaggerFiles.Handler),
-	)
+    router.POST("/requests", h.CreateRequest)
+    router.GET("/requests", h.GetRequests)
+    router.GET("/requests/:id", h.GetRequest)
+
+    router.GET(
+        "/swagger/*any",
+        ginSwagger.WrapHandler(swaggerFiles.Handler),
+    )
 }
