@@ -14,10 +14,11 @@ variables:
   services:
     - docker:27-dind
   before_script:
-    - mkdir backend/db/pgdata_chat
-    - mkdir backend/db/pgdata_meeting
-    - mkdir backend/db/pgdata_request
-    - mkdir backend/db/pgdata_user
+    - docker run --rm -v "$CI_PROJECT_DIR":/workspace alpine mkdir -p
+        /workspace/backend/db/pgdata_meeting
+        /workspace/backend/db/pgdata_chat
+        /workspace/backend/db/pgdata_request
+        /workspace/backend/db/pgdata_user
     - cp .env.example .env
 
 build_backend:
