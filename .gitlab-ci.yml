@@ -4,56 +4,41 @@ stages:
   - deploy
 
 variables:
-  DOCKER_DRIVER: overlay2
-  COMPOSE_DOCKER_CLI_BUILD: 1
   DOCKER_BUILDKIT: 1
-
-# Reusable Docker-in-Docker setup
-.docker_setup: &docker_setup
-  image: docker:27
-  services:
-    - docker:27-dind
-  before_script:
-    - cp .env.example .env
+  COMPOSE_DOCKER_CLI_BUILD: 1
 
 build_backend:
-  <<: *docker_setup
   stage: build
+  image: docker:27
+  before_script:
+    - cp .env.example .env
   script:
-    - docker run --rm -v "$CI_PROJECT_DIR":/check alpine sh -c "ls -la /check/backend/db/ || echo 'NOT FOUND ON DAEMON SIDE'"
     - ls
     - ls backend/db
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
-  # optional: catch build failures early without pushing anywhere
+
 build_frontend:
-  <<: *docker_setup
-  image: node:20
   stage: build
-  
+  image: node:20
   script:
-    - apk add --no-cache curl jq || apt-get update && apt-get install -y curl jq
     - >
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN"
-      --output frontend/.env
-      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$CI_FILE_ID/download"
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --output frontend/.env
+      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$ENV_FILE_ID/download"
     - cd frontend
     - ls
-    - npm install && npm install mapbox-gl && npm install react-router-dom
+    - npm install && npm install mapbox-gl react-router-dom
     - npm run build
-  # optional: catch build failures early without pushing anywhere
 
 test:
-  <<: *docker_setup
   stage: test
-  cache:
-    key: docker-layer-cache
-    paths:
-      - .docker-cache/
+  image: docker:27
+  before_script:
+    - cp .env.example .env
   script:
     - ls
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build --build-arg BUILDKIT_INLINE_CACHE=1
+    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
     - echo "Testing"
-  
+
 deploy:
   stage: deploy
   image: alpine:latest
@@ -63,8 +48,7 @@ deploy:
   before_script:
     - apk add --no-cache curl openssh-client
     - >
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN"
-      --output deploy_key
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --output deploy_key
       "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$SSH_KEY_FILE_ID/download"
     - chmod 600 deploy_key
     - eval $(ssh-agent -s)
@@ -72,4 +56,5 @@ deploy:
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && echo ALL OK"#&& git pull && docker compose up -d --build && docker compose up -d --build"
+    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && echo ALL OK"
+      #&& git pull && docker compose up -d --build && docker compose up -d --build"
