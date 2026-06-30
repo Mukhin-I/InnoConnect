@@ -20,6 +20,7 @@ build_backend:
   <<: *docker_setup
   stage: build
   script:
+    - docker run --rm -v "$CI_PROJECT_DIR":/check alpine sh -c "ls -la /check/backend/db/ || echo 'NOT FOUND ON DAEMON SIDE'"
     - ls
     - ls backend/db
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
