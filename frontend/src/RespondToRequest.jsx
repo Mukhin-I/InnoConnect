@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
 import './RespondToRequest.css';
 import logoIcon from './assets/logo.svg';
 import notificationIcon from './assets/notifications.svg';
@@ -17,6 +18,7 @@ const RespondToRequest = () => {
   const [requestData, setRequestData] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -53,6 +55,10 @@ const RespondToRequest = () => {
   };
 
   const handleOpenChat = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
     try {
       const response = await fetch(`http://localhost:8080/requests/${id}/chat`, {
         method: 'POST',
@@ -72,6 +78,13 @@ const RespondToRequest = () => {
       console.error('Ошибка:', error);
     }
   };
+
+  const handleResponse = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
+  }
 
   if (loading) return <div className="rtr-loading">Загрузка...</div>;
   if (!requestData) return <div className="rtr-error">Запрос не найден</div>;
@@ -141,7 +154,7 @@ const RespondToRequest = () => {
 
       <div className="rtr-bottom-actions">
         <button className="rtr-btn-primary">
-         <img src={heartIcon} alt="Heart" className="rtr-iconbox-icon" />
+         <img src={heartIcon} alt="Heart" className="rtr-iconbox-icon" onclick={handleResponse} />
           Откликнуться
         </button>
         <button className="rtr-btn-secondary"
