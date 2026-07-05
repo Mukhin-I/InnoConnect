@@ -245,7 +245,7 @@ services:
       interval: 8s
       timeout: 10s
       retries: 8
-      start_period: 10s
+      start_period: 30s
     volumes:
       - pgdata_chat:/var/lib/postgresql
     networks:
