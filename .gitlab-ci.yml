@@ -61,7 +61,7 @@ test_autorization:
         docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
         exit 1
       fi
-    - echo "PASS: /meetings returned 403 as expected"
+    - echo "PASS':' /meetings returned 403 as expected"
   after_script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
 
