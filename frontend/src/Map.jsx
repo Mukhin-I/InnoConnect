@@ -21,6 +21,8 @@ function Map() {
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 }); // Start hidden until measured
   const containerRef = useRef(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
   };
@@ -28,7 +30,7 @@ function Map() {
   useEffect(() => {
     async function fetchMeetings() {
       try {
-        const response = await fetch("http://localhost:8080/meetings");
+        const response = await fetch(`${API_URL}/meetings`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch meetings");
@@ -43,7 +45,7 @@ function Map() {
     }
 
     fetchMeetings();
-  }, []);
+  }, [API_URL]);
 
 
   useEffect(() => {

@@ -13,12 +13,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 function GroupChat() {
   const navigate = useNavigate();
-const { id: chatId } = useParams();
+  const { id: chatId } = useParams();
   const [participants, setParticipants] = useState([]);
   const [messages, setMessages] = useState([]);
   const [myId, setMyId] = useState(null);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const task = {
     category: 'Спорт',
@@ -45,7 +46,7 @@ const { id: chatId } = useParams();
   const load = async () => {
     try {
       // кто я (для in/out)
-      const meRes = await fetch('http://localhost:8080/me', {
+      const meRes = await fetch(`${API_URL}/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const me = meRes.ok ? await meRes.json() : null;
@@ -53,7 +54,7 @@ const { id: chatId } = useParams();
       setMyId(meId);
 
       // участники
-      const infoRes = await fetch(`http://localhost:8080/chats/${chatId}`, {
+      const infoRes = await fetch(`${API_URL}/chats/${chatId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (infoRes.ok) {
@@ -67,7 +68,7 @@ const { id: chatId } = useParams();
       }
 
       // сообщения
-      const msgRes = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
+      const msgRes = await fetch(`${API_URL}/chats/${chatId}/messages`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (msgRes.ok) {
@@ -114,7 +115,7 @@ const { id: chatId } = useParams();
     if (!text) return;
     setDraft('');
     try {
-      const res = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
+      const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

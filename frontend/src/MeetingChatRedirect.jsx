@@ -5,11 +5,12 @@ function MeetingChatRedirect() {
   const { id: meetingId } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const resolve = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/meetings/${meetingId}/chat`, {
+        const res = await fetch(`${API_URL}/meetings/${meetingId}/chat`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
@@ -23,7 +24,7 @@ function MeetingChatRedirect() {
       }
     };
     resolve();
-  }, [meetingId]);
+  }, [meetingId, API_URL, token]);
 
   return <div className="rtr-loading">Загрузка...</div>;
 }

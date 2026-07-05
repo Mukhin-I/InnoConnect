@@ -23,12 +23,13 @@ function Requests() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const fetchRequests = async () => {
             setLoading(true);
             try {
-                const response = await fetch("http://localhost:8080/requests");
+                const response = await fetch(`${API_URL}/requests`);
 
                 if (!response.ok) {
                     throw new Error("Ошибка загрузки");
@@ -44,7 +45,7 @@ function Requests() {
         };
 
         fetchRequests();
-    }, []);
+    }, [API_URL]);
 
     if (loading) {
         return(

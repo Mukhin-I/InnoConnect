@@ -36,6 +36,7 @@ function RequestCreation() {
   const [, setError] = useState('');
   const [, setSuccess] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const categories = [
     {
@@ -192,7 +193,7 @@ function RequestCreation() {
     try {
       const token = 'temp';
       
-      const response = await fetch('http://localhost:8080/requests', {
+      const response = await fetch(`${API_URL}/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -17,11 +17,12 @@ const RespondToRequest = () => {
   const [requestData, setRequestData] = useState(null);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/requests/${id || 1}`);
+        const response = await fetch(`${API_URL}/requests/${id || 1}`);
         if (response.ok) {
           const data = await response.json();
           setRequestData(data);
@@ -35,7 +36,7 @@ const RespondToRequest = () => {
       }
     };
     fetchRequest();
-  }, [id]);
+  }, [id, API_URL]);
 
   const useMockData = () => {
     setRequestData({
@@ -54,7 +55,7 @@ const RespondToRequest = () => {
 
   const handleOpenChat = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/requests/${id}/chat`, {
+      const response = await fetch(`${API_URL}/requests/${id}/chat`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
