@@ -23,6 +23,7 @@ function Requests() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
@@ -44,8 +45,33 @@ function Requests() {
             }
         };
 
+        const fetchCurrentUser = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_URL}/me`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Не удалось получить пользователя");
+                }
+
+                const data = await response.json();
+                setCurrentUser(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         fetchRequests();
+        fetchCurrentUser();
     }, [API_URL]);
+
 
     if (loading) {
         return(
@@ -220,12 +246,24 @@ function Requests() {
     }
 
     const filteredRequests = (requests || []).filter(request => {
-    if (requestType === 'allTypes') {
-        return true;
-    }
+        // Мои
+        if (
+            filter === "mine" &&
+            request.creator_id !== currentUser?.id
+        ) {
+            return false;
+        }
 
-    return request.type.toLowerCase() === requestType;
-});
+        // Категории
+        if (
+            requestType !== "allTypes" &&
+            request.type !== requestType
+        ) {
+            return false;
+        }
+
+        return true;
+    });
 
     return(
         <>
@@ -274,26 +312,26 @@ function Requests() {
                             <div className="type-request-icon allrequests"></div>
                             <p>Все категории</p>
                         </div>
-                        <div className={`type-of-request ${requestType === 'help' ? 'type-selected' : ''}`}
-                            onClick={() => setRequestType('help')}
+                        <div className={`type-of-request ${requestType === 'Помощь' ? 'type-selected' : ''}`}
+                            onClick={() => setRequestType('Помощь')}
                         >
                             <div className="type-request-icon helpreq"></div>
                             <p>Помощь</p>
                         </div>
-                        <div className={`type-of-request ${requestType === 'stuff' ? 'type-selected' : ''}`}
-                            onClick={() => setRequestType('stuff')}
+                        <div className={`type-of-request ${requestType === 'Вещи' ? 'type-selected' : ''}`}
+                            onClick={() => setRequestType('Вещи')}
                         >
                             <div className="type-request-icon stuffreq"></div>
                             <p>Вещи</p>
                         </div>
-                        <div className={`type-of-request ${requestType === 'transport' ? 'type-selected' : ''}`}
-                            onClick={() => setRequestType('transport')}
+                        <div className={`type-of-request ${requestType === 'Транспорт' ? 'type-selected' : ''}`}
+                            onClick={() => setRequestType('Транспорт')}
                         >
                             <div className="type-request-icon transportreq"></div>
                             <p>Транспорт</p>
                         </div>
-                        <div className={`type-of-request ${requestType === 'other' ? 'type-selected' : ''}`}
-                            onClick={() => setRequestType('other')}
+                        <div className={`type-of-request ${requestType === 'Прочее' ? 'type-selected' : ''}`}
+                            onClick={() => setRequestType('Прочее')}
                         >
                             <div className="type-request-icon otherreq"></div>
                             <p>Прочее</p>
@@ -305,7 +343,7 @@ function Requests() {
                     <div className="list-of-reqs-container">
                         {filteredRequests.map((request) => (
                             <CardOfRequest
-                                key={request.id}
+                                key={request.request_id}
                                 request={request}
                             />
                         ))}
