@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v7.35.1
-// source: proto/meeting/meeting.proto
+// source: proto/meeting.proto
 
 package meeting
 
@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,9 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MeetingService_CreateMeeting_FullMethodName = "/meeting.MeetingService/CreateMeeting"
-	MeetingService_GetMeetings_FullMethodName   = "/meeting.MeetingService/GetMeetings"
-	MeetingService_GetMeeting_FullMethodName    = "/meeting.MeetingService/GetMeeting"
+	MeetingService_CreateMeeting_FullMethodName  = "/meeting.MeetingService/CreateMeeting"
+	MeetingService_GetMeetings_FullMethodName    = "/meeting.MeetingService/GetMeetings"
+	MeetingService_GetMeeting_FullMethodName     = "/meeting.MeetingService/GetMeeting"
+	MeetingService_ApplyOnMeeting_FullMethodName = "/meeting.MeetingService/ApplyOnMeeting"
 )
 
 // MeetingServiceClient is the client API for MeetingService service.
@@ -31,6 +33,7 @@ type MeetingServiceClient interface {
 	CreateMeeting(ctx context.Context, in *CreateMeetingRequest, opts ...grpc.CallOption) (*MeetingShort, error)
 	GetMeetings(ctx context.Context, in *GetMeetingsRequest, opts ...grpc.CallOption) (*GetMeetingsResponse, error)
 	GetMeeting(ctx context.Context, in *GetMeetingRequest, opts ...grpc.CallOption) (*MeetingFull, error)
+	ApplyOnMeeting(ctx context.Context, in *ApplyOnMeetingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type meetingServiceClient struct {
@@ -71,6 +74,16 @@ func (c *meetingServiceClient) GetMeeting(ctx context.Context, in *GetMeetingReq
 	return out, nil
 }
 
+func (c *meetingServiceClient) ApplyOnMeeting(ctx context.Context, in *ApplyOnMeetingRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, MeetingService_ApplyOnMeeting_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MeetingServiceServer is the server API for MeetingService service.
 // All implementations must embed UnimplementedMeetingServiceServer
 // for forward compatibility.
@@ -78,6 +91,7 @@ type MeetingServiceServer interface {
 	CreateMeeting(context.Context, *CreateMeetingRequest) (*MeetingShort, error)
 	GetMeetings(context.Context, *GetMeetingsRequest) (*GetMeetingsResponse, error)
 	GetMeeting(context.Context, *GetMeetingRequest) (*MeetingFull, error)
+	ApplyOnMeeting(context.Context, *ApplyOnMeetingRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMeetingServiceServer()
 }
 
@@ -96,6 +110,9 @@ func (UnimplementedMeetingServiceServer) GetMeetings(context.Context, *GetMeetin
 }
 func (UnimplementedMeetingServiceServer) GetMeeting(context.Context, *GetMeetingRequest) (*MeetingFull, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMeeting not implemented")
+}
+func (UnimplementedMeetingServiceServer) ApplyOnMeeting(context.Context, *ApplyOnMeetingRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApplyOnMeeting not implemented")
 }
 func (UnimplementedMeetingServiceServer) mustEmbedUnimplementedMeetingServiceServer() {}
 func (UnimplementedMeetingServiceServer) testEmbeddedByValue()                        {}
@@ -172,6 +189,24 @@ func _MeetingService_GetMeeting_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MeetingService_ApplyOnMeeting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApplyOnMeetingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeetingServiceServer).ApplyOnMeeting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MeetingService_ApplyOnMeeting_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeetingServiceServer).ApplyOnMeeting(ctx, req.(*ApplyOnMeetingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MeetingService_ServiceDesc is the grpc.ServiceDesc for MeetingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,7 +226,11 @@ var MeetingService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetMeeting",
 			Handler:    _MeetingService_GetMeeting_Handler,
 		},
+		{
+			MethodName: "ApplyOnMeeting",
+			Handler:    _MeetingService_ApplyOnMeeting_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/meeting/meeting.proto",
+	Metadata: "proto/meeting.proto",
 }
