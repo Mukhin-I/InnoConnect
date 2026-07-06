@@ -87,6 +87,13 @@ const RespondToRequest = () => {
     }
   }
 
+  const typeOfReq = {
+        "Помощь": "helpreq",
+        "Вещи": "stuffreq",
+        "Транспорт": "transportreq",
+        "Прочее": "otherreq",
+    }
+
   if (loading) return <div className="rtr-loading">Загрузка...</div>;
   if (!requestData) return <div className="rtr-error">Запрос не найден</div>;
 
@@ -109,7 +116,7 @@ const RespondToRequest = () => {
 
       <div className="rtr-card main-info-card">
         <div className="rtr-icon-box">
-         <img src={binIcon} alt="Bin" className="rtr-iconbox-icon" />
+         <div className={`type-request-icon-card ${typeOfReq[request.type]}`}></div>
         </div>
         <div className="rtr-main-details">
           <span className="rtr-category">{requestData.type}</span>
