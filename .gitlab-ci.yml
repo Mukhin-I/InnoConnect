@@ -53,15 +53,26 @@ test_autorization:
   script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
     - NETWORK=$(docker inspect $(docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
-    - status=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://gateway:8080/meetings)
+
+    - status=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" --retry 3 --retry-delay 3 --retry-connrefused http://gateway:8080/meetings)
     - echo "Got status $status"
-    - >
-      if [ "$status" -ne 403 ]; then
-        echo "FAIL: expected 403, got $status"
+    - |
+      if [ "$status" -ne 200 ]; then
+        echo "FAIL: expected 200, got $status"
         docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
         exit 1
       fi
-    - echo "PASS':' /meetings returned 403 as expected"
+    - echo "PASS':' GET /meetings returned 200 as expected"
+
+    - status_post=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X POST --retry 3 --retry-delay 3 --retry-connrefused http://gateway:8080/meetings)
+    - echo "Got status $status_post"
+    - |
+      if [ "$status_post" -ne 403 ]; then
+        echo "FAIL: expected 403, got $status_post"
+        docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
+        exit 1
+      fi
+    - echo "PASS':' POST /meetings returned 403 as expected"
   after_script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
 
