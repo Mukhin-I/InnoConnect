@@ -55,7 +55,7 @@ test_autorization:
     - NETWORK=$(docker inspect $(docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
     - status=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://gateway:8080/meetings)
     - echo "Got status $status"
-    - |
+    - >
       if [ "$status" -ne 403 ]; then
         echo "FAIL: expected 403, got $status"
         docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
