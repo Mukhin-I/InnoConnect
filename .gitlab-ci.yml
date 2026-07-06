@@ -67,12 +67,12 @@ test_autorization:
     - status_post=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X POST --retry 3 --retry-delay 3 --retry-connrefused http://gateway:8080/meetings)
     - echo "Got status $status_post"
     - |
-      if [ "$status_post" -ne 403 ]; then
-        echo "FAIL: expected 403, got $status_post"
+      if [ "$status_post" -ne 401 ]; then
+        echo "FAIL: expected 401, got $status_post"
         docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
         exit 1
       fi
-    - echo "PASS':' POST /meetings returned 403 as expected"
+    - echo "PASS':' POST /meetings returned 401 as expected"
   after_script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
 
