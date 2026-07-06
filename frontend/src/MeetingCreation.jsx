@@ -44,6 +44,7 @@ function MeetingCreation() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const categories = [
     {
@@ -146,7 +147,7 @@ function MeetingCreation() {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:8080/meetings', {
+      const response = await fetch(`${API_URL}/meetings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

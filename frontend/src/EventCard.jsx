@@ -24,7 +24,7 @@ function EventCard({ eventId, onClose }) {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const { isAuthenticated } = useAuth();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Date in such format: day.month, hour:minutes like 02.02, 15:05
   const formatDate = (dateString) => {
@@ -50,7 +50,7 @@ function EventCard({ eventId, onClose }) {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/meetings/${eventId}/chat`, {
+      const response = await fetch(`${API_URL}/meetings/${eventId}/chat`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,7 +82,7 @@ function EventCard({ eventId, onClose }) {
     const fetchEvent = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:8080/meetings/${eventId}`);
+        const response = await fetch(`${API_URL}/meetings/${eventId}`);
         if (!response.ok) throw new Error('Ошибка загрузки');
         const data = await response.json();
         setEvent(data);

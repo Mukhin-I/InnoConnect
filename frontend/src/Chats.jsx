@@ -16,6 +16,7 @@ function Chats() {
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const fetchChats = async () => {
@@ -24,7 +25,7 @@ function Chats() {
             try {
                 const token = localStorage.getItem('token');
 
-                const response = await fetch("http://localhost:8080/chats", {
+                const response = await fetch(`${API_URL}/chats`, {
                 headers: { Authorization: `Bearer ${token}` },
                 });
 

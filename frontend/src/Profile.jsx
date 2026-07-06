@@ -22,6 +22,7 @@ import cityImg from './assets/city.svg';
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL;
 
    const useMockData = () => {
     setUser({
@@ -37,7 +38,7 @@ import cityImg from './assets/city.svg';
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/me', {
+        const response = await fetch(`${API_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
@@ -60,7 +61,7 @@ import cityImg from './assets/city.svg';
       }
     };
     fetchUser();
-  }, []);
+  }, [API_URL]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
