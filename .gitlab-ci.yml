@@ -91,9 +91,9 @@ script:
     - echo "Got JWT token (length ${#TOKEN})"
 
     - echo "== /meetings with JWT =="
-    - check_status POST /meetings 200 "-H \"Authorization: Bearer $TOKEN\""
+    - check_status POST /meetings 200 "-H \"Authorization':' Bearer $TOKEN\""
     - echo "== /requests with JWT =="
-    - check_status POST /requests 200 "-H \"Authorization: Bearer $TOKEN\""
+    - check_status POST /requests 200 "-H \"Authorization':' Bearer $TOKEN\""
 deploy:
   stage: deploy
   image: alpine:latest
