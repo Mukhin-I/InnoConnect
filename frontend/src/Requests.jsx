@@ -23,6 +23,7 @@ function Requests() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
@@ -44,8 +45,33 @@ function Requests() {
             }
         };
 
+        const fetchCurrentUser = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_URL}/me`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Не удалось получить пользователя");
+                }
+
+                const data = await response.json();
+                setCurrentUser(data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         fetchRequests();
+        fetchCurrentUser();
     }, [API_URL]);
+
 
     if (loading) {
         return(
@@ -220,11 +246,23 @@ function Requests() {
     }
 
     const filteredRequests = (requests || []).filter(request => {
-        if (requestType === 'allTypes') {
-            return true;
+        // Мои
+        if (
+            filter === "mine" &&
+            request.creator_id !== currentUser?.id
+        ) {
+            return false;
         }
 
-        return request.type?.toLowerCase() === requestType;
+        // Категории
+        if (
+            requestType !== "allTypes" &&
+            request.type !== requestType
+        ) {
+            return false;
+        }
+
+        return true;
     });
 
     return(
@@ -305,7 +343,7 @@ function Requests() {
                     <div className="list-of-reqs-container">
                         {filteredRequests.map((request) => (
                             <CardOfRequest
-                                key={request.id}
+                                key={request.request_id}
                                 request={request}
                             />
                         ))}
