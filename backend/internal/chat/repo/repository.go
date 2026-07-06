@@ -417,6 +417,11 @@ func (r *Repository) AddParticipant(
 	userName string,
 ) error {
 
+	if tx == nil {
+		tx, _ = r.db.Begin(ctx)
+		defer tx.Rollback(ctx)
+	}
+
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

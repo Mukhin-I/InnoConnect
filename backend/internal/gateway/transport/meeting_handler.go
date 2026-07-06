@@ -196,3 +196,47 @@ func (h *Handler) GetMeeting(c *gin.Context) {
 		MaxPeople:     resp.MaxPeople,
 	})
 }
+
+func (h *Handler) ApplyOnMeeting(c *gin.Context) {
+    id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+    if err != nil {
+        logger.Error("Invalid meeting id: " + err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid meeting id"})
+        return
+    }
+
+    logger.Info("Applying on meeting: " + strconv.FormatInt(id, 10))
+
+    authHeader := c.GetHeader("Authorization")
+    if authHeader == "" {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "missing authorization header"})
+        logger.Error("missing authorization header")
+        return
+    }
+
+    userID, name, err := usecase.GetUserFromToken(c)
+    if err != nil {
+        logger.Error("Failed to get user from token: " + err.Error())
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+        return
+    }
+
+    _, err = h.meetingClient.ApplyOnMeeting(
+        c.Request.Context(),
+        &meeting.ApplyOnMeetingRequest{
+            User: &meeting.User { 
+                Id:   userID,
+                Name: name,
+            },
+            MeetingId: id,
+        },
+    )
+
+    if err != nil {
+        logger.Error("Failed to apply on meeting: " + err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to apply on meeting"})
+        return
+    }
+
+    c.JSON(200, http.StatusOK)
+}

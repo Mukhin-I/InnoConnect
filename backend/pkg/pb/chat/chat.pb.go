@@ -9,6 +9,7 @@ package chat
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -869,7 +870,7 @@ var File_proto_chat_proto protoreflect.FileDescriptor
 
 const file_proto_chat_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/chat.proto\x12\x04chat\"*\n" +
+	"\x10proto/chat.proto\x12\x04chat\x1a\x1bgoogle/protobuf/empty.proto\"*\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"K\n" +
@@ -930,7 +931,7 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\bChatType\x12\x19\n" +
 	"\x15CHAT_TYPE_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aREQUEST\x10\x01\x12\v\n" +
-	"\aMEETING\x10\x022\xdb\x03\n" +
+	"\aMEETING\x10\x022\xa7\x04\n" +
 	"\vChatService\x12Q\n" +
 	"\x16GetOrCreateRequestChat\x12#.chat.GetOrCreateRequestChatRequest\x1a\x12.chat.ChatResponse\x12A\n" +
 	"\x0eGetMeetingChat\x12\x1b.chat.GetMeetingChatRequest\x1a\x12.chat.ChatResponse\x126\n" +
@@ -938,7 +939,8 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\vGetMessages\x12\x18.chat.GetMessagesRequest\x1a\x19.chat.GetMessagesResponse\x126\n" +
 	"\vSendMessage\x12\x18.chat.SendMessageRequest\x1a\r.chat.Message\x129\n" +
 	"\bGetChats\x12\x15.chat.GetChatsRequest\x1a\x16.chat.GetChatsResponse\x12G\n" +
-	"\x11createMeetingChat\x12\x1e.chat.CreateMeetingChatRequest\x1a\x12.chat.ChatResponseB\rZ\vpkg/pb/chatb\x06proto3"
+	"\x11createMeetingChat\x12\x1e.chat.CreateMeetingChatRequest\x1a\x12.chat.ChatResponse\x12J\n" +
+	"\x10AddToMeetingChat\x12\x1e.chat.CreateMeetingChatRequest\x1a\x16.google.protobuf.EmptyB\rZ\vpkg/pb/chatb\x06proto3"
 
 var (
 	file_proto_chat_proto_rawDescOnce sync.Once
@@ -970,6 +972,7 @@ var file_proto_chat_proto_goTypes = []any{
 	(*GetChatsRequest)(nil),               // 12: chat.GetChatsRequest
 	(*ChatPreview)(nil),                   // 13: chat.ChatPreview
 	(*GetChatsResponse)(nil),              // 14: chat.GetChatsResponse
+	(*emptypb.Empty)(nil),                 // 15: google.protobuf.Empty
 }
 var file_proto_chat_proto_depIdxs = []int32{
 	0,  // 0: chat.ChatResponse.type:type_name -> chat.ChatType
@@ -988,15 +991,17 @@ var file_proto_chat_proto_depIdxs = []int32{
 	11, // 13: chat.ChatService.SendMessage:input_type -> chat.SendMessageRequest
 	12, // 14: chat.ChatService.GetChats:input_type -> chat.GetChatsRequest
 	4,  // 15: chat.ChatService.createMeetingChat:input_type -> chat.CreateMeetingChatRequest
-	2,  // 16: chat.ChatService.GetOrCreateRequestChat:output_type -> chat.ChatResponse
-	2,  // 17: chat.ChatService.GetMeetingChat:output_type -> chat.ChatResponse
-	7,  // 18: chat.ChatService.GetChat:output_type -> chat.GetChatResponse
-	10, // 19: chat.ChatService.GetMessages:output_type -> chat.GetMessagesResponse
-	9,  // 20: chat.ChatService.SendMessage:output_type -> chat.Message
-	14, // 21: chat.ChatService.GetChats:output_type -> chat.GetChatsResponse
-	2,  // 22: chat.ChatService.createMeetingChat:output_type -> chat.ChatResponse
-	16, // [16:23] is the sub-list for method output_type
-	9,  // [9:16] is the sub-list for method input_type
+	4,  // 16: chat.ChatService.AddToMeetingChat:input_type -> chat.CreateMeetingChatRequest
+	2,  // 17: chat.ChatService.GetOrCreateRequestChat:output_type -> chat.ChatResponse
+	2,  // 18: chat.ChatService.GetMeetingChat:output_type -> chat.ChatResponse
+	7,  // 19: chat.ChatService.GetChat:output_type -> chat.GetChatResponse
+	10, // 20: chat.ChatService.GetMessages:output_type -> chat.GetMessagesResponse
+	9,  // 21: chat.ChatService.SendMessage:output_type -> chat.Message
+	14, // 22: chat.ChatService.GetChats:output_type -> chat.GetChatsResponse
+	2,  // 23: chat.ChatService.createMeetingChat:output_type -> chat.ChatResponse
+	15, // 24: chat.ChatService.AddToMeetingChat:output_type -> google.protobuf.Empty
+	17, // [17:25] is the sub-list for method output_type
+	9,  // [9:17] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name

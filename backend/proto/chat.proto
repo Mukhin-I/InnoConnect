@@ -4,6 +4,8 @@ package chat;
 
 option go_package = "pkg/pb/chat";
 
+import "google/protobuf/empty.proto";
+
 service ChatService {
 
   // POST /requests/{id}/chat
@@ -31,6 +33,9 @@ service ChatService {
 
   rpc createMeetingChat(CreateMeetingChatRequest)
     returns (ChatResponse);
+
+  rpc AddToMeetingChat(CreateMeetingChatRequest)
+    returns (google.protobuf.Empty);
 }
 
 enum ChatType {

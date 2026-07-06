@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type ChatUsecase interface {
@@ -20,6 +21,7 @@ type ChatUsecase interface {
 	GetMessages(ctx context.Context, chatID, userID int64) ([]entity.Message, error)
 	SendMessage(ctx context.Context, chatID, userID int64, text string) (entity.Message, error)
 	CreateMeetingChat(ctx context.Context, meetingID int64, creator_id int64, creator_name string) (entity.Chat, error)
+	AddToMeetingChat(ctx context.Context, meetingID int64, user_id int64, user_name string) (error)
 }
 
 type ChatServer struct {
@@ -186,4 +188,8 @@ func (s *ChatServer) SendMessage(
 	}
 
 	return toMessage(message), nil
+}
+
+func (c *ChatServer) AddToMeetingChat(ctx context.Context, req *pb.CreateMeetingChatRequest) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, c.usecase.AddToMeetingChat(ctx, req.MeetingId, req.CreatorId, req.CreatorName)
 }
