@@ -212,7 +212,7 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER_USER}", "-d", "postgres", "-p", "${DB_USER_PORT}"]
       interval: 8s
-      timeout: 10s
+      timeout: 30s
       retries: 8
       start_period: 30s
     volumes:
