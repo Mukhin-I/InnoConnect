@@ -6,11 +6,19 @@ export const useAuth = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const expiresIn = localStorage.getItem('expiresIn');
     
-    if (token && expiresIn) {
+    if (!token) {
+      setIsAuthenticated(false);
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp * 1000;
       const currentTime = Date.now();
-      if (parseInt(expiresIn) > currentTime) {
+      
+      if (exp > currentTime) {
         setIsAuthenticated(true);
       } else {
         localStorage.removeItem('token');
@@ -18,9 +26,14 @@ export const useAuth = () => {
         localStorage.removeItem('expiresIn');
         setIsAuthenticated(false);
       }
-    } else {
+    } catch (error) {
+      console.error('Invalid token:', error);
+      localStorage.removeItem('token');
+      localStorage.removeItem('tokenType');
+      localStorage.removeItem('expiresIn');
       setIsAuthenticated(false);
     }
+    
     setIsLoading(false);
   }, []);
 

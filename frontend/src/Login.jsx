@@ -40,8 +40,8 @@ function Login() {
 
         if (response.status === 200) {
             localStorage.setItem('token', data.token);
-            localStorage.setItem('tokenType', data.type);
-            localStorage.setItem('expiresIn', data.expiresIn);
+            const expiresInMs = Date.now() + (data.expiresIn || 3600) * 1000;
+            localStorage.setItem('expiresIn', expiresInMs.toString());
 
             setSuccess('Успешный вход!');
             setEmail('');
