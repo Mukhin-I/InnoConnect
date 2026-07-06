@@ -25,6 +25,7 @@ function EventCard({ eventId, onClose }) {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const API_URL = import.meta.env.VITE_API_URL;
+  const isAuthenticated = useAuth();
 
   // Date in such format: day.month, hour:minutes like 02.02, 15:05
   const formatDate = (dateString) => {
