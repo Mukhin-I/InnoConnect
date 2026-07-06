@@ -85,6 +85,7 @@ func (h *Handler) GetRequests(c *gin.Context) {
 	for _, r := range resp.Requests {
 		requests = append(requests, entity.RequestShort{
 			RequestID: r.Id,
+			CreatorID: r.CreatorId,
 			Title:     r.Title,
 			Type:      r.Type,
 			Deadline:  r.Deadline,
