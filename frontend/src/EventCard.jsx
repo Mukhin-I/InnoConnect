@@ -10,6 +10,7 @@ import studyIcon from './assets/learningActiveIcon.png';
 import { useState, useEffect } from 'react';
 import Category from './components/Category';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
 
 const CATEGORY_ITEMS = {
   "Спорт": sportIcon,
@@ -23,6 +24,7 @@ function EventCard({ eventId, onClose }) {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const { isAuthenticated } = useAuth();
 
   // Date in such format: day.month, hour:minutes like 02.02, 15:05
   const formatDate = (dateString) => {
@@ -43,6 +45,10 @@ function EventCard({ eventId, onClose }) {
   };
 
   const handleOpenChat = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
     try {
       const response = await fetch(`http://localhost:8080/meetings/${eventId}/chat`, {
         method: 'GET',
@@ -62,6 +68,13 @@ function EventCard({ eventId, onClose }) {
       console.error('Ошибка:', error);
     }
   };
+
+  const handleSign = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
+  }
 
   useEffect(() => {
     if (!eventId) return;
@@ -134,7 +147,7 @@ function EventCard({ eventId, onClose }) {
               <h2>{event.address || 'Адрес не указан'}</h2>
             </div>
             <div className="button-container">
-              <button className="sign-button">Записаться</button>
+              <button className="sign-button" onClick={handleSign}>Записаться</button>
               <button className="chat-button"
               onClick={handleOpenChat}>
                 <img src={chatIcon} alt="chat" />
