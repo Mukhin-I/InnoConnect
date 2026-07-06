@@ -18,6 +18,9 @@ function Map() {
 
 
   const [activeFilter, setActiveFilter] = useState('Спорт');
+  const filteredMeetings = meetings.filter(
+    meeting => meeting.type === activeFilter
+  );
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 }); // Start hidden until measured
   const containerRef = useRef(null);
 
@@ -25,6 +28,7 @@ function Map() {
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
+    setSelectedMeetingId(null);
   };
 
   useEffect(() => {
@@ -104,8 +108,8 @@ function Map() {
         </div>
 
         <div className="map-container-placeholder">
-          <MapBox 
-            meetings={meetings}
+          <MapBox
+            meetings={filteredMeetings}
             selectedMeetingId={selectedMeetingId}
             setSelectedMeetingId={setSelectedMeetingId}
           />
