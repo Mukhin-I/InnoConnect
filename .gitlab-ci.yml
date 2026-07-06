@@ -53,7 +53,7 @@ test_autorization:
   script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
     - apk add --no-cache curl
-    - status=$(curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://localhost:8080/meetings)
+    - status=$(curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 3 --retry-connrefused http://localhost:8080/meetings -v)
     - echo "Got status $status"
     - |
       if [ "$status" -ne 403 ]; then
