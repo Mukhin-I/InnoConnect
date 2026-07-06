@@ -76,9 +76,10 @@ func (x *User) GetName() string {
 type RequestShort struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
-	Deadline      string                 `protobuf:"bytes,4,opt,name=deadline,proto3" json:"deadline,omitempty"`
+	CreatorId     int64                  `protobuf:"varint,2,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Deadline      string                 `protobuf:"bytes,5,opt,name=deadline,proto3" json:"deadline,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -116,6 +117,13 @@ func (*RequestShort) Descriptor() ([]byte, []int) {
 func (x *RequestShort) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *RequestShort) GetCreatorId() int64 {
+	if x != nil {
+		return x.CreatorId
 	}
 	return 0
 }
@@ -456,12 +464,14 @@ const file_proto_request_proto_rawDesc = "" +
 	"\x13proto/request.proto\x12\arequest\"*\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"d\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\x83\x01\n" +
 	"\fRequestShort\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x14\n" +
-	"\x05title\x18\x02 \x01(\tR\x05title\x12\x12\n" +
-	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1a\n" +
-	"\bdeadline\x18\x04 \x01(\tR\bdeadline\"\xdb\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
+	"\n" +
+	"creator_id\x18\x02 \x01(\x03R\tcreatorId\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\x12\x1a\n" +
+	"\bdeadline\x18\x05 \x01(\tR\bdeadline\"\xdb\x01\n" +
 	"\vRequestFull\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\acreator\x18\x02 \x01(\v2\r.request.UserR\acreator\x12\x14\n" +

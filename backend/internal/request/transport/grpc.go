@@ -86,6 +86,7 @@ func (s *RequestServer) GetRequest(ctx context.Context, req *pb.GetRequestReques
 func toRequestShort(request entity.Request) *pb.RequestShort {
 	return &pb.RequestShort{
 		Id:       request.ID,
+		CreatorId: request.CreatorID,
 		Title:    request.Title,
 		Type:     request.Type,
 		Deadline: request.Deadline.Format(time.RFC3339),
