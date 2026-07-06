@@ -8,12 +8,14 @@ import (
 	pb "innoconnect/pkg/pb/meeting"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type MeetingUsecase interface {
 	Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error)
 	GetAll(ctx context.Context) ([]entity.Meeting, error)
 	GetByID(ctx context.Context, id int64) (entity.Meeting, error)
+	ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) (error)
 }
 
 type MeetingServer struct {
@@ -106,4 +108,8 @@ func (s *MeetingServer) GetMeeting(
 		},
 		Participants: []*pb.User{},
 	}, nil
+}
+
+func (s *MeetingServer) ApplyOnMeeting(ctx context.Context, req *pb.ApplyOnMeetingRequest) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, s.usecase.ApplyOnMeeting(ctx, req.User.Id, req.User.Name, req.MeetingId)
 }

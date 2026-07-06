@@ -2,9 +2,12 @@ package repo
 
 import (
 	"context"
+	"errors"
+	"strings"
+
+	"innoconnect/internal/meeting/entity"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"innoconnect/internal/meeting/entity"
 )
 
 type Repository struct {
@@ -152,4 +155,30 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.Meeting, err
 	}
 
 	return meeting, nil
+}
+
+func (r *Repository) ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) error {
+    // Check context first
+    select {
+    case <-ctx.Done():
+        return ctx.Err()
+    default:
+    }
+
+    query := `
+        INSERT INTO meeting_participants 
+        (meeting_id, user_id, user_name) 
+        VALUES ($1, $2, $3)
+    `
+
+    _, err := r.pool.Exec(ctx, query, id, userid, username)
+    if err != nil {
+        // Check for duplicate entry
+        if strings.Contains(err.Error(), "duplicate key") {
+            return errors.New("user already applied to this meeting")
+        }
+        return err
+    }
+
+    return nil
 }
