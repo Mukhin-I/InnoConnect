@@ -44,35 +44,37 @@ test:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
     - echo "Testing"
 
-test_autorization:
+test_authorization:
   stage: test
   image: docker:27
   before_script:
     - cp .env.example .env
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
-  script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
+  script:
     - NETWORK=$(docker inspect $(docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
-
-    - status=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" --retry 3 --retry-delay 3 --retry-connrefused http://gateway:8080/meetings)
-    - echo "Got status $status"
     - |
-      if [ "$status" -ne 200 ]; then
-        echo "FAIL: expected 200, got $status"
-        docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
-        exit 1
-      fi
-    - echo "PASS':' GET /meetings returned 200 as expected"
+      check_status() {
+        method="$1"
+        path="$2"
+        expected="$3"
+        actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
+        echo "Got status $actual"
+        if [ "$actual" -ne "$expected" ]; then
+          echo "FAIL: $method $path expected $expected, got $actual"
+          docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
+          exit 1
+        fi
+        echo "PASS: $method $path returned $expected as expected"
+      }
 
-    - status_post=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X POST --retry 3 --retry-delay 3 --retry-connrefused http://gateway:8080/meetings)
-    - echo "Got status $status_post"
-    - |
-      if [ "$status_post" -ne 401 ]; then
-        echo "FAIL: expected 401, got $status_post"
-        docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
-        exit 1
-      fi
-    - echo "PASS':' POST /meetings returned 401 as expected"
+    - echo "== /meetings without JWT =="
+    - check_status GET /meetings 200
+    - check_status POST /meetings 401
+
+    - echo "== /requests without JWT =="
+    - check_status GET /requests 200
+    - check_status POST /requests 401
   after_script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
 
@@ -85,12 +87,13 @@ deploy:
   before_script:
     - apk add --no-cache curl openssh-client
     - >
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --output deploy_key
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --output cd
       "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$SSH_KEY_FILE_ID/download"
-    - chmod 600 deploy_key
+    - chmod 600 cd
     - eval $(ssh-agent -s)
-    - ssh-add deploy_key
+    - ssh-add cd
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && git fetch origin main && git checkout main && git reset --hard origin/main && git clean -fd && sudo lsof -ti:80 | xargs -r kill -9; && cd innoconnect && cp .env.example .env && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down &&docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && cd frontend && cp /.env /innoconnect/frontend/.env && grep -rl 'localhost' . | xargs sed -i 's/localhost/10.93.27.21/g' && (npm run dev&)"
+    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && git fetch origin main "
+    #&& git checkout main && git reset --hard origin/main && git clean -fd && sudo lsof -ti:80 | xargs -r kill -9; && cd innoconnect && cp .env.example .env && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down &&docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && cd frontend && cp /.env /innoconnect/frontend/.env && grep -rl 'localhost' . | xargs sed -i 's/localhost/10.93.27.21/g' && (npm run dev&)"
