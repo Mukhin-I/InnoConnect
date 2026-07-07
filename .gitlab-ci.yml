@@ -131,7 +131,6 @@ deploy:
       "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$SSH_KEY_FILE_ID/download"
     - chmod 600 cd
     - eval $(ssh-agent -s)
-    - file cd
     - head -1 cd
     - ssh-add cd
     - mkdir -p ~/.ssh
