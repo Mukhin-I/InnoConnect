@@ -18,7 +18,7 @@ function Map() {
 
 
   const [activeFilter, setActiveFilter] = useState('Спорт');
-  const filteredMeetings = meetings.filter(
+  const filteredMeetings = (meetings || []).filter(
     meeting => meeting.type === activeFilter
   );
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 }); // Start hidden until measured
