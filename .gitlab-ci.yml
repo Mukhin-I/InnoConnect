@@ -128,10 +128,9 @@ deploy:
     - apk add --no-cache curl openssh-client
     - >
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --output cd
-      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$SSH_KEY_FILE_ID/download"
+      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$CI_FILE_ID/download"
     - chmod 600 cd
     - eval $(ssh-agent -s)
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" "$CI_API_V4_URL/projects/$CI_PROJECT_ID/secure_files"'
     - head -1 cd
     - ssh-add cd
     - mkdir -p ~/.ssh
