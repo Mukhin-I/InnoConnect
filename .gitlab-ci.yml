@@ -133,7 +133,7 @@ test_authorization:
       "type":"Спорт"
       }'
 
-    - check_status POST /meetings 200 "$TOKEN" "$MEETING_BODY"
+    - check_status POST /meetings 201 "$TOKEN" "$MEETING_BODY"
 
     - echo "== /requests with JWT =="
     - REQUEST_BODY='{
@@ -143,7 +143,7 @@ test_authorization:
       "type":"Помощь",
       "deadline":"2026-07-08T18:00:00Z"
       }'
-    - check_status POST /requests 200 "$TOKEN" "$REQUEST_BODY"
+    - check_status POST /requests 201 "$TOKEN" "$REQUEST_BODY"
   after_script:
     - $COMPOSE down -v --remove-orphans || true
 
