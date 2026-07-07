@@ -8,6 +8,7 @@ import (
 
 	"innoconnect/internal/chat/entity"
 	"innoconnect/internal/chat/repo"
+	"innoconnect/pkg/logger"
 )
 
 type ChatUsecase struct {
@@ -112,6 +113,7 @@ func (u *ChatUsecase) CreateMeetingChat(ctx context.Context, meetingID, creatorI
 func (u *ChatUsecase) AddToMeetingChat(ctx context.Context, meetingID int64, user_id int64, user_name string) (error) {
 	chat, err := u.repo.GetMeetingChat(ctx, meetingID)
 	if err != nil {
+		logger.Error(err.Error())
 		return err
 	}
 	return u.repo.AddParticipant(ctx, nil, chat.ID, user_id, user_name)

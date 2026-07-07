@@ -416,9 +416,15 @@ func (r *Repository) AddParticipant(
 	userID int64,
 	userName string,
 ) error {
-
+	newTransaction := false
 	if tx == nil {
-		tx, _ = r.db.Begin(ctx)
+		newTransaction = true
+		var err error
+		tx, err = r.db.Begin(ctx)
+		if err != nil {
+			logger.Error(err.Error())
+			return err
+		}
 		defer tx.Rollback(ctx)
 	}
 
@@ -433,7 +439,15 @@ func (r *Repository) AddParticipant(
 
 	_, err := tx.Exec(ctx, stmt, chatID, userID, userName)
 	if err != nil {
+		logger.Error(err.Error())
 		return err
+	}
+
+	if newTransaction {
+		if err := tx.Commit(ctx); err != nil {
+			logger.Error(err.Error())
+			return err
+		}
 	}
 
 	return nil
