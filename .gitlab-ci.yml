@@ -137,5 +137,19 @@ deploy:
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd innoconnect && git fetch origin main "
-    #&& git checkout main && git reset --hard origin/main && git clean -fd && sudo lsof -ti:80 | xargs -r kill -9 && cp .env.example .env && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && sed -i "s/localhost/10.93.27.21/g" .env && cd frontend && sed -i "s/port: *[0-9]\+/port: 80/" frontend/vite.config.js && (npm run dev&)"
+  - >
+    ssh "$DEPLOY_USER@$DEPLOY_HOST" '
+      cd innoconnect &&
+      git fetch origin main &&
+      git checkout main &&
+      git reset --hard origin/main &&
+      git clean -fd &&
+      sudo lsof -ti:80 | xargs -r kill -9 &&
+      cp .env.example .env &&
+      sed -i "s/localhost/10.93.27.21/g" .env &&
+      docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down &&
+      docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build &&
+      cd frontend &&
+      sed -i "s/port: *[0-9]\+/port: 80/" vite.config.js &&
+      (npm run dev &)
+    '
