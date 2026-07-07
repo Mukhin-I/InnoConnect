@@ -75,6 +75,34 @@ function EventCard({ eventId, onClose }) {
       navigate('/welcome');
       return;
     }
+
+    try {
+      const response = await fetch(`${API_URL}/meetings/${eventId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        const updatedEvent = await fetch(`${API_URL}/meetings/${eventId}`);
+        if (updatedEvent.ok) {
+          const data = await updatedEvent.json();
+          setEvent(data);
+        }
+      } else if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('tokenType');
+        localStorage.removeItem('expiresIn');
+        navigate('/welcome');
+      } else {
+        const errorData = await response.json();
+        console.error(`Ошибка: ${errorData.message || 'Не удалось записаться'}`);
+      }
+    } catch (error) {
+      console.error('Ошибка при записи:', error);
+    }
   }
 
   useEffect(() => {
