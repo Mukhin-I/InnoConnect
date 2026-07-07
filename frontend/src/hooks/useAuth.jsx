@@ -14,7 +14,16 @@ export const useAuth = () => {
     }
     
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      //const payload = JSON.parse(atob(token.split('.')[1]));
+      const base64Url = token.split('.')[1];
+
+      const base64 = base64Url
+        .replace(/-/g, '+')
+        .replace(/_/g, '/')
+        .padEnd(base64Url.length + (4 - base64Url.length % 4) % 4, '=');
+
+      const payload = JSON.parse(atob(base64));
+
       const exp = payload.exp * 1000;
       const currentTime = Date.now();
       

@@ -238,5 +238,21 @@ func (h *Handler) ApplyOnMeeting(c *gin.Context) {
         return
     }
 
+	_, err = h.chatClient.AddToMeetingChat(
+        c.Request.Context(),
+        &chat.CreateMeetingChatRequest{
+            // TODO rename on user
+            CreatorId:   userID,
+        	CreatorName: name,
+            MeetingId: id,
+        },
+    )
+
+	if err != nil {
+        logger.Error("Failed to add user to a meeting chat: " + err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to apply on meeting"})
+        return
+    }
+
     c.JSON(200, http.StatusOK)
 }
