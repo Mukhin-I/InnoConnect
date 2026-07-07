@@ -53,7 +53,7 @@ test_authorization:
   script:
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
     - NETWORK=$(docker inspect $(docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
-    - >
+    - |
       check_status() {
         method="$1"; path="$2"; expected="$3"; token="$4"
         if [ -n "$token" ]; then
@@ -82,7 +82,7 @@ test_authorization:
     - TEST_NAME="cicd"
     - TEST_EMAIL="me.test@example.com"
     - TEST_PASSWORD="123"
-    - >
+    - |
       REGISTER_STATUS=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X POST \
         -H "Content-Type: application/json" \
         -d "{\"name\":\"$TEST_NAME\",\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
@@ -96,7 +96,7 @@ test_authorization:
       echo "PASS: register returned $REGISTER_STATUS"
 
     - echo "== login test user =="
-    - >
+    - |
       LOGIN_RESPONSE=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -X POST \
         -H "Content-Type: application/json" \
         -d "{\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
@@ -132,10 +132,12 @@ deploy:
     - chmod 600 cd
     - eval $(ssh-agent -s)
     - ssh -v
+    - file cd
+    - head -1 cd
     - ssh-add cd
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
     - ssh -v
     - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && git fetch origin main "
-    #&& git checkout main && git reset --hard origin/main && git clean -fd && sudo lsof -ti:80 | xargs -r kill -9 && cp .env.example .env && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && cd frontend && grep -rl 'localhost' . | xargs sed -i 's/localhost/10.93.27.21/g' && (npm run dev&)"
+    #&& git checkout main && git reset --hard origin/main && git clean -fd && sudo lsof -ti:80 | xargs -r kill -9 && cp .env.example .env && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && sed -i "s/localhost/10.93.27.21/g" .env && cd frontend && sed -i "s/port: *[0-9]\+/port: 80/" frontend/vite.config.js && (npm run dev&)"
