@@ -8,7 +8,7 @@
 
 .request-creation-page {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     padding: 0.5vh 4vw;
     background-color: #f5f5f5;
     background-image: url('./assets/bg.png');
@@ -16,6 +16,7 @@
     background-position: center;
     background-size: cover;      
     margin: 0 auto;
+    padding-bottom: 30px;
 }
 
 .close-button-creation {
@@ -31,6 +32,7 @@
   margin-left: auto;
 }
 
+
 .header-top {
     display: flex;
     flex-direction: row;
@@ -42,10 +44,12 @@
     flex-direction: column;
     text-align: left;
     width: 68vw;
+    margin-top: 40px;
+    padding-left: 0 !important;
 }
 
 .header-top h2 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
     font-size: 4.7vw;
     font-weight: 600;
     color: #00130c;
@@ -53,9 +57,9 @@
 }
 
 .text-header h1 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
     font-size: 4vw;
-    font-weight: 600;
+    font-weight: 700 !important;
     color: #000000;
     margin-bottom: 3vh;
     letter-spacing: 0.5vw;
@@ -69,6 +73,7 @@
     line-height: 1.2;
     margin-top: 0;
     margin-bottom: 2.25vh;
+    width: 65%;
 }
 
 .creation-card {

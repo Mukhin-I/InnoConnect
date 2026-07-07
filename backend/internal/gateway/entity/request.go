@@ -21,6 +21,7 @@ type CreateRequestResponse struct {
 type RequestShort struct {
 	RequestID int64  `json:"request_id"`
 	Title     string `json:"title"`
+	CreatorID int64 `json:"creator_id"`
 	Type      string `json:"type"`
 	Deadline  string `json:"deadline"`
 }

@@ -4,10 +4,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"innoconnect/internal/gateway/entity"
+	"innoconnect/internal/gateway/usecase"
 	"innoconnect/pkg/logger"
 	requestpb "innoconnect/pkg/pb/request"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) CreateRequest(c *gin.Context) {
@@ -29,11 +31,13 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 
 	logger.Info("Sending gRPC request to create request")
 
+	userID, name, err := usecase.GetUserFromToken(c)
+
 	request, err := h.requestClient.CreateRequest(
 		c.Request.Context(),
 		&requestpb.CreateRequestRequest{
-			CreatorId:      1,
-			CreatorName:    "Pavel Khramov",
+			CreatorId:      userID,
+			CreatorName:    name,
 			Title:          req.Title,
 			Description:    req.Description,
 			RequesterAddress: req.RequesterAddress,
@@ -81,6 +85,7 @@ func (h *Handler) GetRequests(c *gin.Context) {
 	for _, r := range resp.Requests {
 		requests = append(requests, entity.RequestShort{
 			RequestID: r.Id,
+			CreatorID: r.CreatorId,
 			Title:     r.Title,
 			Type:      r.Type,
 			Deadline:  r.Deadline,

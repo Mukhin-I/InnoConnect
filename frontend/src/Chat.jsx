@@ -12,7 +12,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function Chat() {
-const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
   const { id: chatId } = useParams();
 
   const [contact, setContact] = useState({ name: 'Иван Петров', role: 'Житель Иннополиса' });
@@ -43,14 +44,14 @@ const navigate = useNavigate();
   useEffect(() => {
     const load = async () => {
       try {
-        const meRes = await fetch('http://localhost:8080/me', {
+        const meRes = await fetch(`${API_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const me = meRes.ok ? await meRes.json() : null;
         const meId = me ? me.id : null;
         setMyId(meId);
 
-        const infoRes = await fetch(`http://localhost:8080/chats/${chatId}`, {
+        const infoRes = await fetch(`${API_URL}/chats/${chatId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (infoRes.ok) {
@@ -59,17 +60,19 @@ const navigate = useNavigate();
           if (other) setContact({ name: other.name, role: 'Житель Иннополиса' });
         }
 
-        const msgRes = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
+        const msgRes = await fetch(`${API_URL}/chats/${chatId}/messages`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (msgRes.ok) {
           const data = await msgRes.json();
           setMessages(toView(data.messages, meId));
         } else {
-          useMockData();
+          //useMockData();
+          setMessages([]);
         }
       } catch (error) {
-        useMockData();
+        //useMockData();
+        setMessages([]);
       } finally {
         setLoading(false);
       }
@@ -92,7 +95,7 @@ const navigate = useNavigate();
     if (!text) return;
     setDraft('');
     try {
-      const res = await fetch(`http://localhost:8080/chats/${chatId}/messages`, {
+      const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +119,7 @@ const navigate = useNavigate();
       <header className="chat-header">
         <div className="header-left">
         <button className="rtr-back-btn" onClick={() => navigate('/chats')}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>

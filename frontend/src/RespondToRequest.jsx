@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
 import './RespondToRequest.css';
 import logoIcon from './assets/logo.svg';
 import notificationIcon from './assets/notifications.svg';
@@ -16,11 +17,14 @@ const RespondToRequest = () => {
   const navigate = useNavigate();
   const [requestData, setRequestData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem('token');
+  const API_URL = import.meta.env.VITE_API_URL;
+  const isAuthenticated = useAuth();
 
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/requests/${id || 1}`);
+        const response = await fetch(`${API_URL}/requests/${id || 1}`);
         if (response.ok) {
           const data = await response.json();
           setRequestData(data);
@@ -34,7 +38,7 @@ const RespondToRequest = () => {
       }
     };
     fetchRequest();
-  }, [id]);
+  }, [id, API_URL]);
 
   const useMockData = () => {
     setRequestData({
@@ -51,6 +55,45 @@ const RespondToRequest = () => {
     });
   };
 
+  const handleOpenChat = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/requests/${id}/chat`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        navigate(`/chat/${data.chat_id}`);
+      } else {
+        console.error('Ошибка при создании/получении чата');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  };
+
+  const handleResponse = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
+  }
+
+  const typeOfReq = {
+        "Помощь": "helpreq",
+        "Вещи": "stuffreq",
+        "Транспорт": "transportreq",
+        "Прочее": "otherreq",
+    }
+
   if (loading) return <div className="rtr-loading">Загрузка...</div>;
   if (!requestData) return <div className="rtr-error">Запрос не найден</div>;
 
@@ -58,7 +101,7 @@ const RespondToRequest = () => {
     <div className="respond-page-wrapper">
       <div className="rtr-header">
         <div className="rtr-header-left">
-          <button className="rtr-back-btn" onClick={() => navigate('/')}>
+          <button className="rtr-back-btn" onClick={() => navigate('/requests')}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -73,7 +116,7 @@ const RespondToRequest = () => {
 
       <div className="rtr-card main-info-card">
         <div className="rtr-icon-box">
-         <img src={binIcon} alt="Bin" className="rtr-iconbox-icon" />
+         <div className={`type-request-icon-card ${typeOfReq[request.type]}`}></div>
         </div>
         <div className="rtr-main-details">
           <span className="rtr-category">{requestData.type}</span>
@@ -119,10 +162,11 @@ const RespondToRequest = () => {
 
       <div className="rtr-bottom-actions">
         <button className="rtr-btn-primary">
-         <img src={heartIcon} alt="Heart" className="rtr-iconbox-icon" />
+         <img src={heartIcon} alt="Heart" className="rtr-iconbox-icon" onclick={handleResponse} />
           Откликнуться
         </button>
-        <button className="rtr-btn-secondary">
+        <button className="rtr-btn-secondary"
+        onClick={handleOpenChat}>
          <img src={messIcon} alt="Mess" className="rtr-iconbox-icon" />
           Написать автору
         </button>

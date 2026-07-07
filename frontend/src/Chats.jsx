@@ -16,20 +16,25 @@ function Chats() {
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const fetchChats = async () => {
             setLoading(true);
 
             try {
-                const response = await fetch("http://localhost:8080/chats");
+                const token = localStorage.getItem('token');
+
+                const response = await fetch(`${API_URL}/chats`, {
+                headers: { Authorization: `Bearer ${token}` },
+                });
 
                 if (!response.ok) {
                     throw new Error("Ошибка загрузки");
                 }
 
                 const data = await response.json();
-                setChats(data.chats);
+                setChats(data.chats ?? []);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -53,18 +58,16 @@ function Chats() {
     return (
         <>
             <div className="chats-page">
+                <header className="profile-header">
+                          <div className="logo-container">
+                            <img src={logoIcon} alt="Logo" className="logo-icon" />
+                          </div>
+                          <div className="header-icons">
+                            <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                            <img src={settingsIcon} alt="Settings" className="header-icon" />
+                          </div>
+                </header>
                 <div className="chats-page-content">
-                    <div className="header-top">
-                    <h2>InnoConnect</h2>
-                    <IconButton 
-                        icon={notificationIcon} 
-                        alt=""
-                    />
-                    <IconButton 
-                        icon={settingsIcon} 
-                        alt=""
-                    />
-                    </div>
 
                     <h1 className="chats-header">Чаты</h1>
 

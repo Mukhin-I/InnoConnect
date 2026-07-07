@@ -4,6 +4,8 @@ package chat;
 
 option go_package = "pkg/pb/chat";
 
+import "google/protobuf/empty.proto";
+
 service ChatService {
 
   // POST /requests/{id}/chat
@@ -25,6 +27,15 @@ service ChatService {
   // POST /chats/{chat_id}/messages
   rpc SendMessage(SendMessageRequest)
       returns (Message);
+
+  rpc GetChats(GetChatsRequest)
+    returns (GetChatsResponse);
+
+  rpc createMeetingChat(CreateMeetingChatRequest)
+    returns (ChatResponse);
+
+  rpc AddToMeetingChat(CreateMeetingChatRequest)
+    returns (google.protobuf.Empty);
 }
 
 enum ChatType {
@@ -50,11 +61,20 @@ message GetOrCreateRequestChatRequest {
   int64 user_id = 2;
 }
 
+message CreateMeetingChatRequest {
+  int64 meeting_id = 1;
+
+  // extracted from JWT by Gateway
+  int64 creator_id = 2;
+  string creator_name = 3;
+}
+
 message GetMeetingChatRequest {
   int64 meeting_id = 1;
 
   // extracted from JWT by Gateway
-  int64 user_id = 2;
+  int64 creator_id = 2;
+  string creator_name = 3;
 }
 
 message GetChatRequest {
@@ -62,6 +82,7 @@ message GetChatRequest {
 
   // requester
   int64 user_id = 2;
+  string creator_name = 3;
 }
 
 message GetChatResponse {
@@ -100,3 +121,29 @@ message SendMessageRequest {
 
   string text = 3;
 }
+
+message GetChatsRequest {
+  // extracted from JWT by Gateway
+  int64 user_id = 1;
+}
+
+message ChatPreview {
+  int64 chat_id = 1;
+
+  ChatType type = 2;
+
+  // Other participants in the chat.
+  // For private chats this will contain one user.
+  // For meeting chats it contains all participants except the requester.
+  repeated User participants = 3;
+
+  // Title of the related request or meeting.
+  string title = 4;
+
+  Message last_message = 5;
+}
+
+message GetChatsResponse {
+  repeated ChatPreview chats = 1;
+}
+

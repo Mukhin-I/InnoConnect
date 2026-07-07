@@ -9,6 +9,8 @@ import socialIcon from './assets/socialActiveIcon.png';
 import studyIcon from './assets/learningActiveIcon.png';
 import { useState, useEffect } from 'react';
 import Category from './components/Category';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
 
 const CATEGORY_ITEMS = {
   "Спорт": sportIcon,
@@ -20,6 +22,10 @@ function EventCard({ eventId, onClose }) {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+  const API_URL = import.meta.env.VITE_API_URL;
+  const isAuthenticated = useAuth();
 
   // Date in such format: day.month, hour:minutes like 02.02, 15:05
   const formatDate = (dateString) => {
@@ -39,13 +45,73 @@ function EventCard({ eventId, onClose }) {
     }
   };
 
+  const handleOpenChat = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/meetings/${eventId}/chat`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        navigate(`/group-chat/${data.chat_id}`);
+      } else {
+        console.error('Ошибка при получении чата');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  };
+
+  const handleSign = async () => {
+    if (!isAuthenticated) {
+      navigate('/welcome');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/meetings/${eventId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        const updatedEvent = await fetch(`${API_URL}/meetings/${eventId}`);
+        if (updatedEvent.ok) {
+          const data = await updatedEvent.json();
+          setEvent(data);
+        }
+      } else if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('tokenType');
+        localStorage.removeItem('expiresIn');
+        navigate('/welcome');
+      } else {
+        const errorData = await response.json();
+        console.error(`Ошибка: ${errorData.message || 'Не удалось записаться'}`);
+      }
+    } catch (error) {
+      console.error('Ошибка при записи:', error);
+    }
+  }
+
   useEffect(() => {
     if (!eventId) return;
 
     const fetchEvent = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:8080/meetings/${eventId}`);
+        const response = await fetch(`${API_URL}/meetings/${eventId}`);
         if (!response.ok) throw new Error('Ошибка загрузки');
         const data = await response.json();
         setEvent(data);
@@ -110,8 +176,9 @@ function EventCard({ eventId, onClose }) {
               <h2>{event.address || 'Адрес не указан'}</h2>
             </div>
             <div className="button-container">
-              <button className="sign-button">Записаться</button>
-              <button className="chat-button">
+              <button className="sign-button" onClick={handleSign}>Записаться</button>
+              <button className="chat-button"
+              onClick={handleOpenChat}>
                 <img src={chatIcon} alt="chat" />
               </button>
             </div>

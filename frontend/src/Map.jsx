@@ -18,17 +18,23 @@ function Map() {
 
 
   const [activeFilter, setActiveFilter] = useState('Спорт');
+  const filteredMeetings = (meetings || []).filter(
+    meeting => meeting.type === activeFilter
+  );
   const [highlightStyle, setHighlightStyle] = useState({ opacity: 0 }); // Start hidden until measured
   const containerRef = useRef(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
+    setSelectedMeetingId(null);
   };
 
   useEffect(() => {
     async function fetchMeetings() {
       try {
-        const response = await fetch("http://localhost:8080/meetings");
+        const response = await fetch(`${API_URL}/meetings`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch meetings");
@@ -43,7 +49,7 @@ function Map() {
     }
 
     fetchMeetings();
-  }, []);
+  }, [API_URL]);
 
 
   useEffect(() => {
@@ -102,8 +108,8 @@ function Map() {
         </div>
 
         <div className="map-container-placeholder">
-          <MapBox 
-            meetings={meetings}
+          <MapBox
+            meetings={filteredMeetings}
             selectedMeetingId={selectedMeetingId}
             setSelectedMeetingId={setSelectedMeetingId}
           />

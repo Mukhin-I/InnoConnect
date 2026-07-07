@@ -14,6 +14,41 @@
   overflow: hidden;
 }
 
+.type-request-icon-card {
+    width: 6.502vw;
+    height: 6.502vw;
+    background: #7A9681;
+}
+
+.helpreq {
+    mask: url('../assets/helprequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/helprequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.stuffreq {
+    mask: url('../assets/stuffrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/stuffrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.transportreq {
+    mask: url('../assets/transportrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/transportrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.otherreq {
+    mask: url('../assets/otherrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/otherrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+
 .rtr-header {
   width: 100%;
   max-width: 400px;

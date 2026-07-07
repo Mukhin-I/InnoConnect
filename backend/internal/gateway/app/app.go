@@ -1,16 +1,17 @@
 package app
 
 import (
-	"github.com/gin-gonic/gin"
 	"innoconnect/internal/gateway/grpcclient"
 	"innoconnect/internal/gateway/transport"
 	"innoconnect/pkg/config"
 	"innoconnect/pkg/logger"
-	"github.com/gin-contrib/cors"
-	swaggerFiles "github.com/swaggo/files"
-    ginSwagger "github.com/swaggo/gin-swagger"
 
-    _ "innoconnect/docs"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "innoconnect/docs"
 )
 
 // Function for setuping Gin server
@@ -27,15 +28,23 @@ func CreateServer() error {
 		return err
 	}
 
-	handler := transport.NewHandler(meetingClient, requestClient)
+	chatClient, err := grpcclient.NewChatClient()
+	userClient, err := grpcclient.NewUserClient()
+	if err != nil {
+		logger.Error("Server startup failed" + err.Error())
+		return err
+	}
+
+	handler := transport.NewHandler(meetingClient, requestClient, chatClient, userClient)
+
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-            "http://localhost:5173",
-            "http://10.93.27.21:5173",
+			"http://localhost:5173",
+			"http://10.93.27.21:5173",
 			"http://10.93.27.21",
-        },
+		},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{
 			"Origin",
@@ -62,16 +71,29 @@ func CreateServer() error {
 }
 
 func setEndpoints(router *gin.Engine, h *transport.Handler) {
-	router.POST("/meetings", h.CreateMeeting)
-	router.GET("/meetings", h.GetMeetings)
-	router.GET("/meetings/:id", h.GetMeeting)
+    router.POST("/register", h.Register)
+    router.POST("/login", h.Login)
+    router.GET("/me", h.GetCurrentUser)
 
 	router.POST("/requests", h.CreateRequest)
 	router.GET("/requests", h.GetRequests)
 	router.GET("/requests/:id", h.GetRequest)
+	router.POST("/requests/:id/chat", h.GetOrCreateRequestChat)
 
-	router.GET(
-		"/swagger/*any",
-		ginSwagger.WrapHandler(swaggerFiles.Handler),
-	)
+	router.GET("/meetings/:id/chat", h.GetMeetingChat)
+
+	router.GET("/chats", h.GetChats)
+	router.GET("/chats/:chat_id", h.GetChat)
+	router.GET("/chats/:chat_id/messages", h.GetMessages)
+	router.POST("/chats/:chat_id/messages", h.SendMessage)
+
+    router.POST("/meetings", h.CreateMeeting)
+    router.GET("/meetings", h.GetMeetings)
+    router.GET("/meetings/:id", h.GetMeeting)
+	router.POST("/meetings/:id", h.ApplyOnMeeting)
+
+    router.GET(
+        "/swagger/*any",
+        ginSwagger.WrapHandler(swaggerFiles.Handler),
+    )
 }

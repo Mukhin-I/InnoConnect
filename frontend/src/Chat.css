@@ -193,7 +193,6 @@ span, div, p, h1{
 .header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 .back-btn {
   display: grid;
@@ -393,7 +392,7 @@ span, div, p, h1{
 }
 
 .out p {
-  text-align: right;
+  text-align: left;
 }
 
 .bubble.out {
