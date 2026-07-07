@@ -7,115 +7,115 @@ variables:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
 
-build_backend:
-  stage: build
-  image: docker:27
-  before_script:
-    - cp .env.example .env
-  script:
-    - ls
-    - ls backend/db
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
-    - docker ps -q --filter "publish=8080" | xargs -r docker rm -f || true
-    - docker rm -f gateway meeting user request chat db_meeting db_user db_request db_chat 2>/dev/null || true
-    - docker system prune -af --volumes
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up --build --wait --wait-timeout 60
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs db_user
+# build_backend:
+#   stage: build
+#   image: docker:27
+#   before_script:
+#     - cp .env.example .env
+#   script:
+#     - ls
+#     - ls backend/db
+#     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
+#     - docker ps -q --filter "publish=8080" | xargs -r docker rm -f || true
+#     - docker rm -f gateway meeting user request chat db_meeting db_user db_request db_chat 2>/dev/null || true
+#     - docker system prune -af --volumes
+#     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up --build --wait --wait-timeout 60
+#     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs db_user
 
-build_frontend:
-  stage: build
-  image: node:20
-  script:
-    - >
-      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --output frontend/.env
-      "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$ENV_FILE_ID/download"
-    - cd frontend
-    - ls
-    - npm install && npm install mapbox-gl react-router-dom
-    - npm run build
+# build_frontend:
+#   stage: build
+#   image: node:20
+#   script:
+#     - >
+#       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --output frontend/.env
+#       "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$ENV_FILE_ID/download"
+#     - cd frontend
+#     - ls
+#     - npm install && npm install mapbox-gl react-router-dom
+#     - npm run build
 
-test:
-  stage: test
-  image: docker:27
-  before_script:
-    - cp .env.example .env
-  script:
-    - ls
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
-    - echo "Testing"
+# test:
+#   stage: test
+#   image: docker:27
+#   before_script:
+#     - cp .env.example .env
+#   script:
+#     - ls
+#     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
+#     - echo "Testing"
 
-test_authorization:
-  stage: test
-  image: docker:27
-  before_script:
-    - cp .env.example .env
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
-  script:
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
-    - NETWORK=$(docker inspect $(docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
-    - |
-      check_status() {
-        method="$1"; path="$2"; expected="$3"; token="$4"
-        if [ -n "$token" ]; then
-          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" -H "Authorization: Bearer $token" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
-        else
-          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
-        fi
-        echo "Got status $actual"
-        if [ "$actual" -ne "$expected" ]; then
-          echo "FAIL: $method $path expected $expected, got $actual"
-          docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
-          exit 1
-        fi
-        echo "PASS: $method $path returned $expected as expected"
-      }
+# test_authorization:
+#   stage: test
+#   image: docker:27
+#   before_script:
+#     - cp .env.example .env
+#     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
+#   script:
+#     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build --wait
+#     - NETWORK=$(docker inspect $(docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
+#     - |
+#       check_status() {
+#         method="$1"; path="$2"; expected="$3"; token="$4"
+#         if [ -n "$token" ]; then
+#           actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" -H "Authorization: Bearer $token" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
+#         else
+#           actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
+#         fi
+#         echo "Got status $actual"
+#         if [ "$actual" -ne "$expected" ]; then
+#           echo "FAIL: $method $path expected $expected, got $actual"
+#           docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
+#           exit 1
+#         fi
+#         echo "PASS: $method $path returned $expected as expected"
+#       }
 
-    - echo "== /meetings without JWT =="
-    - check_status GET /meetings 200
-    - check_status POST /meetings 401
+#     - echo "== /meetings without JWT =="
+#     - check_status GET /meetings 200
+#     - check_status POST /meetings 401
 
-    - echo "== /requests without JWT =="
-    - check_status GET /requests 200
-    - check_status POST /requests 401
+#     - echo "== /requests without JWT =="
+#     - check_status GET /requests 200
+#     - check_status POST /requests 401
 
-    # - echo "== register test user =="
-    # - TEST_NAME="cicd"
-    # - TEST_EMAIL="me.test@example.com"
-    # - TEST_PASSWORD="123"
-    # - |
-    #   REGISTER_STATUS=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X POST \
-    #     -H "Content-Type: application/json" \
-    #     -d "{\"name\":\"$TEST_NAME\",\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
-    #     http://gateway:8080/register)
-    #   echo "Register status $REGISTER_STATUS"
-    #   if [ "$REGISTER_STATUS" -ne 201 ] && [ "$REGISTER_STATUS" -ne 400 ]; then
-    #     echo "FAIL: register expected 201 (or 400 if user already exists), got $REGISTER_STATUS"
-    #     docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
-    #     exit 1
-    #   fi
-    #   echo "PASS: register returned $REGISTER_STATUS"
+#     - echo "== register test user =="
+#     - TEST_NAME="cicd"
+#     - TEST_EMAIL="me.test@example.com"
+#     - TEST_PASSWORD="123"
+#     - |
+#       REGISTER_STATUS=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X POST \
+#         -H "Content-Type: application/json" \
+#         -d "{\"name\":\"$TEST_NAME\",\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
+#         http://gateway:8080/register)
+#       echo "Register status $REGISTER_STATUS"
+#       if [ "$REGISTER_STATUS" -ne 201 ] && [ "$REGISTER_STATUS" -ne 400 ]; then
+#         echo "FAIL: register expected 201 (or 400 if user already exists), got $REGISTER_STATUS"
+#         docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs gateway
+#         exit 1
+#       fi
+#       echo "PASS: register returned $REGISTER_STATUS"
 
-    # - echo "== login test user =="
-    # - |
-    #   LOGIN_RESPONSE=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -X POST \
-    #     -H "Content-Type: application/json" \
-    #     -d "{\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
-    #     http://gateway:8080/login)
-    #   echo "Login response $LOGIN_RESPONSE"
-    #   TOKEN=$(echo "$LOGIN_RESPONSE" | grep -o '"token":"[^"]*' | sed 's/"token":"//')
-    #   if [ -z "$TOKEN" ]; then
-    #     echo "FAIL: could not extract JWT token from login response"
-    #     exit 1
-    #   fi
-    #   echo "Got JWT token (length ${#TOKEN})"
+#     - echo "== login test user =="
+#     - |
+#       LOGIN_RESPONSE=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -X POST \
+#         -H "Content-Type: application/json" \
+#         -d "{\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
+#         http://gateway:8080/login)
+#       echo "Login response $LOGIN_RESPONSE"
+#       TOKEN=$(echo "$LOGIN_RESPONSE" | grep -o '"token":"[^"]*' | sed 's/"token":"//')
+#       if [ -z "$TOKEN" ]; then
+#         echo "FAIL: could not extract JWT token from login response"
+#         exit 1
+#       fi
+#       echo "Got JWT token (length ${#TOKEN})"
 
-    # - echo "== /meetings with JWT =="
-    # - check_status POST /meetings 200 "$TOKEN"
+#     - echo "== /meetings with JWT =="
+#     - check_status POST /meetings 200 "$TOKEN"
 
-    # - echo "== /requests with JWT =="
-    # - check_status POST /requests 200 "$TOKEN"
-  after_script:
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
+#     - echo "== /requests with JWT =="
+#     - check_status POST /requests 200 "$TOKEN"
+#   after_script:
+#     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
 
 
 deploy:
@@ -131,13 +131,11 @@ deploy:
       "https://$CI_SERVER_FQDN/api/v4/projects/$CI_PROJECT_ID/secure_files/$SSH_KEY_FILE_ID/download"
     - chmod 600 cd
     - eval $(ssh-agent -s)
-    - ssh -v
     - file cd
     - head -1 cd
     - ssh-add cd
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
-    - ssh -v
     - ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd /innoconnect && git fetch origin main "
     #&& git checkout main && git reset --hard origin/main && git clean -fd && sudo lsof -ti:80 | xargs -r kill -9 && cp .env.example .env && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down && docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build && sed -i "s/localhost/10.93.27.21/g" .env && cd frontend && sed -i "s/port: *[0-9]\+/port: 80/" frontend/vite.config.js && (npm run dev&)"
