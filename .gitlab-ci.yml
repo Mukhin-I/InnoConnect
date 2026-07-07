@@ -184,5 +184,5 @@ deploy:
       source ~/.nvm/nvm.sh &&
       nvm use default &&
       cd ~/innoconnect/frontend &&
-      (npm run dev &)
+      npm run dev >frontend.log 2>&1 &
     '
