@@ -56,11 +56,26 @@ test_authorization:
     - NETWORK=$(docker inspect $($COMPOSE ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
     - |
       check_status() {
-        method="$1"; path="$2"; expected="$3"; token="$4"
-        if [ -n "$token" ]; then
-          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" -H "Authorization: Bearer $token" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
+        method="$1"
+        path="$2"
+        expected="$3"
+        token="$4"
+        body="$5"
+
+        if [ -n "$body" ]; then
+          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.16.0 \
+            -s -o /dev/null -w "%{http_code}" \
+            -X "$method" \
+            -H "Content-Type: application/json" \
+            ${token:+-H "Authorization: Bearer $token"} \
+            -d "$body" \
+            "http://gateway:8080$path")
         else
-          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
+          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.16.0 \
+            -s -o /dev/null -w "%{http_code}" \
+            -X "$method" \
+            ${token:+-H "Authorization: Bearer $token"} \
+            "http://gateway:8080$path")
         fi
         echo "Got status $actual"
         if [ "$actual" -ne "$expected" ]; then
@@ -111,10 +126,24 @@ test_authorization:
       echo "Got JWT token (length ${#TOKEN})"
 
     - echo "== /meetings with JWT =="
-    - check_status POST /meetings 200 "$TOKEN"
+    - MEETING_BODY='{
+      "title":"CI Test",
+      "description":"Created by GitLab CI",
+      "meeting_time":"2026-07-08T18:00:00Z",
+      "type":"Спорт"
+      }'
+
+    - check_status POST /meetings 200 "$TOKEN" "$MEETING_BODY"
 
     - echo "== /requests with JWT =="
-    - check_status POST /requests 200 "$TOKEN"
+    - REQUEST_BODY='{
+      "title":"CI Test Request",
+      "description":"Created by GitLab CI",
+      "requester_address":"Test address",
+      "type":"Помощь",
+      "deadline":"2026-07-08T18:00:00Z"
+      }'
+    - check_status POST /requests 200 "$TOKEN" "$REQUEST_BODY"
   after_script:
     - $COMPOSE down -v --remove-orphans || true
 
