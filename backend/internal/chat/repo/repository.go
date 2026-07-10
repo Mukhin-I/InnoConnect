@@ -93,7 +93,7 @@ func (r *Repository) GetChatsByUserID(
 
 		participants, _ := r.getParticipants(ctx, chatID)
 		lastMsg, _ := r.getLastMessage(ctx, chatID)
-		title := r.resolveTitle(chatType, relatedID)
+		title := r.resolveTitle(chatType)
 
 		logger.Info("Getting chatid: " + strconv.FormatInt(chatID, 10))
 		result = append(result, entity.ChatPreview{
@@ -397,7 +397,7 @@ func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, cre
 	return chat, nil
 }
 
-func (r *Repository) resolveTitle(chatType string, relatedID int64) string {
+func (r *Repository) resolveTitle(chatType string) string {
 	// MVP stub:
 	switch chatType {
 	case "REQUEST":

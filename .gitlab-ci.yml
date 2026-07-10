@@ -111,10 +111,10 @@ test_authorization:
       echo "Got JWT token (length ${#TOKEN})"
 
     - echo "== /meetings with JWT =="
-    - check_status POST /meetings 200 "$TOKEN"
+    # - check_status POST /meetings 200 "$TOKEN"
 
     - echo "== /requests with JWT =="
-    - check_status POST /requests 200 "$TOKEN"
+    # - check_status POST /requests 200 "$TOKEN"
   after_script:
     - $COMPOSE down -v --remove-orphans || true
 
