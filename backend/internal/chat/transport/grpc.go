@@ -20,7 +20,7 @@ type ChatUsecase interface {
 	GetChats(ctx context.Context, userID int64) ([]entity.ChatPreview, error)
 	GetMessages(ctx context.Context, chatID, userID int64) ([]entity.Message, error)
 	SendMessage(ctx context.Context, chatID, userID int64, text string) (entity.Message, error)
-	CreateMeetingChat(ctx context.Context, meetingID int64, creator_id int64, creator_name string) (entity.Chat, error)
+	CreateMeetingChat(ctx context.Context, meetingID int64, chatName string, creator_id int64, creator_name string) (entity.Chat, error)
 	AddToMeetingChat(ctx context.Context, meetingID int64, user_id int64, user_name string) (error)
 }
 
@@ -70,6 +70,7 @@ func (s *ChatServer) CreateMeetingChat(
 	chat, err := s.usecase.CreateMeetingChat(
 		ctx,
 		req.GetMeetingId(),
+		req.GetChatName(),
 		req.GetCreatorId(),
 		req.GetCreatorName(),
 	)

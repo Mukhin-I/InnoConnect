@@ -178,8 +178,9 @@ func (x *ChatResponse) GetType() ChatType {
 type GetOrCreateRequestChatRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	RequestId int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	ChatName  string                 `protobuf:"bytes,2,opt,name=chat_name,json=chatName,proto3" json:"chat_name,omitempty"`
 	// extracted from JWT by Gateway
-	UserId        int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -221,6 +222,13 @@ func (x *GetOrCreateRequestChatRequest) GetRequestId() int64 {
 	return 0
 }
 
+func (x *GetOrCreateRequestChatRequest) GetChatName() string {
+	if x != nil {
+		return x.ChatName
+	}
+	return ""
+}
+
 func (x *GetOrCreateRequestChatRequest) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -231,9 +239,10 @@ func (x *GetOrCreateRequestChatRequest) GetUserId() int64 {
 type CreateMeetingChatRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	MeetingId int64                  `protobuf:"varint,1,opt,name=meeting_id,json=meetingId,proto3" json:"meeting_id,omitempty"`
+	ChatName  string                 `protobuf:"bytes,2,opt,name=chat_name,json=chatName,proto3" json:"chat_name,omitempty"`
 	// extracted from JWT by Gateway
-	CreatorId     int64  `protobuf:"varint,2,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	CreatorName   string `protobuf:"bytes,3,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
+	CreatorId     int64  `protobuf:"varint,3,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	CreatorName   string `protobuf:"bytes,4,opt,name=creator_name,json=creatorName,proto3" json:"creator_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -273,6 +282,13 @@ func (x *CreateMeetingChatRequest) GetMeetingId() int64 {
 		return x.MeetingId
 	}
 	return 0
+}
+
+func (x *CreateMeetingChatRequest) GetChatName() string {
+	if x != nil {
+		return x.ChatName
+	}
+	return ""
 }
 
 func (x *CreateMeetingChatRequest) GetCreatorId() int64 {
@@ -414,8 +430,9 @@ func (x *GetChatRequest) GetCreatorName() string {
 type GetChatResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ChatId        int64                  `protobuf:"varint,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
-	Type          ChatType               `protobuf:"varint,2,opt,name=type,proto3,enum=chat.ChatType" json:"type,omitempty"`
-	Participants  []*User                `protobuf:"bytes,3,rep,name=participants,proto3" json:"participants,omitempty"`
+	ChatName      string                 `protobuf:"bytes,2,opt,name=chat_name,json=chatName,proto3" json:"chat_name,omitempty"`
+	Type          ChatType               `protobuf:"varint,3,opt,name=type,proto3,enum=chat.ChatType" json:"type,omitempty"`
+	Participants  []*User                `protobuf:"bytes,4,rep,name=participants,proto3" json:"participants,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -455,6 +472,13 @@ func (x *GetChatResponse) GetChatId() int64 {
 		return x.ChatId
 	}
 	return 0
+}
+
+func (x *GetChatResponse) GetChatName() string {
+	if x != nil {
+		return x.ChatName
+	}
+	return ""
 }
 
 func (x *GetChatResponse) GetType() ChatType {
@@ -745,13 +769,12 @@ func (x *GetChatsRequest) GetUserId() int64 {
 type ChatPreview struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	ChatId int64                  `protobuf:"varint,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
-	Type   ChatType               `protobuf:"varint,2,opt,name=type,proto3,enum=chat.ChatType" json:"type,omitempty"`
+	Name   string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Type   ChatType               `protobuf:"varint,3,opt,name=type,proto3,enum=chat.ChatType" json:"type,omitempty"`
 	// Other participants in the chat.
 	// For private chats this will contain one user.
 	// For meeting chats it contains all participants except the requester.
-	Participants []*User `protobuf:"bytes,3,rep,name=participants,proto3" json:"participants,omitempty"`
-	// Title of the related request or meeting.
-	Title         string   `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
+	Participants  []*User  `protobuf:"bytes,4,rep,name=participants,proto3" json:"participants,omitempty"`
 	LastMessage   *Message `protobuf:"bytes,5,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -794,6 +817,13 @@ func (x *ChatPreview) GetChatId() int64 {
 	return 0
 }
 
+func (x *ChatPreview) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
 func (x *ChatPreview) GetType() ChatType {
 	if x != nil {
 		return x.Type
@@ -806,13 +836,6 @@ func (x *ChatPreview) GetParticipants() []*User {
 		return x.Participants
 	}
 	return nil
-}
-
-func (x *ChatPreview) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
 }
 
 func (x *ChatPreview) GetLastMessage() *Message {
@@ -876,17 +899,19 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"K\n" +
 	"\fChatResponse\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\"\n" +
-	"\x04type\x18\x02 \x01(\x0e2\x0e.chat.ChatTypeR\x04type\"W\n" +
+	"\x04type\x18\x02 \x01(\x0e2\x0e.chat.ChatTypeR\x04type\"t\n" +
 	"\x1dGetOrCreateRequestChatRequest\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"{\n" +
+	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x1b\n" +
+	"\tchat_name\x18\x02 \x01(\tR\bchatName\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\"\x98\x01\n" +
 	"\x18CreateMeetingChatRequest\x12\x1d\n" +
 	"\n" +
-	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x1d\n" +
+	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x1b\n" +
+	"\tchat_name\x18\x02 \x01(\tR\bchatName\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\x02 \x01(\x03R\tcreatorId\x12!\n" +
-	"\fcreator_name\x18\x03 \x01(\tR\vcreatorName\"x\n" +
+	"creator_id\x18\x03 \x01(\x03R\tcreatorId\x12!\n" +
+	"\fcreator_name\x18\x04 \x01(\tR\vcreatorName\"x\n" +
 	"\x15GetMeetingChatRequest\x12\x1d\n" +
 	"\n" +
 	"meeting_id\x18\x01 \x01(\x03R\tmeetingId\x12\x1d\n" +
@@ -896,11 +921,12 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\x0eGetChatRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +
-	"\fcreator_name\x18\x03 \x01(\tR\vcreatorName\"~\n" +
+	"\fcreator_name\x18\x03 \x01(\tR\vcreatorName\"\x9b\x01\n" +
 	"\x0fGetChatResponse\x12\x17\n" +
-	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\"\n" +
-	"\x04type\x18\x02 \x01(\x0e2\x0e.chat.ChatTypeR\x04type\x12.\n" +
-	"\fparticipants\x18\x03 \x03(\v2\n" +
+	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\x1b\n" +
+	"\tchat_name\x18\x02 \x01(\tR\bchatName\x12\"\n" +
+	"\x04type\x18\x03 \x01(\x0e2\x0e.chat.ChatTypeR\x04type\x12.\n" +
+	"\fparticipants\x18\x04 \x03(\v2\n" +
 	".chat.UserR\fparticipants\"F\n" +
 	"\x12GetMessagesRequest\x12\x17\n" +
 	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\x17\n" +
@@ -918,13 +944,13 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04text\x18\x03 \x01(\tR\x04text\"*\n" +
 	"\x0fGetChatsRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xc2\x01\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xc0\x01\n" +
 	"\vChatPreview\x12\x17\n" +
-	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\"\n" +
-	"\x04type\x18\x02 \x01(\x0e2\x0e.chat.ChatTypeR\x04type\x12.\n" +
-	"\fparticipants\x18\x03 \x03(\v2\n" +
-	".chat.UserR\fparticipants\x12\x14\n" +
-	"\x05title\x18\x04 \x01(\tR\x05title\x120\n" +
+	"\achat_id\x18\x01 \x01(\x03R\x06chatId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\"\n" +
+	"\x04type\x18\x03 \x01(\x0e2\x0e.chat.ChatTypeR\x04type\x12.\n" +
+	"\fparticipants\x18\x04 \x03(\v2\n" +
+	".chat.UserR\fparticipants\x120\n" +
 	"\flast_message\x18\x05 \x01(\v2\r.chat.MessageR\vlastMessage\";\n" +
 	"\x10GetChatsResponse\x12'\n" +
 	"\x05chats\x18\x01 \x03(\v2\x11.chat.ChatPreviewR\x05chats*?\n" +

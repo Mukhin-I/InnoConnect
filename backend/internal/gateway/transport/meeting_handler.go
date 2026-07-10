@@ -73,6 +73,7 @@ func (h *Handler) CreateMeeting(c *gin.Context) {
 		c.Request.Context(),
 		&chat.CreateMeetingChatRequest{
 			MeetingId: meeting.Id,
+			ChatName: req.Title,
 			CreatorId: userID,
 			CreatorName: name,
 		},
