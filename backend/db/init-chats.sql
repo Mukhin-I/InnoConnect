@@ -1,6 +1,8 @@
 CREATE TABLE chats (
     id BIGSERIAL PRIMARY KEY,
 
+    name VARCHAR(30) NOT NULL,
+
     -- REQUEST or MEETING
     type VARCHAR(20) NOT NULL,
 

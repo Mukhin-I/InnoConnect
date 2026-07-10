@@ -58,9 +58,9 @@ func toChatPreview(chat entity.ChatPreview) *pb.ChatPreview {
 
 	return &pb.ChatPreview{
 		ChatId:      chat.ID,
+		Name: chat.Title,
 		Type:        toProtoChatType(chat.Type),
 		Participants: users,
-		Title:       chat.Title,
 		LastMessage: lastMessage,
 	}
 }
