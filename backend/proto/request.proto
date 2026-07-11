@@ -4,6 +4,8 @@ package request;
 
 option go_package = "pkg/pb/request";
 
+import "google/protobuf/empty.proto";
+
 service RequestService {
     rpc CreateRequest(CreateRequestRequest)
         returns (RequestFull);
@@ -20,7 +22,7 @@ service RequestService {
 
     // Creator cancels/removes user from request
     rpc CancelRequestApplication(CancelRequestApplicationRequest)
-        returns (ApplyToRequestResponse);
+        returns (google.protobuf.Empty);
 }
 
 message ApplyToRequestRequest {
@@ -42,7 +44,7 @@ message CancelRequestApplicationRequest {
 }
 
 message ApplyToRequestResponse {
-    bool success = 1;
+    string req_title = 1;
 }
 
 message RequestApplication {

@@ -12,13 +12,14 @@ import (
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type RequestUsecase interface {
 	Create(ctx context.Context, request entity.Request) (entity.Request, error)
 	GetAll(ctx context.Context) ([]entity.Request, error)
 	GetByID(ctx context.Context, id int64) (entity.Request, error)
-	ApplyToRequest(ctx context.Context, requestID int64, userID int64, userName string) error
+	ApplyToRequest(ctx context.Context, requestID int64, userID int64, userName string) (string, error)
 	CancelRequestApplication(ctx context.Context, requestID int64, userID int64, creatorID int64) error
 }
 
@@ -131,7 +132,7 @@ func (s *RequestServer) ApplyToRequest(
 	}
 
 
-	err := s.usecase.ApplyToRequest(
+	req_title, err := s.usecase.ApplyToRequest(
 		ctx,
 		req.GetRequestId(),
 		req.GetUserId(),
@@ -155,14 +156,14 @@ func (s *RequestServer) ApplyToRequest(
 
 
 	return &pb.ApplyToRequestResponse{
-		Success: true,
+		ReqTitle: req_title,
 	}, nil
 }
 
 func (s *RequestServer) CancelRequestApplication(
 	ctx context.Context,
 	req *pb.CancelRequestApplicationRequest,
-) (*pb.ApplyToRequestResponse, error) {
+) (*emptypb.Empty, error) {
 
 
 	if req.GetRequestId() == 0 {
@@ -214,7 +215,5 @@ func (s *RequestServer) CancelRequestApplication(
 	}
 
 
-	return &pb.ApplyToRequestResponse{
-		Success: true,
-	}, nil
+	return &emptypb.Empty{}, nil
 }

@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -36,7 +37,7 @@ type RequestServiceClient interface {
 	// User applies to request
 	ApplyToRequest(ctx context.Context, in *ApplyToRequestRequest, opts ...grpc.CallOption) (*ApplyToRequestResponse, error)
 	// Creator cancels/removes user from request
-	CancelRequestApplication(ctx context.Context, in *CancelRequestApplicationRequest, opts ...grpc.CallOption) (*ApplyToRequestResponse, error)
+	CancelRequestApplication(ctx context.Context, in *CancelRequestApplicationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type requestServiceClient struct {
@@ -87,9 +88,9 @@ func (c *requestServiceClient) ApplyToRequest(ctx context.Context, in *ApplyToRe
 	return out, nil
 }
 
-func (c *requestServiceClient) CancelRequestApplication(ctx context.Context, in *CancelRequestApplicationRequest, opts ...grpc.CallOption) (*ApplyToRequestResponse, error) {
+func (c *requestServiceClient) CancelRequestApplication(ctx context.Context, in *CancelRequestApplicationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ApplyToRequestResponse)
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, RequestService_CancelRequestApplication_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -107,7 +108,7 @@ type RequestServiceServer interface {
 	// User applies to request
 	ApplyToRequest(context.Context, *ApplyToRequestRequest) (*ApplyToRequestResponse, error)
 	// Creator cancels/removes user from request
-	CancelRequestApplication(context.Context, *CancelRequestApplicationRequest) (*ApplyToRequestResponse, error)
+	CancelRequestApplication(context.Context, *CancelRequestApplicationRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRequestServiceServer()
 }
 
@@ -130,7 +131,7 @@ func (UnimplementedRequestServiceServer) GetRequest(context.Context, *GetRequest
 func (UnimplementedRequestServiceServer) ApplyToRequest(context.Context, *ApplyToRequestRequest) (*ApplyToRequestResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ApplyToRequest not implemented")
 }
-func (UnimplementedRequestServiceServer) CancelRequestApplication(context.Context, *CancelRequestApplicationRequest) (*ApplyToRequestResponse, error) {
+func (UnimplementedRequestServiceServer) CancelRequestApplication(context.Context, *CancelRequestApplicationRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelRequestApplication not implemented")
 }
 func (UnimplementedRequestServiceServer) mustEmbedUnimplementedRequestServiceServer() {}

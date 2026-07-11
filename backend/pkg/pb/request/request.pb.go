@@ -9,6 +9,7 @@ package request
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -146,7 +147,7 @@ func (x *CancelRequestApplicationRequest) GetCreatorId() int64 {
 
 type ApplyToRequestResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	ReqTitle      string                 `protobuf:"bytes,1,opt,name=req_title,json=reqTitle,proto3" json:"req_title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -181,11 +182,11 @@ func (*ApplyToRequestResponse) Descriptor() ([]byte, []int) {
 	return file_proto_request_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ApplyToRequestResponse) GetSuccess() bool {
+func (x *ApplyToRequestResponse) GetReqTitle() string {
 	if x != nil {
-		return x.Success
+		return x.ReqTitle
 	}
-	return false
+	return ""
 }
 
 type RequestApplication struct {
@@ -704,7 +705,7 @@ var File_proto_request_proto protoreflect.FileDescriptor
 
 const file_proto_request_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/request.proto\x12\arequest\"l\n" +
+	"\x13proto/request.proto\x12\arequest\x1a\x1bgoogle/protobuf/empty.proto\"l\n" +
 	"\x15ApplyToRequestRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x17\n" +
@@ -715,9 +716,9 @@ const file_proto_request_proto_rawDesc = "" +
 	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\x03 \x01(\x03R\tcreatorId\"2\n" +
-	"\x16ApplyToRequestResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x8d\x01\n" +
+	"creator_id\x18\x03 \x01(\x03R\tcreatorId\"5\n" +
+	"\x16ApplyToRequestResponse\x12\x1b\n" +
+	"\treq_title\x18\x01 \x01(\tR\breqTitle\"\x8d\x01\n" +
 	"\x12RequestApplication\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\x03R\trequestId\x12!\n" +
@@ -757,14 +758,14 @@ const file_proto_request_proto_rawDesc = "" +
 	"\x13GetRequestsResponse\x121\n" +
 	"\brequests\x18\x01 \x03(\v2\x15.request.RequestShortR\brequests\"#\n" +
 	"\x11GetRequestRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id2\x9a\x03\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id2\x91\x03\n" +
 	"\x0eRequestService\x12D\n" +
 	"\rCreateRequest\x12\x1d.request.CreateRequestRequest\x1a\x14.request.RequestFull\x12H\n" +
 	"\vGetRequests\x12\x1b.request.GetRequestsRequest\x1a\x1c.request.GetRequestsResponse\x12>\n" +
 	"\n" +
 	"GetRequest\x12\x1a.request.GetRequestRequest\x1a\x14.request.RequestFull\x12Q\n" +
-	"\x0eApplyToRequest\x12\x1e.request.ApplyToRequestRequest\x1a\x1f.request.ApplyToRequestResponse\x12e\n" +
-	"\x18CancelRequestApplication\x12(.request.CancelRequestApplicationRequest\x1a\x1f.request.ApplyToRequestResponseB\x10Z\x0epkg/pb/requestb\x06proto3"
+	"\x0eApplyToRequest\x12\x1e.request.ApplyToRequestRequest\x1a\x1f.request.ApplyToRequestResponse\x12\\\n" +
+	"\x18CancelRequestApplication\x12(.request.CancelRequestApplicationRequest\x1a\x16.google.protobuf.EmptyB\x10Z\x0epkg/pb/requestb\x06proto3"
 
 var (
 	file_proto_request_proto_rawDescOnce sync.Once
@@ -791,6 +792,7 @@ var file_proto_request_proto_goTypes = []any{
 	(*GetRequestsRequest)(nil),              // 8: request.GetRequestsRequest
 	(*GetRequestsResponse)(nil),             // 9: request.GetRequestsResponse
 	(*GetRequestRequest)(nil),               // 10: request.GetRequestRequest
+	(*emptypb.Empty)(nil),                   // 11: google.protobuf.Empty
 }
 var file_proto_request_proto_depIdxs = []int32{
 	4,  // 0: request.RequestApplication.user:type_name -> request.User
@@ -805,7 +807,7 @@ var file_proto_request_proto_depIdxs = []int32{
 	9,  // 9: request.RequestService.GetRequests:output_type -> request.GetRequestsResponse
 	6,  // 10: request.RequestService.GetRequest:output_type -> request.RequestFull
 	2,  // 11: request.RequestService.ApplyToRequest:output_type -> request.ApplyToRequestResponse
-	2,  // 12: request.RequestService.CancelRequestApplication:output_type -> request.ApplyToRequestResponse
+	11, // 12: request.RequestService.CancelRequestApplication:output_type -> google.protobuf.Empty
 	8,  // [8:13] is the sub-list for method output_type
 	3,  // [3:8] is the sub-list for method input_type
 	3,  // [3:3] is the sub-list for extension type_name

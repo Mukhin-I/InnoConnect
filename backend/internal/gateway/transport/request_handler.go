@@ -9,6 +9,8 @@ import (
 	"innoconnect/pkg/logger"
 	requestpb "innoconnect/pkg/pb/request"
 
+	"innoconnect/pkg/pb/chat"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -174,6 +176,25 @@ func (h *Handler) ApplyToRequest(c *gin.Context) {
 		})
 		return
 	}
+
+	_, err = h.chatClient.GetOrCreateRequestChat(
+		c.Request.Context(),
+		&chat.GetOrCreateRequestChatRequest{
+			RequestId: requestID,
+			ChatName: ,
+			UserId: userID,
+		},
+	)
+
+	if err != nil {
+		logger.Error(err.Error())
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":"failed to create chat",
+		})
+		return
+	}
+
 
 
 	c.JSON(http.StatusOK, gin.H{

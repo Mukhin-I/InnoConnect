@@ -10,7 +10,7 @@ type RequestRepository interface {
 	Create(ctx context.Context, request entity.Request) (entity.Request, error)
 	GetAll(ctx context.Context) ([]entity.Request, error)
 	GetByID(ctx context.Context, id int64) (entity.Request, error)
-	ApplyToRequest(ctx context.Context, requestID int64, userID int64, userName string) error
+	ApplyToRequest(ctx context.Context, requestID int64, userID int64, userName string) (string, error)
 	CancelRequestApplication(ctx context.Context, requestID int64, userID int64, creatorID int64) error
 }
 
@@ -41,7 +41,7 @@ func (u *Usecase) ApplyToRequest(
 	requestID int64,
 	userID int64,
 	userName string,
-) error {
+) (string, error) {
 
 	return u.repo.ApplyToRequest(ctx, requestID, userID, userName)
 }

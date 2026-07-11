@@ -149,11 +149,11 @@ func (r *Repository) ApplyToRequest(
 	requestID int64,
 	userID int64,
 	userName string,
-) error {
+) (string, error) {
 
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer tx.Rollback(ctx)
 
@@ -177,27 +177,28 @@ func (r *Repository) ApplyToRequest(
 	)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 
 	// Change request status
-	_, err = tx.Exec(
+	var title string
+	err = tx.QueryRow(
 		ctx,
 		`
 		UPDATE requests
 		SET status = 'IN PROGRESS'
 		WHERE id = $1
+		RETURNING title
 		`,
 		requestID,
-	)
+	).Scan(&title)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-
-	return tx.Commit(ctx)
+	return title, tx.Commit(ctx)
 }
 
 func (r *Repository) CancelRequestApplication(
