@@ -21,7 +21,7 @@ type ChatUsecase interface {
 	GetMessages(ctx context.Context, chatID, userID int64) ([]entity.Message, error)
 	SendMessage(ctx context.Context, chatID, userID int64, text string) (entity.Message, error)
 	CreateMeetingChat(ctx context.Context, meetingID int64, chatName string, creator_id int64, creator_name string) (entity.Chat, error)
-	AddToMeetingChat(ctx context.Context, meetingID int64, user_id int64, user_name string) (error)
+	AddToChat(ctx context.Context, meetingID int64, chatType string, user_id int64, user_name string) (error)
 	GetParticipants(ctx context.Context, chatID int64) ([]entity.User, error)
 }
 
@@ -192,8 +192,8 @@ func (s *ChatServer) SendMessage(
 	return toMessage(message), nil
 }
 
-func (c *ChatServer) AddToMeetingChat(ctx context.Context, req *pb.CreateMeetingChatRequest) (*emptypb.Empty, error) {
-	return &emptypb.Empty{}, c.usecase.AddToMeetingChat(ctx, req.MeetingId, req.CreatorId, req.CreatorName)
+func (c *ChatServer) AddToChat(ctx context.Context, req *pb.AddToChatRequest) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, c.usecase.AddToChat(ctx, req.RelaterId, req.ChatType, req.CreatorId, req.CreatorName)
 }
 
 func (s *ChatServer) GetParticipants(

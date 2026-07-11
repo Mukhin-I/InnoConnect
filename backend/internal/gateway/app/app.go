@@ -80,6 +80,12 @@ func setEndpoints(router *gin.Engine, h *transport.Handler) {
 	router.GET("/requests", h.GetRequests)
 	router.GET("/requests/:id", h.GetRequest)
 	router.POST("/requests/:id/chat", h.GetOrCreateRequestChat)
+	router.POST("/requests/:id/apply", h.ApplyToRequest)
+
+	router.DELETE(
+		"/requests/:request_id/applications/:user_id",
+		h.CancelRequestApplication,
+	)
 
 	router.GET("/meetings/:id/chat", h.GetMeetingChat)
 

@@ -9,6 +9,8 @@ import (
 	"innoconnect/pkg/logger"
 	requestpb "innoconnect/pkg/pb/request"
 
+	"innoconnect/pkg/pb/chat"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,6 +53,15 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 		logger.Error("Failed to get answer from request service via gRPC: " + err.Error())
 		return
 	}
+
+	_, err = h.chatClient.GetOrCreateRequestChat(
+		c.Request.Context(),
+		&chat.GetOrCreateRequestChatRequest{
+			RequestId: request.Id,
+			ChatName: request.Title,
+			UserId: userID,
+		},
+	)
 
 	c.JSON(http.StatusCreated, entity.CreateRequestResponse{
 		ID: request.Id,
@@ -126,5 +137,113 @@ func (h *Handler) GetRequest(c *gin.Context) {
 		RequesterAddress: resp.RequesterAddress,
 		Type:             resp.Type,
 		Deadline:         resp.Deadline,
+	})
+}
+
+func (h *Handler) ApplyToRequest(c *gin.Context) {
+	requestID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request id",
+		})
+		return
+	}
+
+	userID, userName, err := usecase.GetUserFromToken(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// TODO: remove uneccesarry return from this method
+	_, err = h.requestClient.ApplyToRequest(
+		c.Request.Context(),
+		&requestpb.ApplyToRequestRequest{
+			RequestId: requestID,
+			UserId:    userID,
+			UserName:  userName,
+		},
+	)
+
+	if err != nil {
+		logger.Error(
+			"failed to apply to request: " + err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to apply to request",
+		})
+		return
+	}
+
+	_, err = h.chatClient.AddToChat(
+        c.Request.Context(),
+        &chat.AddToChatRequest{
+            // TODO rename on user
+            CreatorId:   userID,
+        	CreatorName: userName,
+			ChatType: "REQUEST",
+            RelaterId: requestID,
+        },
+    )
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
+
+func (h *Handler) CancelRequestApplication(c *gin.Context) {
+
+	requestID, err := strconv.ParseInt(c.Param("request_id"), 10, 64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request id",
+		})
+		return
+	}
+
+	userID, err := strconv.ParseInt(c.Param("user_id"), 10, 64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid user id",
+		})
+		return
+	}
+
+	creatorID, _, err := usecase.GetUserFromToken(c)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	_, err = h.requestClient.CancelRequestApplication(
+		c.Request.Context(),
+		&requestpb.CancelRequestApplicationRequest{
+			RequestId: requestID,
+			UserId:    userID,
+			CreatorId: creatorID,
+		},
+	)
+
+	if err != nil {
+		logger.Error(
+			"failed to cancel application: " + err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to cancel application",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
 	})
 }

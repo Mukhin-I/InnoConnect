@@ -12,12 +12,15 @@ import (
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type RequestUsecase interface {
 	Create(ctx context.Context, request entity.Request) (entity.Request, error)
 	GetAll(ctx context.Context) ([]entity.Request, error)
 	GetByID(ctx context.Context, id int64) (entity.Request, error)
+	ApplyToRequest(ctx context.Context, requestID int64, userID int64, userName string) (string, error)
+	CancelRequestApplication(ctx context.Context, requestID int64, userID int64, creatorID int64) error
 }
 
 type RequestServer struct {
@@ -104,6 +107,113 @@ func toRequestFull(request entity.Request) *pb.RequestFull {
 		Description:      request.Description,
 		RequesterAddress: request.RequesterAddress,
 		Type:             request.Type,
+		Status: request.Status,
 		Deadline:         request.Deadline.Format(time.RFC3339),
 	}
+}
+
+func (s *RequestServer) ApplyToRequest(
+	ctx context.Context,
+	req *pb.ApplyToRequestRequest,
+) (*pb.ApplyToRequestResponse, error) {
+
+	if req.GetRequestId() == 0 {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			"request_id is required",
+		)
+	}
+
+	if req.GetUserId() == 0 {
+		return nil, status.Error(
+			codes.Unauthenticated,
+			"user_id is required",
+		)
+	}
+
+
+	req_title, err := s.usecase.ApplyToRequest(
+		ctx,
+		req.GetRequestId(),
+		req.GetUserId(),
+		req.GetUserName(),
+	)
+
+	if err != nil {
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, status.Error(
+				codes.NotFound,
+				"request not found",
+			)
+		}
+
+		return nil, status.Error(
+			codes.Internal,
+			err.Error(),
+		)
+	}
+
+
+	return &pb.ApplyToRequestResponse{
+		ReqTitle: req_title,
+	}, nil
+}
+
+func (s *RequestServer) CancelRequestApplication(
+	ctx context.Context,
+	req *pb.CancelRequestApplicationRequest,
+) (*emptypb.Empty, error) {
+
+
+	if req.GetRequestId() == 0 {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			"request_id is required",
+		)
+	}
+
+
+	if req.GetUserId() == 0 {
+		return nil, status.Error(
+			codes.InvalidArgument,
+			"user_id is required",
+		)
+	}
+
+
+	if req.GetCreatorId() == 0 {
+		return nil, status.Error(
+			codes.Unauthenticated,
+			"creator_id is required",
+		)
+	}
+
+
+	err := s.usecase.CancelRequestApplication(
+		ctx,
+		req.GetRequestId(),
+		req.GetUserId(),
+		req.GetCreatorId(),
+	)
+
+
+	if err != nil {
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, status.Error(
+				codes.NotFound,
+				"application not found",
+			)
+		}
+
+
+		return nil, status.Error(
+			codes.Internal,
+			err.Error(),
+		)
+	}
+
+
+	return &emptypb.Empty{}, nil
 }

@@ -9,6 +9,7 @@ package request
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,6 +22,241 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ApplyToRequestRequest struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	RequestId int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// extracted from JWT by Gateway
+	UserId        int64  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserName      string `protobuf:"bytes,3,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApplyToRequestRequest) Reset() {
+	*x = ApplyToRequestRequest{}
+	mi := &file_proto_request_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyToRequestRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyToRequestRequest) ProtoMessage() {}
+
+func (x *ApplyToRequestRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_request_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyToRequestRequest.ProtoReflect.Descriptor instead.
+func (*ApplyToRequestRequest) Descriptor() ([]byte, []int) {
+	return file_proto_request_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ApplyToRequestRequest) GetRequestId() int64 {
+	if x != nil {
+		return x.RequestId
+	}
+	return 0
+}
+
+func (x *ApplyToRequestRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ApplyToRequestRequest) GetUserName() string {
+	if x != nil {
+		return x.UserName
+	}
+	return ""
+}
+
+type CancelRequestApplicationRequest struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	RequestId int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// user who will be removed
+	UserId int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// request creator from JWT
+	CreatorId     int64 `protobuf:"varint,3,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelRequestApplicationRequest) Reset() {
+	*x = CancelRequestApplicationRequest{}
+	mi := &file_proto_request_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelRequestApplicationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelRequestApplicationRequest) ProtoMessage() {}
+
+func (x *CancelRequestApplicationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_request_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelRequestApplicationRequest.ProtoReflect.Descriptor instead.
+func (*CancelRequestApplicationRequest) Descriptor() ([]byte, []int) {
+	return file_proto_request_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CancelRequestApplicationRequest) GetRequestId() int64 {
+	if x != nil {
+		return x.RequestId
+	}
+	return 0
+}
+
+func (x *CancelRequestApplicationRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CancelRequestApplicationRequest) GetCreatorId() int64 {
+	if x != nil {
+		return x.CreatorId
+	}
+	return 0
+}
+
+type ApplyToRequestResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ReqTitle      string                 `protobuf:"bytes,1,opt,name=req_title,json=reqTitle,proto3" json:"req_title,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApplyToRequestResponse) Reset() {
+	*x = ApplyToRequestResponse{}
+	mi := &file_proto_request_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyToRequestResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyToRequestResponse) ProtoMessage() {}
+
+func (x *ApplyToRequestResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_request_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyToRequestResponse.ProtoReflect.Descriptor instead.
+func (*ApplyToRequestResponse) Descriptor() ([]byte, []int) {
+	return file_proto_request_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ApplyToRequestResponse) GetReqTitle() string {
+	if x != nil {
+		return x.ReqTitle
+	}
+	return ""
+}
+
+type RequestApplication struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RequestId     int64                  `protobuf:"varint,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	AppliedAt     string                 `protobuf:"bytes,4,opt,name=applied_at,json=appliedAt,proto3" json:"applied_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RequestApplication) Reset() {
+	*x = RequestApplication{}
+	mi := &file_proto_request_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RequestApplication) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestApplication) ProtoMessage() {}
+
+func (x *RequestApplication) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_request_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestApplication.ProtoReflect.Descriptor instead.
+func (*RequestApplication) Descriptor() ([]byte, []int) {
+	return file_proto_request_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *RequestApplication) GetRequestId() int64 {
+	if x != nil {
+		return x.RequestId
+	}
+	return 0
+}
+
+func (x *RequestApplication) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *RequestApplication) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *RequestApplication) GetAppliedAt() string {
+	if x != nil {
+		return x.AppliedAt
+	}
+	return ""
+}
+
 type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -31,7 +267,7 @@ type User struct {
 
 func (x *User) Reset() {
 	*x = User{}
-	mi := &file_proto_request_proto_msgTypes[0]
+	mi := &file_proto_request_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +279,7 @@ func (x *User) String() string {
 func (*User) ProtoMessage() {}
 
 func (x *User) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_request_proto_msgTypes[0]
+	mi := &file_proto_request_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +292,7 @@ func (x *User) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use User.ProtoReflect.Descriptor instead.
 func (*User) Descriptor() ([]byte, []int) {
-	return file_proto_request_proto_rawDescGZIP(), []int{0}
+	return file_proto_request_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *User) GetId() int64 {
@@ -86,7 +322,7 @@ type RequestShort struct {
 
 func (x *RequestShort) Reset() {
 	*x = RequestShort{}
-	mi := &file_proto_request_proto_msgTypes[1]
+	mi := &file_proto_request_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -98,7 +334,7 @@ func (x *RequestShort) String() string {
 func (*RequestShort) ProtoMessage() {}
 
 func (x *RequestShort) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_request_proto_msgTypes[1]
+	mi := &file_proto_request_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -111,7 +347,7 @@ func (x *RequestShort) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestShort.ProtoReflect.Descriptor instead.
 func (*RequestShort) Descriptor() ([]byte, []int) {
-	return file_proto_request_proto_rawDescGZIP(), []int{1}
+	return file_proto_request_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *RequestShort) GetId() int64 {
@@ -157,14 +393,15 @@ type RequestFull struct {
 	Description      string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	RequesterAddress string                 `protobuf:"bytes,5,opt,name=requester_address,json=requesterAddress,proto3" json:"requester_address,omitempty"`
 	Type             string                 `protobuf:"bytes,6,opt,name=type,proto3" json:"type,omitempty"`
-	Deadline         string                 `protobuf:"bytes,7,opt,name=deadline,proto3" json:"deadline,omitempty"`
+	Status           string                 `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	Deadline         string                 `protobuf:"bytes,8,opt,name=deadline,proto3" json:"deadline,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
 
 func (x *RequestFull) Reset() {
 	*x = RequestFull{}
-	mi := &file_proto_request_proto_msgTypes[2]
+	mi := &file_proto_request_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -176,7 +413,7 @@ func (x *RequestFull) String() string {
 func (*RequestFull) ProtoMessage() {}
 
 func (x *RequestFull) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_request_proto_msgTypes[2]
+	mi := &file_proto_request_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -189,7 +426,7 @@ func (x *RequestFull) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestFull.ProtoReflect.Descriptor instead.
 func (*RequestFull) Descriptor() ([]byte, []int) {
-	return file_proto_request_proto_rawDescGZIP(), []int{2}
+	return file_proto_request_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RequestFull) GetId() int64 {
@@ -234,6 +471,13 @@ func (x *RequestFull) GetType() string {
 	return ""
 }
 
+func (x *RequestFull) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
 func (x *RequestFull) GetDeadline() string {
 	if x != nil {
 		return x.Deadline
@@ -256,7 +500,7 @@ type CreateRequestRequest struct {
 
 func (x *CreateRequestRequest) Reset() {
 	*x = CreateRequestRequest{}
-	mi := &file_proto_request_proto_msgTypes[3]
+	mi := &file_proto_request_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -268,7 +512,7 @@ func (x *CreateRequestRequest) String() string {
 func (*CreateRequestRequest) ProtoMessage() {}
 
 func (x *CreateRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_request_proto_msgTypes[3]
+	mi := &file_proto_request_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -281,7 +525,7 @@ func (x *CreateRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRequestRequest.ProtoReflect.Descriptor instead.
 func (*CreateRequestRequest) Descriptor() ([]byte, []int) {
-	return file_proto_request_proto_rawDescGZIP(), []int{3}
+	return file_proto_request_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateRequestRequest) GetCreatorId() int64 {
@@ -341,7 +585,7 @@ type GetRequestsRequest struct {
 
 func (x *GetRequestsRequest) Reset() {
 	*x = GetRequestsRequest{}
-	mi := &file_proto_request_proto_msgTypes[4]
+	mi := &file_proto_request_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -353,7 +597,7 @@ func (x *GetRequestsRequest) String() string {
 func (*GetRequestsRequest) ProtoMessage() {}
 
 func (x *GetRequestsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_request_proto_msgTypes[4]
+	mi := &file_proto_request_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -366,7 +610,7 @@ func (x *GetRequestsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestsRequest.ProtoReflect.Descriptor instead.
 func (*GetRequestsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_request_proto_rawDescGZIP(), []int{4}
+	return file_proto_request_proto_rawDescGZIP(), []int{8}
 }
 
 type GetRequestsResponse struct {
@@ -378,7 +622,7 @@ type GetRequestsResponse struct {
 
 func (x *GetRequestsResponse) Reset() {
 	*x = GetRequestsResponse{}
-	mi := &file_proto_request_proto_msgTypes[5]
+	mi := &file_proto_request_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -390,7 +634,7 @@ func (x *GetRequestsResponse) String() string {
 func (*GetRequestsResponse) ProtoMessage() {}
 
 func (x *GetRequestsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_request_proto_msgTypes[5]
+	mi := &file_proto_request_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -403,7 +647,7 @@ func (x *GetRequestsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestsResponse.ProtoReflect.Descriptor instead.
 func (*GetRequestsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_request_proto_rawDescGZIP(), []int{5}
+	return file_proto_request_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetRequestsResponse) GetRequests() []*RequestShort {
@@ -422,7 +666,7 @@ type GetRequestRequest struct {
 
 func (x *GetRequestRequest) Reset() {
 	*x = GetRequestRequest{}
-	mi := &file_proto_request_proto_msgTypes[6]
+	mi := &file_proto_request_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -434,7 +678,7 @@ func (x *GetRequestRequest) String() string {
 func (*GetRequestRequest) ProtoMessage() {}
 
 func (x *GetRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_request_proto_msgTypes[6]
+	mi := &file_proto_request_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -447,7 +691,7 @@ func (x *GetRequestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRequestRequest.ProtoReflect.Descriptor instead.
 func (*GetRequestRequest) Descriptor() ([]byte, []int) {
-	return file_proto_request_proto_rawDescGZIP(), []int{6}
+	return file_proto_request_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetRequestRequest) GetId() int64 {
@@ -461,7 +705,27 @@ var File_proto_request_proto protoreflect.FileDescriptor
 
 const file_proto_request_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/request.proto\x12\arequest\"*\n" +
+	"\x13proto/request.proto\x12\arequest\x1a\x1bgoogle/protobuf/empty.proto\"l\n" +
+	"\x15ApplyToRequestRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tuser_name\x18\x03 \x01(\tR\buserName\"x\n" +
+	"\x1fCancelRequestApplicationRequest\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\x03R\trequestId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\n" +
+	"creator_id\x18\x03 \x01(\x03R\tcreatorId\"5\n" +
+	"\x16ApplyToRequestResponse\x12\x1b\n" +
+	"\treq_title\x18\x01 \x01(\tR\breqTitle\"\x8d\x01\n" +
+	"\x12RequestApplication\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x01 \x01(\x03R\trequestId\x12!\n" +
+	"\x04user\x18\x02 \x01(\v2\r.request.UserR\x04user\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"applied_at\x18\x04 \x01(\tR\tappliedAt\"*\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"\x83\x01\n" +
@@ -471,15 +735,16 @@ const file_proto_request_proto_rawDesc = "" +
 	"creator_id\x18\x02 \x01(\x03R\tcreatorId\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\tR\x04type\x12\x1a\n" +
-	"\bdeadline\x18\x05 \x01(\tR\bdeadline\"\xdb\x01\n" +
+	"\bdeadline\x18\x05 \x01(\tR\bdeadline\"\xf3\x01\n" +
 	"\vRequestFull\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
 	"\acreator\x18\x02 \x01(\v2\r.request.UserR\acreator\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12+\n" +
 	"\x11requester_address\x18\x05 \x01(\tR\x10requesterAddress\x12\x12\n" +
-	"\x04type\x18\x06 \x01(\tR\x04type\x12\x1a\n" +
-	"\bdeadline\x18\a \x01(\tR\bdeadline\"\xed\x01\n" +
+	"\x04type\x18\x06 \x01(\tR\x04type\x12\x16\n" +
+	"\x06status\x18\a \x01(\tR\x06status\x12\x1a\n" +
+	"\bdeadline\x18\b \x01(\tR\bdeadline\"\xed\x01\n" +
 	"\x14CreateRequestRequest\x12\x1d\n" +
 	"\n" +
 	"creator_id\x18\x01 \x01(\x03R\tcreatorId\x12!\n" +
@@ -493,12 +758,14 @@ const file_proto_request_proto_rawDesc = "" +
 	"\x13GetRequestsResponse\x121\n" +
 	"\brequests\x18\x01 \x03(\v2\x15.request.RequestShortR\brequests\"#\n" +
 	"\x11GetRequestRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id2\xe0\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id2\x91\x03\n" +
 	"\x0eRequestService\x12D\n" +
 	"\rCreateRequest\x12\x1d.request.CreateRequestRequest\x1a\x14.request.RequestFull\x12H\n" +
 	"\vGetRequests\x12\x1b.request.GetRequestsRequest\x1a\x1c.request.GetRequestsResponse\x12>\n" +
 	"\n" +
-	"GetRequest\x12\x1a.request.GetRequestRequest\x1a\x14.request.RequestFullB\x10Z\x0epkg/pb/requestb\x06proto3"
+	"GetRequest\x12\x1a.request.GetRequestRequest\x1a\x14.request.RequestFull\x12Q\n" +
+	"\x0eApplyToRequest\x12\x1e.request.ApplyToRequestRequest\x1a\x1f.request.ApplyToRequestResponse\x12\\\n" +
+	"\x18CancelRequestApplication\x12(.request.CancelRequestApplicationRequest\x1a\x16.google.protobuf.EmptyB\x10Z\x0epkg/pb/requestb\x06proto3"
 
 var (
 	file_proto_request_proto_rawDescOnce sync.Once
@@ -512,30 +779,40 @@ func file_proto_request_proto_rawDescGZIP() []byte {
 	return file_proto_request_proto_rawDescData
 }
 
-var file_proto_request_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_proto_request_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_proto_request_proto_goTypes = []any{
-	(*User)(nil),                 // 0: request.User
-	(*RequestShort)(nil),         // 1: request.RequestShort
-	(*RequestFull)(nil),          // 2: request.RequestFull
-	(*CreateRequestRequest)(nil), // 3: request.CreateRequestRequest
-	(*GetRequestsRequest)(nil),   // 4: request.GetRequestsRequest
-	(*GetRequestsResponse)(nil),  // 5: request.GetRequestsResponse
-	(*GetRequestRequest)(nil),    // 6: request.GetRequestRequest
+	(*ApplyToRequestRequest)(nil),           // 0: request.ApplyToRequestRequest
+	(*CancelRequestApplicationRequest)(nil), // 1: request.CancelRequestApplicationRequest
+	(*ApplyToRequestResponse)(nil),          // 2: request.ApplyToRequestResponse
+	(*RequestApplication)(nil),              // 3: request.RequestApplication
+	(*User)(nil),                            // 4: request.User
+	(*RequestShort)(nil),                    // 5: request.RequestShort
+	(*RequestFull)(nil),                     // 6: request.RequestFull
+	(*CreateRequestRequest)(nil),            // 7: request.CreateRequestRequest
+	(*GetRequestsRequest)(nil),              // 8: request.GetRequestsRequest
+	(*GetRequestsResponse)(nil),             // 9: request.GetRequestsResponse
+	(*GetRequestRequest)(nil),               // 10: request.GetRequestRequest
+	(*emptypb.Empty)(nil),                   // 11: google.protobuf.Empty
 }
 var file_proto_request_proto_depIdxs = []int32{
-	0, // 0: request.RequestFull.creator:type_name -> request.User
-	1, // 1: request.GetRequestsResponse.requests:type_name -> request.RequestShort
-	3, // 2: request.RequestService.CreateRequest:input_type -> request.CreateRequestRequest
-	4, // 3: request.RequestService.GetRequests:input_type -> request.GetRequestsRequest
-	6, // 4: request.RequestService.GetRequest:input_type -> request.GetRequestRequest
-	2, // 5: request.RequestService.CreateRequest:output_type -> request.RequestFull
-	5, // 6: request.RequestService.GetRequests:output_type -> request.GetRequestsResponse
-	2, // 7: request.RequestService.GetRequest:output_type -> request.RequestFull
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4,  // 0: request.RequestApplication.user:type_name -> request.User
+	4,  // 1: request.RequestFull.creator:type_name -> request.User
+	5,  // 2: request.GetRequestsResponse.requests:type_name -> request.RequestShort
+	7,  // 3: request.RequestService.CreateRequest:input_type -> request.CreateRequestRequest
+	8,  // 4: request.RequestService.GetRequests:input_type -> request.GetRequestsRequest
+	10, // 5: request.RequestService.GetRequest:input_type -> request.GetRequestRequest
+	0,  // 6: request.RequestService.ApplyToRequest:input_type -> request.ApplyToRequestRequest
+	1,  // 7: request.RequestService.CancelRequestApplication:input_type -> request.CancelRequestApplicationRequest
+	6,  // 8: request.RequestService.CreateRequest:output_type -> request.RequestFull
+	9,  // 9: request.RequestService.GetRequests:output_type -> request.GetRequestsResponse
+	6,  // 10: request.RequestService.GetRequest:output_type -> request.RequestFull
+	2,  // 11: request.RequestService.ApplyToRequest:output_type -> request.ApplyToRequestResponse
+	11, // 12: request.RequestService.CancelRequestApplication:output_type -> google.protobuf.Empty
+	8,  // [8:13] is the sub-list for method output_type
+	3,  // [3:8] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_request_proto_init() }
@@ -549,7 +826,7 @@ func file_proto_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_request_proto_rawDesc), len(file_proto_request_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

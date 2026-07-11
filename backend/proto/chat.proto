@@ -34,7 +34,7 @@ service ChatService {
   rpc createMeetingChat(CreateMeetingChatRequest)
     returns (ChatResponse);
 
-  rpc AddToMeetingChat(CreateMeetingChatRequest)
+  rpc AddToChat(AddToChatRequest)
     returns (google.protobuf.Empty);
 
   rpc GetParticipants(GetParticipantsRequest)
@@ -70,6 +70,16 @@ message CreateMeetingChatRequest {
   int64 meeting_id = 1;
 
   string chat_name = 2;
+
+  // extracted from JWT by Gateway
+  int64 creator_id = 3;
+  string creator_name = 4;
+}
+
+message AddToChatRequest {
+  int64 relater_id = 1;
+
+  string chat_type = 2;
 
   // extracted from JWT by Gateway
   int64 creator_id = 3;

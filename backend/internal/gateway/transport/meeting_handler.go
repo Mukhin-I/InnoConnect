@@ -239,13 +239,14 @@ func (h *Handler) ApplyOnMeeting(c *gin.Context) {
         return
     }
 
-	_, err = h.chatClient.AddToMeetingChat(
+	_, err = h.chatClient.AddToChat(
         c.Request.Context(),
-        &chat.CreateMeetingChatRequest{
+        &chat.AddToChatRequest{
             // TODO rename on user
             CreatorId:   userID,
         	CreatorName: name,
-            MeetingId: id,
+			ChatType: "MEETING",
+            RelaterId: id,
         },
     )
 
