@@ -324,25 +324,24 @@ func (r *Repository) getLastMessage(
 	return &msg, nil
 }
 
-func (r *Repository) GetMeetingChat(
+func (r *Repository) GetChat(
 	ctx context.Context,
 	meetingID int64,
+	chatType string,
 ) (entity.Chat, error) {
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	var chat entity.Chat
-	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
 		FROM chats
-		WHERE type = 'MEETING'
-		  AND related_id = $1
-	`, meetingID).Scan(
+		WHERE type = '$1'
+		  AND related_id = $2
+	`, chatType, meetingID).Scan(
 		&chat.ID,
-		&chatType,
 	)
 
 	chat.Type = entity.ChatTypeFromString(chatType)

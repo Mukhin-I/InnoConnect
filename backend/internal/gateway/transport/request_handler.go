@@ -54,6 +54,15 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 		return
 	}
 
+	_, err = h.chatClient.GetOrCreateRequestChat(
+		c.Request.Context(),
+		&chat.GetOrCreateRequestChatRequest{
+			RequestId: request.Id,
+			ChatName: request.Title,
+			UserId: userID,
+		},
+	)
+
 	c.JSON(http.StatusCreated, entity.CreateRequestResponse{
 		ID: request.Id,
 		Creator: entity.User{
@@ -148,8 +157,8 @@ func (h *Handler) ApplyToRequest(c *gin.Context) {
 		return
 	}
 
-
-	resp, err := h.requestClient.ApplyToRequest(
+	// TODO: remove uneccesarry return from this method
+	_, err = h.requestClient.ApplyToRequest(
 		c.Request.Context(),
 		&requestpb.ApplyToRequestRequest{
 			RequestId: requestID,
@@ -169,33 +178,16 @@ func (h *Handler) ApplyToRequest(c *gin.Context) {
 		return
 	}
 
-
-	if !resp.Success {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "cannot apply to request",
-		})
-		return
-	}
-
-	_, err = h.chatClient.GetOrCreateRequestChat(
-		c.Request.Context(),
-		&chat.GetOrCreateRequestChatRequest{
-			RequestId: requestID,
-			ChatName: ,
-			UserId: userID,
-		},
-	)
-
-	if err != nil {
-		logger.Error(err.Error())
-
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":"failed to create chat",
-		})
-		return
-	}
-
-
+	_, err = h.chatClient.AddToChat(
+        c.Request.Context(),
+        &chat.AddToChatRequest{
+            // TODO rename on user
+            CreatorId:   userID,
+        	CreatorName: userName,
+			ChatType: "REQUEST",
+            RelaterId: requestID,
+        },
+    )
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
@@ -213,7 +205,6 @@ func (h *Handler) CancelRequestApplication(c *gin.Context) {
 		return
 	}
 
-
 	userID, err := strconv.ParseInt(c.Param("user_id"), 10, 64)
 
 	if err != nil {
@@ -222,7 +213,6 @@ func (h *Handler) CancelRequestApplication(c *gin.Context) {
 		})
 		return
 	}
-
 
 	creatorID, _, err := usecase.GetUserFromToken(c)
 
@@ -233,8 +223,7 @@ func (h *Handler) CancelRequestApplication(c *gin.Context) {
 		return
 	}
 
-
-	resp, err := h.requestClient.CancelRequestApplication(
+	_, err = h.requestClient.CancelRequestApplication(
 		c.Request.Context(),
 		&requestpb.CancelRequestApplicationRequest{
 			RequestId: requestID,
@@ -242,7 +231,6 @@ func (h *Handler) CancelRequestApplication(c *gin.Context) {
 			CreatorId: creatorID,
 		},
 	)
-
 
 	if err != nil {
 		logger.Error(
@@ -254,15 +242,6 @@ func (h *Handler) CancelRequestApplication(c *gin.Context) {
 		})
 		return
 	}
-
-
-	if !resp.Success {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "cannot cancel application",
-		})
-		return
-	}
-
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,

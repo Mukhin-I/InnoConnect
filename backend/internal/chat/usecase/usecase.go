@@ -71,7 +71,7 @@ func (u *ChatUsecase) GetMeetingChat(
 
 	// Later: verify user participates in meeting
 
-	return u.repo.GetMeetingChat(ctx, meetingID)
+	return u.repo.GetChat(ctx, meetingID, "MEETING")
 }
 
 func (u *ChatUsecase) GetOrCreateRequestChat(
@@ -96,7 +96,7 @@ func (u *ChatUsecase) GetOrCreateRequestChat(
 func (u *ChatUsecase) CreateMeetingChat(ctx context.Context, meetingID int64, chatName string, creatorID int64, creatorName string) (entity.Chat, error) {
 
 	// 1. try find existing chat
-	chat, err := u.repo.GetMeetingChat(ctx, meetingID)
+	chat, err := u.repo.GetChat(ctx, meetingID, "MEETING")
 	if err == nil {
 		return chat, nil
 	}
@@ -110,8 +110,8 @@ func (u *ChatUsecase) CreateMeetingChat(ctx context.Context, meetingID int64, ch
 	return chat, nil
 }
 
-func (u *ChatUsecase) AddToMeetingChat(ctx context.Context, meetingID int64, user_id int64, user_name string) (error) {
-	chat, err := u.repo.GetMeetingChat(ctx, meetingID)
+func (u *ChatUsecase) AddToChat(ctx context.Context, relatedID int64, chatType string, user_id int64, user_name string) (error) {
+	chat, err := u.repo.GetChat(ctx, relatedID, chatType)
 	if err != nil {
 		logger.Error(err.Error())
 		return err
