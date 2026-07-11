@@ -35,7 +35,8 @@ func CreateServer() error {
 		return err
 	}
 
-	handler := transport.NewHandler(meetingClient, requestClient, chatClient, userClient)
+	wsHub := transport.NewHub()
+	handler := transport.NewHandler(meetingClient, requestClient, chatClient, userClient, wsHub)
 
 	router := gin.Default()
 
@@ -91,6 +92,8 @@ func setEndpoints(router *gin.Engine, h *transport.Handler) {
     router.GET("/meetings", h.GetMeetings)
     router.GET("/meetings/:id", h.GetMeeting)
 	router.POST("/meetings/:id", h.ApplyOnMeeting)
+
+	router.GET("/ws", h.WebSocket)
 
     router.GET(
         "/swagger/*any",

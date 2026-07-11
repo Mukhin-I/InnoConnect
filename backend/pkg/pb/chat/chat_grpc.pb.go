@@ -28,6 +28,7 @@ const (
 	ChatService_GetChats_FullMethodName               = "/chat.ChatService/GetChats"
 	ChatService_CreateMeetingChat_FullMethodName      = "/chat.ChatService/createMeetingChat"
 	ChatService_AddToMeetingChat_FullMethodName       = "/chat.ChatService/AddToMeetingChat"
+	ChatService_GetParticipants_FullMethodName        = "/chat.ChatService/GetParticipants"
 )
 
 // ChatServiceClient is the client API for ChatService service.
@@ -47,6 +48,7 @@ type ChatServiceClient interface {
 	GetChats(ctx context.Context, in *GetChatsRequest, opts ...grpc.CallOption) (*GetChatsResponse, error)
 	CreateMeetingChat(ctx context.Context, in *CreateMeetingChatRequest, opts ...grpc.CallOption) (*ChatResponse, error)
 	AddToMeetingChat(ctx context.Context, in *CreateMeetingChatRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetParticipants(ctx context.Context, in *GetParticipantsRequest, opts ...grpc.CallOption) (*GetParticipantsResponse, error)
 }
 
 type chatServiceClient struct {
@@ -137,6 +139,16 @@ func (c *chatServiceClient) AddToMeetingChat(ctx context.Context, in *CreateMeet
 	return out, nil
 }
 
+func (c *chatServiceClient) GetParticipants(ctx context.Context, in *GetParticipantsRequest, opts ...grpc.CallOption) (*GetParticipantsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetParticipantsResponse)
+	err := c.cc.Invoke(ctx, ChatService_GetParticipants_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 // All implementations must embed UnimplementedChatServiceServer
 // for forward compatibility.
@@ -154,6 +166,7 @@ type ChatServiceServer interface {
 	GetChats(context.Context, *GetChatsRequest) (*GetChatsResponse, error)
 	CreateMeetingChat(context.Context, *CreateMeetingChatRequest) (*ChatResponse, error)
 	AddToMeetingChat(context.Context, *CreateMeetingChatRequest) (*emptypb.Empty, error)
+	GetParticipants(context.Context, *GetParticipantsRequest) (*GetParticipantsResponse, error)
 	mustEmbedUnimplementedChatServiceServer()
 }
 
@@ -187,6 +200,9 @@ func (UnimplementedChatServiceServer) CreateMeetingChat(context.Context, *Create
 }
 func (UnimplementedChatServiceServer) AddToMeetingChat(context.Context, *CreateMeetingChatRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddToMeetingChat not implemented")
+}
+func (UnimplementedChatServiceServer) GetParticipants(context.Context, *GetParticipantsRequest) (*GetParticipantsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetParticipants not implemented")
 }
 func (UnimplementedChatServiceServer) mustEmbedUnimplementedChatServiceServer() {}
 func (UnimplementedChatServiceServer) testEmbeddedByValue()                     {}
@@ -353,6 +369,24 @@ func _ChatService_AddToMeetingChat_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_GetParticipants_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetParticipantsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).GetParticipants(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatService_GetParticipants_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).GetParticipants(ctx, req.(*GetParticipantsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ChatService_ServiceDesc is the grpc.ServiceDesc for ChatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -391,6 +425,10 @@ var ChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddToMeetingChat",
 			Handler:    _ChatService_AddToMeetingChat_Handler,
+		},
+		{
+			MethodName: "GetParticipants",
+			Handler:    _ChatService_GetParticipants_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
