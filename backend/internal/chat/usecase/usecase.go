@@ -118,3 +118,11 @@ func (u *ChatUsecase) AddToMeetingChat(ctx context.Context, meetingID int64, use
 	}
 	return u.repo.AddParticipant(ctx, nil, chat.ID, user_id, user_name)
 }
+
+func (u *ChatUsecase) GetParticipants(
+	ctx context.Context,
+	chatID int64,
+) ([]entity.User, error) {
+
+	return u.repo.GetParticipants(ctx, chatID)
+}

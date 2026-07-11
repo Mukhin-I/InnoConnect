@@ -442,3 +442,14 @@ func (r *Repository) AddParticipant(
 
 	return nil
 }
+
+func (r *Repository) GetParticipants(
+	ctx context.Context,
+	chatID int64,
+) ([]entity.User, error) {
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return r.getParticipants(ctx, chatID)
+}

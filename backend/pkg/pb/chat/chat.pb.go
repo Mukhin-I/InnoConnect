@@ -889,6 +889,94 @@ func (x *GetChatsResponse) GetChats() []*ChatPreview {
 	return nil
 }
 
+type GetParticipantsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ChatId        int64                  `protobuf:"varint,1,opt,name=chat_id,json=chatId,proto3" json:"chat_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetParticipantsRequest) Reset() {
+	*x = GetParticipantsRequest{}
+	mi := &file_proto_chat_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetParticipantsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetParticipantsRequest) ProtoMessage() {}
+
+func (x *GetParticipantsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetParticipantsRequest.ProtoReflect.Descriptor instead.
+func (*GetParticipantsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *GetParticipantsRequest) GetChatId() int64 {
+	if x != nil {
+		return x.ChatId
+	}
+	return 0
+}
+
+type GetParticipantsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Participants  []*User                `protobuf:"bytes,1,rep,name=participants,proto3" json:"participants,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetParticipantsResponse) Reset() {
+	*x = GetParticipantsResponse{}
+	mi := &file_proto_chat_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetParticipantsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetParticipantsResponse) ProtoMessage() {}
+
+func (x *GetParticipantsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetParticipantsResponse.ProtoReflect.Descriptor instead.
+func (*GetParticipantsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_chat_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetParticipantsResponse) GetParticipants() []*User {
+	if x != nil {
+		return x.Participants
+	}
+	return nil
+}
+
 var File_proto_chat_proto protoreflect.FileDescriptor
 
 const file_proto_chat_proto_rawDesc = "" +
@@ -953,11 +1041,16 @@ const file_proto_chat_proto_rawDesc = "" +
 	".chat.UserR\fparticipants\x120\n" +
 	"\flast_message\x18\x05 \x01(\v2\r.chat.MessageR\vlastMessage\";\n" +
 	"\x10GetChatsResponse\x12'\n" +
-	"\x05chats\x18\x01 \x03(\v2\x11.chat.ChatPreviewR\x05chats*?\n" +
+	"\x05chats\x18\x01 \x03(\v2\x11.chat.ChatPreviewR\x05chats\"1\n" +
+	"\x16GetParticipantsRequest\x12\x17\n" +
+	"\achat_id\x18\x01 \x01(\x03R\x06chatId\"I\n" +
+	"\x17GetParticipantsResponse\x12.\n" +
+	"\fparticipants\x18\x01 \x03(\v2\n" +
+	".chat.UserR\fparticipants*?\n" +
 	"\bChatType\x12\x19\n" +
 	"\x15CHAT_TYPE_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aREQUEST\x10\x01\x12\v\n" +
-	"\aMEETING\x10\x022\xa7\x04\n" +
+	"\aMEETING\x10\x022\xf7\x04\n" +
 	"\vChatService\x12Q\n" +
 	"\x16GetOrCreateRequestChat\x12#.chat.GetOrCreateRequestChatRequest\x1a\x12.chat.ChatResponse\x12A\n" +
 	"\x0eGetMeetingChat\x12\x1b.chat.GetMeetingChatRequest\x1a\x12.chat.ChatResponse\x126\n" +
@@ -966,7 +1059,8 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\vSendMessage\x12\x18.chat.SendMessageRequest\x1a\r.chat.Message\x129\n" +
 	"\bGetChats\x12\x15.chat.GetChatsRequest\x1a\x16.chat.GetChatsResponse\x12G\n" +
 	"\x11createMeetingChat\x12\x1e.chat.CreateMeetingChatRequest\x1a\x12.chat.ChatResponse\x12J\n" +
-	"\x10AddToMeetingChat\x12\x1e.chat.CreateMeetingChatRequest\x1a\x16.google.protobuf.EmptyB\rZ\vpkg/pb/chatb\x06proto3"
+	"\x10AddToMeetingChat\x12\x1e.chat.CreateMeetingChatRequest\x1a\x16.google.protobuf.Empty\x12N\n" +
+	"\x0fGetParticipants\x12\x1c.chat.GetParticipantsRequest\x1a\x1d.chat.GetParticipantsResponseB\rZ\vpkg/pb/chatb\x06proto3"
 
 var (
 	file_proto_chat_proto_rawDescOnce sync.Once
@@ -981,7 +1075,7 @@ func file_proto_chat_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_chat_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_proto_chat_proto_goTypes = []any{
 	(ChatType)(0),                         // 0: chat.ChatType
 	(*User)(nil),                          // 1: chat.User
@@ -998,7 +1092,9 @@ var file_proto_chat_proto_goTypes = []any{
 	(*GetChatsRequest)(nil),               // 12: chat.GetChatsRequest
 	(*ChatPreview)(nil),                   // 13: chat.ChatPreview
 	(*GetChatsResponse)(nil),              // 14: chat.GetChatsResponse
-	(*emptypb.Empty)(nil),                 // 15: google.protobuf.Empty
+	(*GetParticipantsRequest)(nil),        // 15: chat.GetParticipantsRequest
+	(*GetParticipantsResponse)(nil),       // 16: chat.GetParticipantsResponse
+	(*emptypb.Empty)(nil),                 // 17: google.protobuf.Empty
 }
 var file_proto_chat_proto_depIdxs = []int32{
 	0,  // 0: chat.ChatResponse.type:type_name -> chat.ChatType
@@ -1010,27 +1106,30 @@ var file_proto_chat_proto_depIdxs = []int32{
 	1,  // 6: chat.ChatPreview.participants:type_name -> chat.User
 	9,  // 7: chat.ChatPreview.last_message:type_name -> chat.Message
 	13, // 8: chat.GetChatsResponse.chats:type_name -> chat.ChatPreview
-	3,  // 9: chat.ChatService.GetOrCreateRequestChat:input_type -> chat.GetOrCreateRequestChatRequest
-	5,  // 10: chat.ChatService.GetMeetingChat:input_type -> chat.GetMeetingChatRequest
-	6,  // 11: chat.ChatService.GetChat:input_type -> chat.GetChatRequest
-	8,  // 12: chat.ChatService.GetMessages:input_type -> chat.GetMessagesRequest
-	11, // 13: chat.ChatService.SendMessage:input_type -> chat.SendMessageRequest
-	12, // 14: chat.ChatService.GetChats:input_type -> chat.GetChatsRequest
-	4,  // 15: chat.ChatService.createMeetingChat:input_type -> chat.CreateMeetingChatRequest
-	4,  // 16: chat.ChatService.AddToMeetingChat:input_type -> chat.CreateMeetingChatRequest
-	2,  // 17: chat.ChatService.GetOrCreateRequestChat:output_type -> chat.ChatResponse
-	2,  // 18: chat.ChatService.GetMeetingChat:output_type -> chat.ChatResponse
-	7,  // 19: chat.ChatService.GetChat:output_type -> chat.GetChatResponse
-	10, // 20: chat.ChatService.GetMessages:output_type -> chat.GetMessagesResponse
-	9,  // 21: chat.ChatService.SendMessage:output_type -> chat.Message
-	14, // 22: chat.ChatService.GetChats:output_type -> chat.GetChatsResponse
-	2,  // 23: chat.ChatService.createMeetingChat:output_type -> chat.ChatResponse
-	15, // 24: chat.ChatService.AddToMeetingChat:output_type -> google.protobuf.Empty
-	17, // [17:25] is the sub-list for method output_type
-	9,  // [9:17] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	1,  // 9: chat.GetParticipantsResponse.participants:type_name -> chat.User
+	3,  // 10: chat.ChatService.GetOrCreateRequestChat:input_type -> chat.GetOrCreateRequestChatRequest
+	5,  // 11: chat.ChatService.GetMeetingChat:input_type -> chat.GetMeetingChatRequest
+	6,  // 12: chat.ChatService.GetChat:input_type -> chat.GetChatRequest
+	8,  // 13: chat.ChatService.GetMessages:input_type -> chat.GetMessagesRequest
+	11, // 14: chat.ChatService.SendMessage:input_type -> chat.SendMessageRequest
+	12, // 15: chat.ChatService.GetChats:input_type -> chat.GetChatsRequest
+	4,  // 16: chat.ChatService.createMeetingChat:input_type -> chat.CreateMeetingChatRequest
+	4,  // 17: chat.ChatService.AddToMeetingChat:input_type -> chat.CreateMeetingChatRequest
+	15, // 18: chat.ChatService.GetParticipants:input_type -> chat.GetParticipantsRequest
+	2,  // 19: chat.ChatService.GetOrCreateRequestChat:output_type -> chat.ChatResponse
+	2,  // 20: chat.ChatService.GetMeetingChat:output_type -> chat.ChatResponse
+	7,  // 21: chat.ChatService.GetChat:output_type -> chat.GetChatResponse
+	10, // 22: chat.ChatService.GetMessages:output_type -> chat.GetMessagesResponse
+	9,  // 23: chat.ChatService.SendMessage:output_type -> chat.Message
+	14, // 24: chat.ChatService.GetChats:output_type -> chat.GetChatsResponse
+	2,  // 25: chat.ChatService.createMeetingChat:output_type -> chat.ChatResponse
+	17, // 26: chat.ChatService.AddToMeetingChat:output_type -> google.protobuf.Empty
+	16, // 27: chat.ChatService.GetParticipants:output_type -> chat.GetParticipantsResponse
+	19, // [19:28] is the sub-list for method output_type
+	10, // [10:19] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_proto_init() }
@@ -1044,7 +1143,7 @@ func file_proto_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_proto_rawDesc), len(file_proto_chat_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

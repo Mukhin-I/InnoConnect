@@ -36,6 +36,9 @@ service ChatService {
 
   rpc AddToMeetingChat(CreateMeetingChatRequest)
     returns (google.protobuf.Empty);
+
+  rpc GetParticipants(GetParticipantsRequest)
+    returns (GetParticipantsResponse);
 }
 
 enum ChatType {
@@ -151,3 +154,10 @@ message GetChatsResponse {
   repeated ChatPreview chats = 1;
 }
 
+message GetParticipantsRequest {
+  int64 chat_id = 1;
+}
+
+message GetParticipantsResponse {
+  repeated User participants = 1;
+}

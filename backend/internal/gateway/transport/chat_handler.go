@@ -237,12 +237,13 @@ func (h *Handler) WebSocket(c *gin.Context) {
 	}
 }
 
+// TODO: can be optimized for a one grpc call instead of 2
 func (h *Handler) handleSendMessage(
 	ctx context.Context,
 	userID int64,
 	req entity.WSRequest,
 ) {
-	_, err := h.chatClient.SendMessage(
+	resp, err := h.chatClient.SendMessage(
 		ctx,
 		&chatpb.SendMessageRequest{
 			ChatId: req.ChatID,
@@ -255,5 +256,25 @@ func (h *Handler) handleSendMessage(
 		return
 	}
 
-	// TODO: send to every participant
+	participants, err := h.chatClient.GetParticipants(
+		ctx,
+		&chatpb.GetParticipantsRequest{
+			ChatId: req.ChatID,
+		},
+	)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+
+	wsMessage := entity.WSResponse{
+		Type:    "new_message",
+		ChatID:  req.ChatID,
+		Message: resp,
+	}
+
+	for _, participant := range participants.Participants {
+		h.wsHub.Send(participant.Id, wsMessage)
+	}
 }
