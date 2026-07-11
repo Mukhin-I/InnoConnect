@@ -13,6 +13,46 @@ service RequestService {
 
     rpc GetRequest(GetRequestRequest)
         returns (RequestFull);
+
+    // User applies to request
+    rpc ApplyToRequest(ApplyToRequestRequest)
+        returns (ApplyToRequestResponse);
+
+    // Creator cancels/removes user from request
+    rpc CancelRequestApplication(CancelRequestApplicationRequest)
+        returns (ApplyToRequestResponse);
+}
+
+message ApplyToRequestRequest {
+    int64 request_id = 1;
+
+    // extracted from JWT by Gateway
+    int64 user_id = 2;
+    string user_name = 3;
+}
+
+message CancelRequestApplicationRequest {
+    int64 request_id = 1;
+
+    // user who will be removed
+    int64 user_id = 2;
+
+    // request creator from JWT
+    int64 creator_id = 3;
+}
+
+message ApplyToRequestResponse {
+    bool success = 1;
+}
+
+message RequestApplication {
+    int64 request_id = 1;
+
+    User user = 2;
+
+    string status = 3;
+
+    string applied_at = 4;
 }
 
 message User {
@@ -32,6 +72,7 @@ message RequestShort {
     string deadline = 5;
 }
 
+
 message RequestFull {
     int64 id = 1;
 
@@ -45,7 +86,9 @@ message RequestFull {
 
     string type = 6;
 
-    string deadline = 7;
+    string status = 7;
+
+    string deadline = 8;
 }
 
 message CreateRequestRequest {

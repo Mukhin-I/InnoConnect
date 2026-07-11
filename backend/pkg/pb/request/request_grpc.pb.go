@@ -19,9 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RequestService_CreateRequest_FullMethodName = "/request.RequestService/CreateRequest"
-	RequestService_GetRequests_FullMethodName   = "/request.RequestService/GetRequests"
-	RequestService_GetRequest_FullMethodName    = "/request.RequestService/GetRequest"
+	RequestService_CreateRequest_FullMethodName            = "/request.RequestService/CreateRequest"
+	RequestService_GetRequests_FullMethodName              = "/request.RequestService/GetRequests"
+	RequestService_GetRequest_FullMethodName               = "/request.RequestService/GetRequest"
+	RequestService_ApplyToRequest_FullMethodName           = "/request.RequestService/ApplyToRequest"
+	RequestService_CancelRequestApplication_FullMethodName = "/request.RequestService/CancelRequestApplication"
 )
 
 // RequestServiceClient is the client API for RequestService service.
@@ -31,6 +33,10 @@ type RequestServiceClient interface {
 	CreateRequest(ctx context.Context, in *CreateRequestRequest, opts ...grpc.CallOption) (*RequestFull, error)
 	GetRequests(ctx context.Context, in *GetRequestsRequest, opts ...grpc.CallOption) (*GetRequestsResponse, error)
 	GetRequest(ctx context.Context, in *GetRequestRequest, opts ...grpc.CallOption) (*RequestFull, error)
+	// User applies to request
+	ApplyToRequest(ctx context.Context, in *ApplyToRequestRequest, opts ...grpc.CallOption) (*ApplyToRequestResponse, error)
+	// Creator cancels/removes user from request
+	CancelRequestApplication(ctx context.Context, in *CancelRequestApplicationRequest, opts ...grpc.CallOption) (*ApplyToRequestResponse, error)
 }
 
 type requestServiceClient struct {
@@ -71,6 +77,26 @@ func (c *requestServiceClient) GetRequest(ctx context.Context, in *GetRequestReq
 	return out, nil
 }
 
+func (c *requestServiceClient) ApplyToRequest(ctx context.Context, in *ApplyToRequestRequest, opts ...grpc.CallOption) (*ApplyToRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApplyToRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_ApplyToRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *requestServiceClient) CancelRequestApplication(ctx context.Context, in *CancelRequestApplicationRequest, opts ...grpc.CallOption) (*ApplyToRequestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ApplyToRequestResponse)
+	err := c.cc.Invoke(ctx, RequestService_CancelRequestApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RequestServiceServer is the server API for RequestService service.
 // All implementations must embed UnimplementedRequestServiceServer
 // for forward compatibility.
@@ -78,6 +104,10 @@ type RequestServiceServer interface {
 	CreateRequest(context.Context, *CreateRequestRequest) (*RequestFull, error)
 	GetRequests(context.Context, *GetRequestsRequest) (*GetRequestsResponse, error)
 	GetRequest(context.Context, *GetRequestRequest) (*RequestFull, error)
+	// User applies to request
+	ApplyToRequest(context.Context, *ApplyToRequestRequest) (*ApplyToRequestResponse, error)
+	// Creator cancels/removes user from request
+	CancelRequestApplication(context.Context, *CancelRequestApplicationRequest) (*ApplyToRequestResponse, error)
 	mustEmbedUnimplementedRequestServiceServer()
 }
 
@@ -96,6 +126,12 @@ func (UnimplementedRequestServiceServer) GetRequests(context.Context, *GetReques
 }
 func (UnimplementedRequestServiceServer) GetRequest(context.Context, *GetRequestRequest) (*RequestFull, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRequest not implemented")
+}
+func (UnimplementedRequestServiceServer) ApplyToRequest(context.Context, *ApplyToRequestRequest) (*ApplyToRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApplyToRequest not implemented")
+}
+func (UnimplementedRequestServiceServer) CancelRequestApplication(context.Context, *CancelRequestApplicationRequest) (*ApplyToRequestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelRequestApplication not implemented")
 }
 func (UnimplementedRequestServiceServer) mustEmbedUnimplementedRequestServiceServer() {}
 func (UnimplementedRequestServiceServer) testEmbeddedByValue()                        {}
@@ -172,6 +208,42 @@ func _RequestService_GetRequest_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RequestService_ApplyToRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ApplyToRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).ApplyToRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_ApplyToRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).ApplyToRequest(ctx, req.(*ApplyToRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RequestService_CancelRequestApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelRequestApplicationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RequestServiceServer).CancelRequestApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RequestService_CancelRequestApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RequestServiceServer).CancelRequestApplication(ctx, req.(*CancelRequestApplicationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RequestService_ServiceDesc is the grpc.ServiceDesc for RequestService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +262,14 @@ var RequestService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRequest",
 			Handler:    _RequestService_GetRequest_Handler,
+		},
+		{
+			MethodName: "ApplyToRequest",
+			Handler:    _RequestService_ApplyToRequest_Handler,
+		},
+		{
+			MethodName: "CancelRequestApplication",
+			Handler:    _RequestService_CancelRequestApplication_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

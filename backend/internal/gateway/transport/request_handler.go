@@ -128,3 +128,122 @@ func (h *Handler) GetRequest(c *gin.Context) {
 		Deadline:         resp.Deadline,
 	})
 }
+
+func (h *Handler) ApplyToRequest(c *gin.Context) {
+	requestID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request id",
+		})
+		return
+	}
+
+	userID, userName, err := usecase.GetUserFromToken(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+
+	resp, err := h.requestClient.ApplyToRequest(
+		c.Request.Context(),
+		&requestpb.ApplyToRequestRequest{
+			RequestId: requestID,
+			UserId:    userID,
+			UserName:  userName,
+		},
+	)
+
+	if err != nil {
+		logger.Error(
+			"failed to apply to request: " + err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to apply to request",
+		})
+		return
+	}
+
+
+	if !resp.Success {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "cannot apply to request",
+		})
+		return
+	}
+
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
+
+func (h *Handler) CancelRequestApplication(c *gin.Context) {
+
+	requestID, err := strconv.ParseInt(c.Param("request_id"), 10, 64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request id",
+		})
+		return
+	}
+
+
+	userID, err := strconv.ParseInt(c.Param("user_id"), 10, 64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid user id",
+		})
+		return
+	}
+
+
+	creatorID, _, err := usecase.GetUserFromToken(c)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+
+	resp, err := h.requestClient.CancelRequestApplication(
+		c.Request.Context(),
+		&requestpb.CancelRequestApplicationRequest{
+			RequestId: requestID,
+			UserId:    userID,
+			CreatorId: creatorID,
+		},
+	)
+
+
+	if err != nil {
+		logger.Error(
+			"failed to cancel application: " + err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to cancel application",
+		})
+		return
+	}
+
+
+	if !resp.Success {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "cannot cancel application",
+		})
+		return
+	}
+
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
