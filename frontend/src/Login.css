@@ -34,15 +34,6 @@ body {
     justify-content: flex-start;
 }
 
-.text-header {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    width: 290px;
-    padding: 0 24px 0 24px !important;
-    margin-bottom: 10px;
-}
-
 .header-top h2 {
     font-family: 'Montserrat', sans-serif;
     font-size: 10px;
@@ -50,6 +41,14 @@ body {
     color: #00130c;
     margin-right: auto;
     text-align: left;
+}
+
+.text-header {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 290px;
+    margin-bottom: 10px;
 }
 
 .text-header h1 {

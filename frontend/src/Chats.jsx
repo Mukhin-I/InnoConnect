@@ -58,15 +58,14 @@ function Chats() {
     return (
         <>
             <div className="chats-page">
-                <header className="profile-header">
-                          <div className="logo-container">
-                            <img src={logoIcon} alt="Logo" className="logo-icon" />
-                          </div>
-                          <div className="header-icons">
-                            <img src={notificationIcon} alt="Notifications" className="header-icon" />
-                            <img src={settingsIcon} alt="Settings" className="header-icon" />
-                          </div>
-                </header>
+                <header className="map-header">
+                         <div className="logo-container">
+                       <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                                 <div className="header-icons">
+                                   <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                                     <img src={settingsIcon} alt="Settings" className="header-icon" />
+                              </div>
+                         </header>
                 <div className="chats-page-content">
 
                     <h1 className="chats-header">Чаты</h1>
