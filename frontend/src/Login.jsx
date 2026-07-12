@@ -7,6 +7,7 @@ import avatarIcon from './assets/avatar.png'
 import lockIcon from './assets/lock.png'
 import CreateButton from './components/CreateButton'
 import PasswordInput from './components/PasswordInput';
+import logoIcon from './assets/logo.svg';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -68,7 +69,7 @@ function Login() {
       <div className="login-page">
         <div className="login-page-content">
             <div className="header-top">
-                <h2>InnoConnect</h2>
+                    <img src={logoIcon} alt="Logo" style={{ width: 65, height: 15 }} />
             </div>
             <div className="text-header">
                 <h1>С возвращением<br />в InnoConnect</h1>
