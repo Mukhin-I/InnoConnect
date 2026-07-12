@@ -40,6 +40,10 @@ body {
     padding: 40px 24px 0 24px;
 }
 
+.header-register {
+    padding-left: 24px !important;
+}
+
 .header-top h2 {
     font-family: 'Montserrat', sans-serif;
     font-size: 10px;

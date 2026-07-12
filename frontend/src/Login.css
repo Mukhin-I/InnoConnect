@@ -48,7 +48,8 @@ body {
     font-size: 10px;
     font-weight: 600;
     color: #00130c;
-    margin: 0;
+    margin-right: auto;
+    text-align: left;
 }
 
 .text-header h1 {
