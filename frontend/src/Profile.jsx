@@ -95,7 +95,6 @@ import EventCard from './EventCard.jsx';
 
   return (
     <>
-    <EventCard onClose={() => console.log('closed')} />
       <div className="profile-page">
         <header className="profile-header">
           <div className="logo-container">

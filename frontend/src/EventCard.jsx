@@ -50,15 +50,25 @@ const mockParticipants = [
     subtitle: 'Житель Иннополиса',
     isOrganizer: false,
   },
+  {
+    id: 4,
+    name: 'Анна Кузнецова',
+    subtitle: 'Житель Иннополиса',
+    isOrganizer: false,
+  },
+  {
+    id: 5,
+    name: 'Егор Соколов',
+    subtitle: 'Житель Иннополиса',
+    isOrganizer: false,
+  },
 ];
 
 function EventCard({ eventId, onClose }) {
-  // const [event, setEvent] = useState(null);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
-  const [event, setEvent] = useState(mockEvent); // <- сразу мок
-const [loading, setLoading] = useState(false);  // <- false чтобы не крутился лоадер
-const [error, setError] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [participantsOpen, setParticipantsOpen] = useState(true);
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -256,23 +266,32 @@ const [error, setError] = useState(null);
                 <p className="address-description">Участники</p>
                 <span>{participantsCount}</span>
               </div>
-              <img src={arrowIcon} alt="Свернуть" className="participants-arrow" />
+              <button
+                type="button"
+                className={`participants-toggle ${participantsOpen ? 'is-open' : ''}`}
+                onClick={() => setParticipantsOpen((value) => !value)}
+                aria-expanded={participantsOpen}
+                aria-label={participantsOpen ? 'Свернуть список участников' : 'Развернуть список участников'}
+              >
+                <img src={arrowIcon} alt="" className="participants-arrow" />
+              </button>
             </div>
-
-            <div className="participants-list">
-              {participants.map((participant) => (
-                <div className="participant-row" key={participant.id}>
-                  <div className="participant-left">
-                    <img src={avatarIcon} alt={participant.name} className="participant-avatar" />
-                    <div className="participant-meta">
-                      <p className="participant-name-event">{participant.name}</p>
-                      <p className="participant-subtitle">{participant.subtitle}</p>
+            {participantsOpen && (
+              <div className="participants-list-event">
+                {participants.map((participant) => (
+                  <div className="participant-row" key={participant.id}>
+                    <div className="participant-left">
+                      <img src={avatarIcon} alt={participant.name} className="participant-avatar" />
+                      <div className="participant-meta">
+                        <p className="participant-name-event">{participant.name}</p>
+                        <p className="participant-subtitle">{participant.subtitle}</p>
+                      </div>
                     </div>
+                        {participant.isOrganizer && <span className="organizer-chip">Организатор</span>}
                   </div>
-                      {participant.isOrganizer && <span className="organizer-chip">Организатор</span>}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="button-container">
