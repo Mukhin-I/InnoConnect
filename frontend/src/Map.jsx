@@ -72,8 +72,7 @@ function Map() {
       <div className="map-page">
         <header className="map-header">
           <div className="logo-container">
-            <img src={logoIcon} alt="Logo" className="logo-icon" />
-          </div>
+<img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
           <div className="header-icons">
             <img src={notificationIcon} alt="Notifications" className="header-icon" />
               <img src={settingsIcon} alt="Settings" className="header-icon" />

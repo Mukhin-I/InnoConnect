@@ -32,21 +32,20 @@ body {
     padding: 38px 24px 0 24px;
 }
 
-.text-header {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    width: 290px;
-    padding: 40px 24px 0 24px;
-    margin-bottom: 10px;
-}
-
 .header-top h2 {
     font-family: 'Montserrat', sans-serif;
     font-size: 10px;
     font-weight: 600;
     color: #00130c;
     margin-right: auto;
+}
+
+.text-header {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 290px;
+    margin-bottom: 10px;
 }
 
 .text-header h1 {

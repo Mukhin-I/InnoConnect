@@ -99,20 +99,19 @@ const RespondToRequest = () => {
 
   return (
     <div className="respond-page-wrapper">
-      <div className="rtr-header">
-        <div className="rtr-header-left">
-          <button className="rtr-back-btn" onClick={() => navigate('/requests')}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-            <img src={logoIcon} alt="InnoConnect Logo" className="rtr-logo" />
-        </div>
-        <div className="rtr-header-actions">
-            <img src={notificationIcon} alt="Notifications" className="rtr-header-icon" />
-            <img src={settingsIcon} alt="Settings" className="rtr-header-icon" />
-        </div>
-      </div>
+       <header className="map-header">
+          <div className="logo-container">
+            <button className="rtr-back-btn" onClick={() => navigate('/chats')}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  </button>
+<img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+          <div className="header-icons">
+            <img src={notificationIcon} alt="Notifications" className="header-icon" />
+              <img src={settingsIcon} alt="Settings" className="header-icon" />
+          </div>
+        </header>
 
       <div className="rtr-card main-info-card">
         <div className="rtr-icon-box">

@@ -72,19 +72,16 @@ import cityImg from './assets/city.svg';
     return (
       <>
         <div className="profile-page">
-        <header className="profile-header">
+         <header className="map-header">
           <div className="logo-container">
-            <img src={logoIcon} alt="Logo" className="logo-icon" />
-          </div>
-          <div className="header-icons">
-            <img src={notificationIcon} alt="Notifications" className="header-icon" />
-            <img src={settingsIcon} alt="Settings" className="header-icon" />
-          </div>
-        </header>
-
+        <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                  <div className="header-icons">
+                    <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                      <img src={settingsIcon} alt="Settings" className="header-icon" />
+               </div>
+          </header>
         <h1 className="page-title">Профиль</h1>
         <p className="rtr-loading">Загрузка...</p>
-
         
       </div>
       <BottomMenu initialSelected={'profile'} />
@@ -95,15 +92,14 @@ import cityImg from './assets/city.svg';
   return (
     <>
       <div className="profile-page">
-        <header className="profile-header">
+         <header className="map-header">
           <div className="logo-container">
-            <img src={logoIcon} alt="Logo" className="logo-icon" />
-          </div>
-          <div className="header-icons">
-            <img src={notificationIcon} alt="Notifications" className="header-icon" />
-            <img src={settingsIcon} alt="Settings" className="header-icon" />
-          </div>
-        </header>
+        <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                  <div className="header-icons">
+                    <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                      <img src={settingsIcon} alt="Settings" className="header-icon" />
+               </div>
+          </header>
 
         <h1 className="page-title">Профиль</h1>
 
