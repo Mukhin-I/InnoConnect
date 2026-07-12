@@ -74,10 +74,6 @@ function Registration() {
                 <div className="logo-container">
                     <img src={logoIcon} alt="Logo" style={{ width: 65, height: 15 }} />
                 </div>
-                <button className="language-change-button">
-                  <img src={languageIcon} alt=""/>
-                  Русский
-                </button>
             </div>
             <div className="text-header header-register">
                 <h1>Добро пожаловать<br />в InnoConnect</h1>
