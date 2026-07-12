@@ -98,7 +98,7 @@
 .meeting-name h2, .meeting-description h2, .meeting-time-date h2,
 .meeting-place h2, .seats-amount h2, .event-cataegories h2 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.85vw;
+    font-size: 8px;
     font-weight: 700;
     color: #768F64;
     margin-bottom: 0.45vh;
@@ -124,8 +124,13 @@
 .meeting-time-date p {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
-    font-size: 1.6vw;
+    font-size: 7px;
+    margin: 5px 0 5px 0;
     color: rgba(52, 52, 52, 0.5);
+}
+
+.event-cataegories {
+    margin-top: 10px;
 }
 
 .choose-date-time-container {
@@ -241,13 +246,13 @@
     }
     
     .creation-card {
-        height: 70vh;
+        height: fit-content;
         margin-top: 1.5vh;
     }
     
     .meeting-name h2, .meeting-description h2, .meeting-time-date h2,
     .meeting-place h2, .seats-amount h2, .event-cataegories h2 {
-        font-size: 2vw;
+        font-size: 8px;
     }
 
     /*.meeting-name input::placeholder, .meeting-description textarea::placeholder,  .seats-amount input::placeholder {
@@ -291,7 +296,7 @@
     }
     
     .creation-card {
-        height: 69vh;
+        height: fit-content;
         margin-top: 2vh;
     }
     
@@ -392,7 +397,7 @@
     }
 
     .creation-card {
-        height: 900px;
+        height: fit-content;
     }
     
     .header-top h2 {
@@ -441,7 +446,8 @@
     }*/
     
     .meeting-time-date p {
-        font-size: 1.2vw;
+        font-size: 8px;
+        margin: 5px 0 5px 0;
     }
 
     .datetime-input {

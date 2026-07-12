@@ -186,7 +186,7 @@ function MeetingCreation() {
       <div className="meeting-creation-page">
                 <header className="map-header">
                           <div className="logo-container">
-                            <button className="rtr-back-btn" onClick={() => navigate('/chats')}>
+                            <button className="rtr-back-btn" onClick={() => navigate('/')}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
