@@ -9,6 +9,7 @@ import CreateButton from './components/CreateButton'
 import mailIcon from './assets/mailIcon.png'
 import languageIcon from './assets/languageIcon.png'
 import PasswordInput from './components/PasswordInput';
+import logoIcon from './assets/logo.svg';
 
 function Registration() {
   const [name, setName] = useState('');
@@ -70,11 +71,9 @@ function Registration() {
       <div className="registration-page">
         <div className="registration-page-content">
             <div className="header-top">
-                <h2>InnoConnect</h2>
-                <button className="language-change-button">
-                  <img src={languageIcon} alt=""/>
-                  Русский
-                </button>
+                <div className="logo-container">
+                    <img src={logoIcon} alt="Logo" style={{ width: 65, height: 15 }} />
+                </div>
             </div>
             <div className="text-header header-register">
                 <h1>Добро пожаловать<br />в InnoConnect</h1>
