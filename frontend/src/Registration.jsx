@@ -76,7 +76,7 @@ function Registration() {
                   Русский
                 </button>
             </div>
-            <div className="text-header">
+            <div className="text-header header-register">
                 <h1>Добро пожаловать<br />в InnoConnect</h1>
                 <p>Создайте аккаунт, чтобы находить события, помогать соседям и делать Иннополис лучше каждый день.</p>
             </div>
