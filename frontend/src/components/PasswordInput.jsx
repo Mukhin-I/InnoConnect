@@ -18,7 +18,7 @@ const PasswordInput = ({
         backgroundImage: `url(${icon})`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'left 1.33vw center',
-        backgroundSize: '2.66vw',
+        backgroundSize: '3.5vw',
         paddingLeft: '6.4vw',
     } : {};
 
