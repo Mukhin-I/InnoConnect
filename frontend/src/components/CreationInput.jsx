@@ -13,7 +13,7 @@ const CreationInput = ({
         backgroundImage: `url(${icon})`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'left 1.33vw center',
-        backgroundSize: '2.66vw',
+        backgroundSize: '2.8vw',
         paddingLeft: '6.4vw',
     } : {};
 

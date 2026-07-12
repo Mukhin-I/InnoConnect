@@ -1,4 +1,5 @@
 import CategoryWelcome from './components/CategoryWelcome'
+import WelcomeButton from './components/WelcomeButton';
 import "./Welcome.css"
 import liveMapIcon from './assets/live-map.png'
 import helpIcon from './assets/help.png'
@@ -15,6 +16,10 @@ function Welcome() {
 
   const handleLoginClick = () => {
     navigate('/login');
+  };
+
+  const handleGuestClick = () => {
+    navigate('/');
   };
 
   return (
@@ -46,10 +51,10 @@ function Welcome() {
           </div>
         </section>
         <div className="buttons-container">
-          <button type="button" className="register-button"
-          onClick={handleRegisterClick}>Регистрация</button>
+          <WelcomeButton onClick={handleRegisterClick} />
           <button type="button" className="login-button"
           onClick={handleLoginClick}>Войти</button>
+          <WelcomeButton onClick={handleGuestClick}>Войти как гость</WelcomeButton>
         </div>
       </div>
     </div>
