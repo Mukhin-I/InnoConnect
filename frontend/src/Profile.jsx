@@ -17,6 +17,7 @@ import logoutIcon from './assets/logout.svg';
 import chevronIcon from './assets/chevron.svg';
 import thanksIcon from './assets/thanks.svg';
 import cityImg from './assets/city.svg';         
+import EventCard from './EventCard.jsx';
 
  function Profile() {
   const navigate = useNavigate();

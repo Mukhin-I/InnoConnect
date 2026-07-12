@@ -8,9 +8,9 @@ const ProtectedRoute = ({ children }) => {
     return <div>Загрузка...</div>;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/welcome" replace />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/welcome" replace />;
+  // }
 
   return children;
 };
