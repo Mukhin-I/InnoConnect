@@ -146,7 +146,21 @@ import EventCard from './EventCard.jsx';
           </div>
         </section>
 
-        <nav className="menu-card">
+        <section className="thanks-card">
+          <div className='thanks-text'>
+          <div className="thanks-icon-box">
+            <img src={thanksIcon} alt="" className="thanks-icon" />
+          </div>
+          <h2 className="thanks-title">Спасибо,</h2>
+          <p className="thanks-text">что делаете Иннополис более дружным местом.</p>
+          </div>
+          <div className="thanks-art-box">
+            <img src={cityImg} alt="" className="thanks-art" />
+          </div>
+        </section>
+
+                <nav className="menu-card">
+          {/*
           <Link to="/profile/personal" className="menu-item">
             <span className="menu-icon-box">
               <img src={personalIcon} alt="" className="menu-icon" />
@@ -170,7 +184,7 @@ import EventCard from './EventCard.jsx';
             <span className="menu-label">Помощь и поддержка</span>
             <img src={rightArrowIcon} alt="" className="menu-chevron" />
           </Link>
-
+          */}
           <button className="menu-item" onClick={handleLogout}>
             <span className="menu-icon-box">
               <img src={logoutIcon} alt="" className="menu-icon" />
@@ -179,21 +193,6 @@ import EventCard from './EventCard.jsx';
             <img src={rightArrowIcon} alt="" className="menu-chevron" />
           </button>
         </nav>
-
-        <section className="thanks-card">
-          <div className='thanks-text'>
-          <div className="thanks-icon-box">
-            <img src={thanksIcon} alt="" className="thanks-icon" />
-          </div>
-          <h2 className="thanks-title">Спасибо,</h2>
-          <p className="thanks-text">что делаете Иннополис более дружным местом.</p>
-          </div>
-          <div className="thanks-art-box">
-            <img src={cityImg} alt="" className="thanks-art" />
-          </div>
-        </section>
-
-        
       </div>
       <BottomMenu initialSelected={'profile'} />
     </>
