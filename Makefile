@@ -2,8 +2,12 @@ MAKEFLAGS += --silent # Убрать стандартные warnings из-за �
 
 ENV_FILE = .env
 
-COMPOSE = docker compose -f ./backend/deployment/docker/docker-compose.yml --env-file $(ENV_FILE) # Подготовленные команды docker, сохранённые в переменных
-COMPOSE_DEV = docker compose -f ./backend/deployment/docker/docker-compose-dev.yml --env-file $(ENV_FILE)
+ # вынесено отдельно (без комментария на той же строке, иначе в переменную попадёт хвостовой пробел), чтобы Windows-скрипт (scripts/make.ps1) брал тот же путь
+DOCKER_COMPOSE_FILE = ./backend/deployment/docker/docker-compose.yml
+DOCKER_COMPOSE_DEV_FILE = ./backend/deployment/docker/docker-compose-dev.yml
+
+COMPOSE = docker compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENV_FILE) # Подготовленные команды docker, сохранённые в переменных
+COMPOSE_DEV = docker compose -f $(DOCKER_COMPOSE_DEV_FILE) --env-file $(ENV_FILE)
 
 SERVICES = all up down stop switch selfDestroySequence db dev gateway meeting meetings request user chat log logs help cache remove init # объявление кодовых слов
 .PHONY: $(SERVICES) # не запускать как файлы с подобными именами
@@ -21,6 +25,9 @@ ARGS = $(filter $(SERVICES), $(input)) # оставляем только код�
 %: # заглушка для слов с опечатками(make запускает пайплайн для каждого слова, в том числе и неправильно написанного, вне зависимости хотим мы того или нет)
 	@:
 $(firstword $(ARGS)): # берём из отфильтрованных слов первое и на нём триггерим проход по всей входной строчке 
+ifeq ($(OS),Windows_NT) # $(OS)=Windows_NT задаётся системой всегда на Windows — определяем ветку прямо при чтении Makefile, без WSL/bash
+	@powershell -NoProfile -ExecutionPolicy Bypass -File "scripts/make.ps1" -EnvFile "$(ENV_FILE)" -ComposeFile "$(DOCKER_COMPOSE_FILE)" -ComposeDevFile "$(DOCKER_COMPOSE_DEV_FILE)" $(ARGS) # та же самая логика, переписанная на PowerShell (см. scripts/make.ps1), т.к. на Windows нет /bin/sh
+else
 	@if [ "$@" = "$(firstword $(ARGS))" ]; then # на остальных кодовых словах ничего не делаем, чтобы один и тот же цикл не выполнять N слов=раз\
 		db="false"; # со знака @ тут начинается bash синтаксис, объявляем флаги\
 		dev="false"; # из полезного: $() - считать переменную make, $$.. - считать переменную bash\
@@ -408,7 +415,7 @@ $(firstword $(ARGS)): # берём из отфильтрованных слов 
 					if [ "$$dev" = "true" ]; then \
 						dev="false"; \
 						echo "Поднимаю ВСЕ сервисы бэкенда в сервисном режиме"; \
-						$(COMPOSE_ENV) up -d --build; \
+						$(COMPOSE_DEV) up -d --build; \
 					else \
 						echo "Поднимаю ВСЕ сервисы бэкенда"; \
 						$(COMPOSE) up -d --build; \
@@ -422,5 +429,6 @@ $(firstword $(ARGS)): # берём из отфильтрованных слов 
 				;; \
 		esac; \
 		done;\
-	fi;\
+	fi;
+endif
  # ВСЁ! Ты герой, ты прошёл этот файл вместе со мной!
