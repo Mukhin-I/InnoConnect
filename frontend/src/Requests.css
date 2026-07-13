@@ -42,8 +42,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .requests-filter-container {
-    width: 53.251vw;
-    height: 11.146vw;
+    width: max(220px, 53.251vw);
+    height: max(42px, 11.146vw);
     border-radius: 45px;
     background-color: #fff;
     padding: 4px 7px;
@@ -55,23 +55,31 @@ h1, h2, h3, h4, h5, h6 {
 .request-filter-item {
     background-color: #fff;
     border-radius: 500px;
-    width: 24.458vw;
-    height: 8.669vw;
+    flex: 1;
+    height: 100%;
     color: #343434;
     font-weight: 500;
-    font-size: 9px;
+    font-size: 13px;
     display: flex;
     align-items: center;
-    gap: 3.096vw;
-    padding: 2.477vw 4.954vw;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
 
-    transition: 
+    transition:
         background-color 0.25s ease,
         color 0.25s ease,
         transform 0.25s ease;
 }
 
+.request-filter-item p {
+    margin: 0;
+}
+
 .request-filter-item img {
+    width: 14px;
+    height: 14px;
     visibility: hidden;
 }
 
@@ -87,24 +95,35 @@ h1, h2, h3, h4, h5, h6 {
 .add-request {
     box-shadow: 0 3.096vw 6.192vw 0 rgba(52, 52, 52, 0.05);
     background-color: #fff;
-    border-radius: 1000px;
-    width: 11.146vw;
-    height: 11.146vw;
-    padding: 1.238vw 3.406vw;
+    border-radius: 50%;
+    width: max(42px, 11.146vw);
+    height: max(42px, 11.146vw);
+    padding: 0;
     text-decoration: none;
     color: #000;
     font-weight: 300;
     font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.add-request span {
+    display: block;
+    line-height: 1;
+    transform: translateY(-1px);
 }
 
 .type-of-requests-filter {
-    margin-top: 5.573vw;
+    margin-top: max(16px, 5.573vw);
     width: 100%;
-    height: 8.669vw;
+    height: max(34px, 8.669vw);
 
     display: flex;
     align-items: center;
-    gap: 1.238vw;
+    gap: max(6px, 1.238vw);
 
     overflow-x: auto;
     overflow-y: hidden;
@@ -118,24 +137,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .type-of-request {
-    height: 8.669vw;
+    height: max(34px, 8.669vw);
     border-radius: 500px;
     color: #343434;
     font-weight: 500;
-    font-size: 8px;
-    padding: 2.167vw 2.786vw;
+    font-size: 12px;
+    padding: max(6px, 2.167vw) max(10px, 2.786vw);
     width: fit-content;
     display: flex;
     align-items: center;
-    gap: 1.548vw;
+    gap: max(6px, 1.548vw);
     box-shadow: 0 3.096vw 6.192vw 0 rgba(52, 52, 52, 0.1);
     background-color: #fff;
     flex-shrink: 0;
+    cursor: pointer;
 
-    transition: 
+    transition:
         background-color 0.25s ease,
         color 0.25s ease,
         transform 0.25s ease;
+}
+
+.type-of-request p {
+    margin: 0;
 }
 
 .type-selected {
@@ -147,9 +171,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .type-request-icon {
-    width: 4.334vw;
-    height: 4.334vw;
+    width: max(16px, 4.334vw);
+    height: max(16px, 4.334vw);
     background: rgba(52, 52, 52, 0.7);
+    flex-shrink: 0;
 }
 
 .allrequests {

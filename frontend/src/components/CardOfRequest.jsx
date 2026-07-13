@@ -36,10 +36,6 @@ function CardOfRequest({ request }) {
                     {formatDate(request.deadline)}
                 </p>
             </div>
-
-            <div className="new-request-tag">
-                <p>Новое</p>
-            </div>
         </Link>
     );
 }
