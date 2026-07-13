@@ -1,14 +1,15 @@
 .request-card-container {
     background-color: #fff;
     width: 100%;
-    height: 26.935vw;
+    min-height: max(102px, 26.935vw);
     border-radius: 12px;
-    padding: 5.263vw 4.025vw;
+    padding: max(14px, 5.263vw) max(12px, 4.025vw);
     display: flex;
     align-items: center;
-    gap: 3.096vw;
+    gap: max(10px, 3.096vw);
     position: relative;
     text-decoration: none;
+        text-align: left;
 }
 
 .request-card-icon {
@@ -55,13 +56,13 @@
 }
 
 .request-card-type {
-    font-size: 2.477vw;
+    font-size: max(12px, 2.477vw);
     color: #84A886;
     font-weight: 600;
 }
 
 .request-card-title {
-    font-size: 3.715vw;
+    font-size: max(14px, 3.715vw);
     font-weight: 600;
     color: #000;
     margin-top: 1.858vw;
@@ -70,7 +71,7 @@
 .request-card-date {
     margin-top: 0.619vw;
     font-weight: 500;
-    font-size: 2.477vw;
+    font-size: max(12px, 2.477vw);
     color: rgba(0, 0, 0, 0.5);
 }
 
@@ -78,21 +79,4 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-}
-
-.new-request-tag {
-    width: 10.836vw;
-    height: 4.954vw;
-    border-radius: 500px;
-    background-color: #F5F9EF;
-    padding: 1.548vw 2.167vw;
-    position: absolute;
-    bottom: 3.715vw;
-    right: 3.715vw;
-}
-
-.new-request-tag p {
-    font-weight: 700;
-    font-size: 1.858vw;
-    color: #7A9681;
 }
