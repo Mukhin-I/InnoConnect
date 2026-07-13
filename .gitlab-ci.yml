@@ -49,6 +49,7 @@ integration_tests:
     - cp .env.example .env
     - $COMPOSE down -v --remove-orphans || true
   script:
+    - docker info
     - $COMPOSE up -d --build --wait --wait-timeout 90
     - NETWORK=$(docker inspect $($COMPOSE ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
     - >

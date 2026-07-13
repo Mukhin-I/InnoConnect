@@ -160,7 +160,6 @@ services:
       start_period: 10s
     volumes:
       - pgdata_meeting:/var/lib/postgresql
-      - ../../db/init-meetings.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - meeting
     restart: unless-stopped
@@ -190,7 +189,6 @@ services:
       start_period: 10s
     volumes:
       - pgdata_request:/var/lib/postgresql
-      - ../../db/init-requests.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - request
     restart: unless-stopped
@@ -220,7 +218,6 @@ services:
       start_period: 10s
     volumes:
       - pgdata_user:/var/lib/postgresql
-      - ../../db/init-users.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - user
     restart: unless-stopped
@@ -268,26 +265,6 @@ networks:
 
 volumes:
   pgdata_meeting:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ../../db/pgdata_meeting
   pgdata_request:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ../../db/pgdata_request
   pgdata_user:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ../../db/pgdata_user
   pgdata_chat:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ../../db/pgdata_chat
