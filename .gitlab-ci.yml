@@ -13,14 +13,13 @@ build_backend:
   before_script:
     - cp .env.example .env
   script:
-    - ls
-    - ls backend/db
+    # удалить всё, что есть к этому моменту у докера
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down -v --remove-orphans || true
     - docker ps -q --filter "publish=8080" | xargs -r docker rm -f || true
     - docker rm -f gateway meeting user request chat db_meeting db_user db_request db_chat 2>/dev/null || true
     - docker system prune -af --volumes
+    # запустить всё и эдать пока все не будут healty
     - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up --build --wait --wait-timeout 60
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml logs db_user
 
 build_frontend:
   stage: build
@@ -33,90 +32,61 @@ build_frontend:
     - ls
     - npm install && npm install mapbox-gl react-router-dom
     - npm run build
+    #npm run build чтобы терминал не держало, но прпроверило тчо всё компилится
 
-test:
+integration_and_unit_tests:
   stage: test
   image: docker:27
-  before_script:
-    - cp .env.example .env
-  script:
-    - ls
-    - docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml build
-    - echo "Testing"
 
-test_authorization:
-  stage: test
-  image: docker:27
   before_script:
     - export COMPOSE="docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml"
+    # для краткости кода кладём в переменную
     - cp .env.example .env
+    #копирует .env и стопаем предыдущие контейнеры
     - $COMPOSE down -v --remove-orphans || true
+
   script:
-    - $COMPOSE up -d --build --wait
+    # ждём пока запустится
+    - $COMPOSE up -d --build --wait --wait-timeout 90
+
+    # запускаем python тесты внутри контейнера
     - NETWORK=$(docker inspect $($COMPOSE ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
     - |
-      check_status() {
-        method="$1"; path="$2"; expected="$3"; token="$4"
-        if [ -n "$token" ]; then
-          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" -H "Authorization: Bearer $token" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
-        else
-          actual=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X "$method" --retry 3 --retry-delay 3 --retry-connrefused "http://gateway:8080${path}")
-        fi
-        echo "Got status $actual"
-        if [ "$actual" -ne "$expected" ]; then
-          echo "FAIL: $method $path expected $expected, got $actual"
-          $COMPOSE logs gateway
-          exit 1
-        fi
-        echo "PASS: $method $path returned $expected as expected"
-      }
+      CID=$(docker create \
+        --network "$NETWORK" \
+        -e API_BASE_URL=http://gateway:8080 \
+        -w /tests \
+        python:3.13-alpine \
+        sh -c "
+          apk add --no-cache gcc musl-dev libffi-dev &&
+          pip install -q -r requirements.txt &&
+          pytest --junitxml=report.xml
+        ")
 
-    - echo "== /meetings without JWT =="
-    - check_status GET /meetings 200
-    - check_status POST /meetings 401
+      docker cp backend/tests/. "$CID:/tests"
 
-    - echo "== /requests without JWT =="
-    - check_status GET /requests 200
-    - check_status POST /requests 401
+      docker start -a "$CID"
+      TEST_EXIT_CODE=$?
 
-    - echo "== register test user =="
-    - TEST_NAME="cicd"
-    - TEST_EMAIL="me.test@example.com"
-    - TEST_PASSWORD="123"
+      mkdir -p backend/tests
+      docker cp "$CID:/tests/report.xml" backend/tests/report.xml || true
+
+      docker rm "$CID"
+
+      exit $TEST_EXIT_CODE
+
+  after_script: # чистим после
+    - export COMPOSE="docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml"
     - |
-      REGISTER_STATUS=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -o /dev/null -w "%{http_code}" -X POST \
-        -H "Content-Type: application/json" \
-        -d "{\"name\":\"$TEST_NAME\",\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
-        http://gateway:8080/register)
-      echo "Register status $REGISTER_STATUS"
-      if [ "$REGISTER_STATUS" -ne 201 ] && [ "$REGISTER_STATUS" -ne 400 ]; then
-        echo "FAIL: register expected 201 (or 400 if user already exists), got $REGISTER_STATUS"
-        $COMPOSE logs gateway
-        exit 1
+      if [ "$CI_JOB_STATUS" != "success" ]; then
+        $COMPOSE logs gateway meeting request user chat || true
       fi
-      echo "PASS: register returned $REGISTER_STATUS"
-
-    - echo "== login test user =="
-    - |
-      LOGIN_RESPONSE=$(docker run --rm --network "$NETWORK" curlimages/curl:8.11.0 -s -X POST \
-        -H "Content-Type: application/json" \
-        -d "{\"email\":\"$TEST_EMAIL\",\"password\":\"$TEST_PASSWORD\"}" \
-        http://gateway:8080/login)
-      echo "Login response $LOGIN_RESPONSE"
-      TOKEN=$(echo "$LOGIN_RESPONSE" | grep -o '"token":"[^"]*' | sed 's/"token":"//')
-      if [ -z "$TOKEN" ]; then
-        echo "FAIL: could not extract JWT token from login response"
-        exit 1
-      fi
-      echo "Got JWT token (length ${#TOKEN})"
-
-    - echo "== /meetings with JWT =="
-    # - check_status POST /meetings 200 "$TOKEN"
-
-    - echo "== /requests with JWT =="
-    # - check_status POST /requests 200 "$TOKEN"
-  after_script:
     - $COMPOSE down -v --remove-orphans || true
+
+  artifacts:
+    when: always
+    reports:
+      junit: backend/tests/report.xml
 
 
 deploy:
@@ -138,6 +108,7 @@ deploy:
     - mkdir -p ~/.ssh
     - ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
   script:
+  # подключаемся, загружаем с гита проект, удаляем остальные файлы, убиваем фронт, копируем .env, меняем запуск с localhost на ..., кладём и перезапускаем docker, патчим порт фронта, и используя нужную версию npm запускаем фронт в фоне
   - >
     ssh "$DEPLOY_USER@$DEPLOY_HOST" '
       cd innoconnect &&
@@ -154,6 +125,7 @@ deploy:
       sed -i "s/port: *[0-9]\+/port: 80/" vite.config.js &&
       source ~/.nvm/nvm.sh &&
       nvm use default &&
-      cd ~/innoconnect/frontend &&
-      (npm run dev &)
+      (nohup npm run dev >/tmp/frontend.log 2>&1 </dev/null &)
+      echo "Started"
+      exit 0
     '
