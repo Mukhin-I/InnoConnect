@@ -51,28 +51,12 @@ integration_tests:
     - $COMPOSE down -v --remove-orphans || true
 
   script:
-    - docker info
-    - $COMPOSE up -d --build --wait --wait-timeout 90
-    - NETWORK=$(docker inspect $($COMPOSE ps -q gateway) --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}')
-    - |
-      CID=$(docker create \
-        --network "$NETWORK" \
-        -e API_BASE_URL=http://gateway:8080 \
-        -w /tests \
-        python:3.13-alpine \
-        sh -c "pip install -q -r requirements.txt && pytest --junitxml=report.xml")
-
-      docker cp backend/tests/. "$CID:/tests"
-
-      docker start -a "$CID"
-      TEST_EXIT_CODE=$?
-
-      mkdir -p backend/tests
-      docker cp "$CID:/tests/report.xml" backend/tests/report.xml || true
-
-      docker rm "$CID"
-
-      exit $TEST_EXIT_CODE
+  - apk add --no-cache python3 py3-pip py3-pytest
+  - docker info
+  - $COMPOSE up -d --build --wait --wait-timeout 90
+  - cd backend/tests
+  - pip3 install -q --break-system-packages -r requirements.txt
+  - API_BASE_URL=http://localhost:8080 pytest --junitxml=report.xml
 
   after_script:
     - export COMPOSE="docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml"
