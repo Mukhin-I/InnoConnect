@@ -62,7 +62,7 @@ def test_create_and_apply_to_request(client, auth_token, request_payload):
     assert chat["type"] in (1, "REQUEST")
 
     listing = client.request("GET", "/requests", expected_status=200).json()
-    assert any(r.get("id") == request_id for r in listing["requests"])
+    assert any(r.get("request_id") == request_id for r in listing["requests"])
 
 
 def test_write_and_read_meeting_chat_message(client, auth_token, created_meeting):
