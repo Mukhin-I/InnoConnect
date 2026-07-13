@@ -34,7 +34,7 @@ build_frontend:
     - npm install && npm install mapbox-gl react-router-dom
     - npm run build
 
-integration_tests:
+integration_and_unit_tests:
   stage: test
   image: docker:27
 
@@ -74,6 +74,11 @@ integration_tests:
       exit $TEST_EXIT_CODE
 
   after_script:
+    - export COMPOSE="docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml"
+    - |
+      if [ "$CI_JOB_STATUS" != "success" ]; then
+        $COMPOSE logs gateway meeting request user chat || true
+      fi
     - $COMPOSE down -v --remove-orphans || true
 
   artifacts:
