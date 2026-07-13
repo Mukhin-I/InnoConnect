@@ -44,6 +44,8 @@ integration_and_unit_tests:
     - $COMPOSE down -v --remove-orphans || true
 
   script:
+  - apk update
+  - apk upgrade
   - apk add --no-cache python3 py3-pip py3-pytest
   - docker info
   - $COMPOSE up -d --build --wait --wait-timeout 90
