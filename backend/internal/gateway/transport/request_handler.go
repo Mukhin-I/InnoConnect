@@ -8,6 +8,7 @@ import (
 	"innoconnect/internal/gateway/usecase"
 	"innoconnect/pkg/logger"
 	requestpb "innoconnect/pkg/pb/request"
+	userpb "innoconnect/pkg/pb/user"
 
 	"innoconnect/pkg/pb/chat"
 
@@ -38,13 +39,13 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 	request, err := h.requestClient.CreateRequest(
 		c.Request.Context(),
 		&requestpb.CreateRequestRequest{
-			CreatorId:      userID,
-			CreatorName:    name,
-			Title:          req.Title,
-			Description:    req.Description,
+			CreatorId:        userID,
+			CreatorName:      name,
+			Title:            req.Title,
+			Description:      req.Description,
 			RequesterAddress: req.RequesterAddress,
-			Type:           req.Type,
-			Deadline:       req.Deadline,
+			Type:             req.Type,
+			Deadline:         req.Deadline,
 		},
 	)
 
@@ -54,12 +55,24 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 		return
 	}
 
+	_, err = h.userClient.IncrementCreatedRequestsCount(
+		c.Request.Context(),
+		&userpb.IncrementUserRequestsCountRequest{
+			UserId: userID,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Failed to increment created requests count: " + err.Error())
+		return
+	}
+
 	_, err = h.chatClient.GetOrCreateRequestChat(
 		c.Request.Context(),
 		&chat.GetOrCreateRequestChatRequest{
 			RequestId: request.Id,
-			ChatName: request.Title,
-			UserId: userID,
+			ChatName:  request.Title,
+			UserId:    userID,
 		},
 	)
 
@@ -179,15 +192,15 @@ func (h *Handler) ApplyToRequest(c *gin.Context) {
 	}
 
 	_, err = h.chatClient.AddToChat(
-        c.Request.Context(),
-        &chat.AddToChatRequest{
-            // TODO rename on user
-            CreatorId:   userID,
-        	CreatorName: userName,
-			ChatType: "REQUEST",
-            RelaterId: requestID,
-        },
-    )
+		c.Request.Context(),
+		&chat.AddToChatRequest{
+			// TODO rename on user
+			CreatorId:   userID,
+			CreatorName: userName,
+			ChatType:    "REQUEST",
+			RelaterId:   requestID,
+		},
+	)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,

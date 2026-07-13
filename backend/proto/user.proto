@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package user;
 
+import "google/protobuf/empty.proto";
+
 option go_package = "pkg/pb/user";
 
 service UserService {
@@ -17,6 +19,12 @@ service UserService {
   // GET /me
   rpc GetCurrentUser(GetCurrentUserRequest)
       returns (User);
+
+  rpc IncrementCreatedRequestsCount(IncrementUserRequestsCountRequest)
+      returns (google.protobuf.Empty);
+
+  rpc IncrementCompletedRequestsCount(IncrementUserRequestsCountRequest)
+      returns (google.protobuf.Empty);
 }
 
 message RegisterRequest {
@@ -49,4 +57,10 @@ message User {
   int64 id = 1;
   string email = 2;
   string name = 3;
+  int64 created_requests_count = 4;
+  int64 completed_requests_count = 5;
+}
+
+message IncrementUserRequestsCountRequest {
+  int64 user_id = 1;
 }

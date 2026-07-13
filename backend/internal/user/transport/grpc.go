@@ -13,12 +13,15 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type UserUsecase interface {
 	Register(ctx context.Context, email, password, name string) (entity.User, error)
 	Login(ctx context.Context, email, password string) (usecase.LoginResult, error)
 	GetCurrentUser(ctx context.Context, id int64) (entity.User, error)
+	IncrementCreatedRequestsCount(ctx context.Context, userID int64) error
+	IncrementCompletedRequestsCount(ctx context.Context, userID int64) error
 }
 
 type UserServer struct {
@@ -78,11 +81,51 @@ func (s *UserServer) GetCurrentUser(ctx context.Context, req *pb.GetCurrentUserR
 	return toProtoUser(user), nil
 }
 
+func (s *UserServer) IncrementCreatedRequestsCount(
+	ctx context.Context,
+	req *pb.IncrementUserRequestsCountRequest,
+) (*emptypb.Empty, error) {
+	if req.GetUserId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
+	}
+
+	err := s.usecase.IncrementCreatedRequestsCount(ctx, req.GetUserId())
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+func (s *UserServer) IncrementCompletedRequestsCount(
+	ctx context.Context,
+	req *pb.IncrementUserRequestsCountRequest,
+) (*emptypb.Empty, error) {
+	if req.GetUserId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
+	}
+
+	err := s.usecase.IncrementCompletedRequestsCount(ctx, req.GetUserId())
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
 func toProtoUser(user entity.User) *pb.User {
 	return &pb.User{
-		Id:    user.ID,
-		Email: user.Email,
-		Name:  user.Name,
+		Id:                     user.ID,
+		Email:                  user.Email,
+		Name:                   user.Name,
+		CreatedRequestsCount:   user.CreatedRequestsCount,
+		CompletedRequestsCount: user.CompletedRequestsCount,
 	}
 }
 
