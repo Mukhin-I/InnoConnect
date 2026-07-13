@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"time"
 
 	"innoconnect/internal/request/entity"
 	"innoconnect/pkg/logger"
@@ -55,6 +56,8 @@ func (r *Repository) Create(ctx context.Context, request entity.Request) (entity
 }
 
 func (r *Repository) GetAll(ctx context.Context) ([]entity.Request, error) {
+	now := time.Now()
+
 	query := `
 		SELECT
 			id,
@@ -66,10 +69,11 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Request, error) {
 			type,
 			deadline
 		FROM requests
+		WHERE deadline > $1
 		ORDER BY deadline
 	`
 
-	rows, err := r.pool.Query(ctx, query)
+	rows, err := r.pool.Query(ctx, query, now)
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err

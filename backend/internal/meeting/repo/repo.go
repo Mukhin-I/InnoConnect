@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"time"
 
 	"innoconnect/internal/meeting/entity"
 
@@ -62,6 +63,8 @@ func (r *Repository) Create(ctx context.Context, meeting entity.Meeting) (entity
 }
 
 func (r *Repository) GetAll(ctx context.Context) ([]entity.Meeting, error) {
+	now := time.Now()
+
 	query := `
 		SELECT
 			id,
@@ -76,10 +79,11 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Meeting, error) {
 			meeting_time,
 			max_people
 		FROM meetings
+		WHERE meeting_time > $1
 		ORDER BY meeting_time
 	`
 
-	rows, err := r.pool.Query(ctx, query)
+	rows, err := r.pool.Query(ctx, query, now)
 	if err != nil {
 		return nil, err
 	}
