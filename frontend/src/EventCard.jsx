@@ -31,6 +31,69 @@ const mockEvent = {
   address: "Спортивный комплекс ",
 };
 
+const MOCK_EVENTS = {
+  'mock-1': {
+    id: 'mock-1',
+    title: 'Утренняя йога в парке',
+    type: 'Спорт',
+    meeting_time: (() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(8, 45, 0, 0); return d.toISOString(); })(),
+    address: 'Парк у Артспейса',
+    description: 'Мягкая утренняя практика для всех уровней. Берите коврик и воду.',
+    current_people: 4,
+    max_people: 10,
+  },
+  'mock-2': {
+    id: 'mock-2',
+    title: 'Пробежка вокруг озера',
+    type: 'Спорт',
+    meeting_time: (() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(19, 0, 0, 0); return d.toISOString(); })(),
+    address: 'Озеро у Технопарка',
+    description: 'Лёгкий темп ~6 км. Присоединяйтесь, если хочется размяться после работы.',
+    current_people: 3,
+    max_people: 8,
+  },
+  'mock-3': {
+    id: 'mock-3',
+    title: 'Кофе и настолки',
+    type: 'Соц',
+    meeting_time: (() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(18, 30, 0, 0); return d.toISOString(); })(),
+    address: 'Кофейня «Пар»',
+    description: 'Играем в Codenames и Dixit. Приходите с хорошим настроением.',
+    current_people: 5,
+    max_people: 12,
+  },
+  'mock-4': {
+    id: 'mock-4',
+    title: 'Языковой обмен EN/RU',
+    type: 'Соц',
+    meeting_time: (() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(20, 0, 0, 0); return d.toISOString(); })(),
+    address: 'Лобби Технопарка',
+    description: 'Полчаса на английском, полчаса на русском. Уровень любой.',
+    current_people: 6,
+    max_people: 15,
+  },
+  'mock-5': {
+    id: 'mock-5',
+    title: 'Learning club: System Design',
+    type: 'Учеба',
+    meeting_time: (() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(17, 0, 0, 0); return d.toISOString(); })(),
+    address: 'Университет Иннополис, ауд. 108',
+    description: 'Разбираем классические кейсы: URL shortener, news feed. Ноутбук приветствуется.',
+    current_people: 8,
+    max_people: 20,
+  },
+  'mock-6': {
+    id: 'mock-6',
+    title: 'Разбор задач по алгоритмам',
+    type: 'Учеба',
+    meeting_time: (() => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(21, 0, 0, 0); return d.toISOString(); })(),
+    address: 'Библиотека кампуса',
+    description: 'Решаем задачи среднего уровня с LeetCode. Приносите свои интересные задачи.',
+    current_people: 2,
+    max_people: 6,
+  },
+};
+
 const mockParticipants = [
   {
     id: 1,
@@ -163,7 +226,7 @@ function EventCard({ eventId, onClose }) {
     }
   }
 
-  const participants = event.participants?.length
+  const participants = event?.participants?.length
     ? event.participants.map((participant, index) => ({
         id: participant.id ?? index,
         name:
@@ -175,14 +238,21 @@ function EventCard({ eventId, onClose }) {
       }))
     : mockParticipants;
 
-  const participantsCount = event.max_people
+  const participantsCount = event?.max_people
     ? `${event.current_people}/${event.max_people}`
-    : `${event.current_people || participants.length}`;
+    : `${event?.current_people || participants.length}`;
 
-  const distanceLabel = event.distance ? `${event.distance}` : '150м от вас';
+  const distanceLabel = event?.distance ? `${event.distance}` : '150м от вас';
 
   useEffect(() => {
     if (!eventId) return;
+
+    if (typeof eventId === 'string' && eventId.startsWith('mock-') && MOCK_EVENTS[eventId]) {
+      setEvent(MOCK_EVENTS[eventId]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
 
     const fetchEvent = async () => {
       setLoading(true);
@@ -232,7 +302,7 @@ function EventCard({ eventId, onClose }) {
                 </div>
               )}
               <div className="card-header">
-                <h2 className="card-header-title">{event.title}</h2>
+                <h2 className="card-header-title-event">{event.title}</h2>
                 <div className="card-info-row">
                   <div className="card-date">
                     <img src={calendarIcon} alt=""></img>

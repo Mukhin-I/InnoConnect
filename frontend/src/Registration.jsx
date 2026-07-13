@@ -83,7 +83,7 @@ function Registration() {
               <img src={signUpBackground} alt=""></img>
             </div>
             <div className="register-card">
-                <div className="card-header">
+                <div className="card-header-register">
                     <h2>Создать аккаунт</h2>
                 </div>
                 <form onSubmit={handleSubmit}>
