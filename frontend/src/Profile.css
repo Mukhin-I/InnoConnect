@@ -58,6 +58,7 @@
   border-radius: 22px;
   box-shadow: 0 14px 30px -18px rgba(36, 61, 52, 0.25);
   padding: 14px;
+  margin-top: 10px;
 }
 
 .profile-top {
@@ -219,8 +220,8 @@
 }
 
 .thanks-card {
-  margin-top: 16px;
-  margin-bottom: 100px;
+  margin-top: 20px;
+  margin-bottom: 115px;
   display: flex;
   padding: 14px;
   border-radius: 22px;
