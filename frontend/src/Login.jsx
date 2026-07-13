@@ -6,8 +6,8 @@ import CreationInput from './components/CreationInput'
 import avatarIcon from './assets/avatar.png'
 import lockIcon from './assets/lock.png'
 import CreateButton from './components/CreateButton'
-import languageIcon from './assets/languageIcon.png'
 import PasswordInput from './components/PasswordInput';
+import logoIcon from './assets/logo.svg';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -69,11 +69,7 @@ function Login() {
       <div className="login-page">
         <div className="login-page-content">
             <div className="header-top">
-                <h2>InnoConnect</h2>
-                <button className="language-change-button">
-                  <img src={languageIcon} alt=""/>
-                  Русский
-                </button>
+                    <img src={logoIcon} alt="Logo" style={{ width: 65, height: 15 }} />
             </div>
             <div className="text-header">
                 <h1>С возвращением<br />в InnoConnect</h1>
@@ -90,6 +86,7 @@ function Login() {
                         icon={avatarIcon}
                         required
                         disabled={isLoading}
+                        fontSize="3.2vw"
                         />
                         <PasswordInput
                             value={password}

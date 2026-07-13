@@ -33,11 +33,12 @@ func (r *Repository) GetChatByID(
 	var chatType string
 
 	err := r.db.QueryRow(ctx, `
-		SELECT id, type
+		SELECT id, name, type
 		FROM chats
 		WHERE id = $1
 	`, chatID).Scan(
 		&chat.ID,
+		&chat.Name,
 		&chatType,
 	)
 	
@@ -67,6 +68,7 @@ func (r *Repository) GetChatsByUserID(
 	rows, err := r.db.Query(ctx, `
 		SELECT 
 			c.id,
+			c.name,
 			c.type,
 			c.related_id
 		FROM chats c
@@ -84,23 +86,23 @@ func (r *Repository) GetChatsByUserID(
 
 	for rows.Next() {
 		var chatID int64
+		var name string
 		var chatType string
 		var relatedID int64
 
-		if err := rows.Scan(&chatID, &chatType, &relatedID); err != nil {
+		if err := rows.Scan(&chatID, &name, &chatType, &relatedID); err != nil {
 			return nil, err
 		}
 
 		participants, _ := r.getParticipants(ctx, chatID)
 		lastMsg, _ := r.getLastMessage(ctx, chatID)
-		title := r.resolveTitle(chatType, relatedID)
 
 		logger.Info("Getting chatid: " + strconv.FormatInt(chatID, 10))
 		result = append(result, entity.ChatPreview{
 			ID:           chatID,
+			Name: name,
 			Type:         entity.ChatTypeFromString(chatType),
 			Participants: participants,
-			Title:        title,
 			LastMessage:  lastMsg,
 		})
 	}
@@ -322,25 +324,24 @@ func (r *Repository) getLastMessage(
 	return &msg, nil
 }
 
-func (r *Repository) GetMeetingChat(
+func (r *Repository) GetChat(
 	ctx context.Context,
 	meetingID int64,
+	chatType string,
 ) (entity.Chat, error) {
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	var chat entity.Chat
-	var chatType string
 
 	err := r.db.QueryRow(ctx, `
 		SELECT id, type
 		FROM chats
-		WHERE type = 'MEETING'
-		  AND related_id = $1
-	`, meetingID).Scan(
+		WHERE type = '$1'
+		  AND related_id = $2
+	`, chatType, meetingID).Scan(
 		&chat.ID,
-		&chatType,
 	)
 
 	chat.Type = entity.ChatTypeFromString(chatType)
@@ -359,7 +360,7 @@ func (r *Repository) GetMeetingChat(
 	return chat, nil
 }
 
-func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, creatorID int64, creatorName string) (entity.Chat, error) {
+func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, chatName string, creatorID int64, creatorName string) (entity.Chat, error) {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return entity.Chat{}, err
@@ -370,7 +371,7 @@ func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, cre
 	var chatType string
 
 	err = tx.QueryRow(ctx, `
-		INSERT INTO chats (type, related_id)
+		INSERT INTO chats (type, name, related_id)
 		VALUES ('MEETING', $1)
 		RETURNING id, type, related_id
 	`, meetingID).Scan(
@@ -395,18 +396,6 @@ func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, cre
 	}
 
 	return chat, nil
-}
-
-func (r *Repository) resolveTitle(chatType string, relatedID int64) string {
-	// MVP stub:
-	switch chatType {
-	case "REQUEST":
-		return "Request Chat"
-	case "MEETING":
-		return "Meeting Chat"
-	default:
-		return "Chat"
-	}
 }
 
 func (r *Repository) AddParticipant(
@@ -451,4 +440,15 @@ func (r *Repository) AddParticipant(
 	}
 
 	return nil
+}
+
+func (r *Repository) GetParticipants(
+	ctx context.Context,
+	chatID int64,
+) ([]entity.User, error) {
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	return r.getParticipants(ctx, chatID)
 }

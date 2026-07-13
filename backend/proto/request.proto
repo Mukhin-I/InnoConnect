@@ -4,6 +4,8 @@ package request;
 
 option go_package = "pkg/pb/request";
 
+import "google/protobuf/empty.proto";
+
 service RequestService {
     rpc CreateRequest(CreateRequestRequest)
         returns (RequestFull);
@@ -13,6 +15,49 @@ service RequestService {
 
     rpc GetRequest(GetRequestRequest)
         returns (RequestFull);
+
+    rpc DeleteRequest(DeleteRequestRequest)
+        returns (google.protobuf.Empty);
+
+    // User applies to request
+    rpc ApplyToRequest(ApplyToRequestRequest)
+        returns (ApplyToRequestResponse);
+
+    // Creator cancels/removes user from request
+    rpc CancelRequestApplication(CancelRequestApplicationRequest)
+        returns (google.protobuf.Empty);
+}
+
+message ApplyToRequestRequest {
+    int64 request_id = 1;
+
+    // extracted from JWT by Gateway
+    int64 user_id = 2;
+    string user_name = 3;
+}
+
+message CancelRequestApplicationRequest {
+    int64 request_id = 1;
+
+    // user who will be removed
+    int64 user_id = 2;
+
+    // request creator from JWT
+    int64 creator_id = 3;
+}
+
+message ApplyToRequestResponse {
+    string req_title = 1;
+}
+
+message RequestApplication {
+    int64 request_id = 1;
+
+    User user = 2;
+
+    string status = 3;
+
+    string applied_at = 4;
 }
 
 message User {
@@ -32,6 +77,7 @@ message RequestShort {
     string deadline = 5;
 }
 
+
 message RequestFull {
     int64 id = 1;
 
@@ -45,7 +91,9 @@ message RequestFull {
 
     string type = 6;
 
-    string deadline = 7;
+    string status = 7;
+
+    string deadline = 8;
 }
 
 message CreateRequestRequest {
@@ -72,4 +120,9 @@ message GetRequestsResponse {
 
 message GetRequestRequest {
     int64 id = 1;
+}
+
+message DeleteRequestRequest {
+    int64 id = 1;
+    int64 creator_id = 2;
 }

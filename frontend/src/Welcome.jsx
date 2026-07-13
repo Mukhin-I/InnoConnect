@@ -1,10 +1,12 @@
 import CategoryWelcome from './components/CategoryWelcome'
+import WelcomeButton from './components/WelcomeButton';
 import "./Welcome.css"
 import liveMapIcon from './assets/live-map.png'
 import helpIcon from './assets/help.png'
 import peopleIcon from './assets/people.png'
 import welcomeImage from './assets/welcome-car.svg'
 import { useNavigate } from 'react-router-dom';
+import logoIcon from './assets/logo_welcome.svg';
 
 function Welcome() {
   const navigate = useNavigate();
@@ -17,13 +19,17 @@ function Welcome() {
     navigate('/login');
   };
 
+  const handleGuestClick = () => {
+    navigate('/');
+  };
+
   return (
     <>
      <div className="welcome-page">
       <div className="welcome-content">
-        <div className="header-top">
-          <h2>InnoConnect</h2>
-        </div>
+          <div className="logo-container">
+            <img src={logoIcon} alt="Logo" style={{ width: 121, height: 22 }} />
+          </div>
         <div className="title-container">
           <h1>Твой город -<br />твои люди</h1>
           <p>Удобный способ находить события и помогать соседям в Иннополисе в один клик.</p>
@@ -46,10 +52,10 @@ function Welcome() {
           </div>
         </section>
         <div className="buttons-container">
-          <button type="button" className="register-button"
-          onClick={handleRegisterClick}>Регистрация</button>
+          <WelcomeButton onClick={handleRegisterClick} />
           <button type="button" className="login-button"
           onClick={handleLoginClick}>Войти</button>
+          <WelcomeButton onClick={handleGuestClick}>Войти как гость</WelcomeButton>
         </div>
       </div>
     </div>

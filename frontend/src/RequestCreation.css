@@ -43,8 +43,8 @@
     display: flex;
     flex-direction: column;
     text-align: left;
+    margin-top: 1.5vh;
     width: 68vw;
-    margin-top: 40px;
     padding-left: 0 !important;
 }
 
@@ -87,16 +87,20 @@
     gap: 1.5vh;
     width: 100%;
     max-width: 95.5vw;
-    height: 72vh;
+    height: fit-content;
     background-color: #FFFFFF;
     border-radius: 12px;
     margin: 0 auto;
 }
 
+.event-categories {
+    margin-top: 10px;
+}
+
 .request-name h2, .request-description h2, .request-address-container h2,
 .request-catergories h2, .deadline-container h2 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.85vw;
+    font-size: 8px;
     font-weight: 700;
     color: #768F64;
     margin-bottom: 0.45vh;

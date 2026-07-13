@@ -16,6 +16,7 @@ import Login from './Login.jsx'
 import GroupChats from './GroupChats.jsx'
 import MeetingChatRedirect from './MeetingChatRedirect.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import EventCard from './EventCard.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

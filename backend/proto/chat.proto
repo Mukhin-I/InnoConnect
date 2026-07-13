@@ -34,8 +34,11 @@ service ChatService {
   rpc createMeetingChat(CreateMeetingChatRequest)
     returns (ChatResponse);
 
-  rpc AddToMeetingChat(CreateMeetingChatRequest)
+  rpc AddToChat(AddToChatRequest)
     returns (google.protobuf.Empty);
+
+  rpc GetParticipants(GetParticipantsRequest)
+    returns (GetParticipantsResponse);
 }
 
 enum ChatType {
@@ -57,16 +60,30 @@ message ChatResponse {
 message GetOrCreateRequestChatRequest {
   int64 request_id = 1;
 
+  string chat_name = 2;
+
   // extracted from JWT by Gateway
-  int64 user_id = 2;
+  int64 user_id = 3;
 }
 
 message CreateMeetingChatRequest {
   int64 meeting_id = 1;
 
+  string chat_name = 2;
+
   // extracted from JWT by Gateway
-  int64 creator_id = 2;
-  string creator_name = 3;
+  int64 creator_id = 3;
+  string creator_name = 4;
+}
+
+message AddToChatRequest {
+  int64 relater_id = 1;
+
+  string chat_type = 2;
+
+  // extracted from JWT by Gateway
+  int64 creator_id = 3;
+  string creator_name = 4;
 }
 
 message GetMeetingChatRequest {
@@ -87,9 +104,10 @@ message GetChatRequest {
 
 message GetChatResponse {
   int64 chat_id = 1;
-  ChatType type = 2;
+  string chat_name = 2;
+  ChatType type = 3;
 
-  repeated User participants = 3;
+  repeated User participants = 4;
 }
 
 message GetMessagesRequest {
@@ -130,15 +148,14 @@ message GetChatsRequest {
 message ChatPreview {
   int64 chat_id = 1;
 
-  ChatType type = 2;
+  string name = 2;
+
+  ChatType type = 3;
 
   // Other participants in the chat.
   // For private chats this will contain one user.
   // For meeting chats it contains all participants except the requester.
-  repeated User participants = 3;
-
-  // Title of the related request or meeting.
-  string title = 4;
+  repeated User participants = 4;
 
   Message last_message = 5;
 }
@@ -147,3 +164,10 @@ message GetChatsResponse {
   repeated ChatPreview chats = 1;
 }
 
+message GetParticipantsRequest {
+  int64 chat_id = 1;
+}
+
+message GetParticipantsResponse {
+  repeated User participants = 1;
+}

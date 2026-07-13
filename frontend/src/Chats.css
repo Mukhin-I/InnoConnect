@@ -45,7 +45,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 20px;
     color: #243D34;
     text-align: left;
-    margin-top: 5.5vh;
+    margin-top: 1vh;
     margin-left: 2vw;
 }
 
@@ -57,7 +57,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .chats-filter-container {
-    width: 69.04vw;
+    width: fit-content;
     height: 11.146vw;
     border-radius: 45px;
     background-color: #fff;
@@ -70,7 +70,7 @@ h1, h2, h3, h4, h5, h6 {
 .chat-filter-item {
     background-color: #fff;
     border-radius: 500px;
-    width: 24.458vw;
+    width: fit-content;
     height: 8.669vw;
     color: #343434;
     font-weight: 500;

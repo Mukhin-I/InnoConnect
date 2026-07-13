@@ -20,8 +20,9 @@ type ChatUsecase interface {
 	GetChats(ctx context.Context, userID int64) ([]entity.ChatPreview, error)
 	GetMessages(ctx context.Context, chatID, userID int64) ([]entity.Message, error)
 	SendMessage(ctx context.Context, chatID, userID int64, text string) (entity.Message, error)
-	CreateMeetingChat(ctx context.Context, meetingID int64, creator_id int64, creator_name string) (entity.Chat, error)
-	AddToMeetingChat(ctx context.Context, meetingID int64, user_id int64, user_name string) (error)
+	CreateMeetingChat(ctx context.Context, meetingID int64, chatName string, creator_id int64, creator_name string) (entity.Chat, error)
+	AddToChat(ctx context.Context, meetingID int64, chatType string, user_id int64, user_name string) (error)
+	GetParticipants(ctx context.Context, chatID int64) ([]entity.User, error)
 }
 
 type ChatServer struct {
@@ -70,6 +71,7 @@ func (s *ChatServer) CreateMeetingChat(
 	chat, err := s.usecase.CreateMeetingChat(
 		ctx,
 		req.GetMeetingId(),
+		req.GetChatName(),
 		req.GetCreatorId(),
 		req.GetCreatorName(),
 	)
@@ -190,6 +192,34 @@ func (s *ChatServer) SendMessage(
 	return toMessage(message), nil
 }
 
-func (c *ChatServer) AddToMeetingChat(ctx context.Context, req *pb.CreateMeetingChatRequest) (*emptypb.Empty, error) {
-	return &emptypb.Empty{}, c.usecase.AddToMeetingChat(ctx, req.MeetingId, req.CreatorId, req.CreatorName)
+func (c *ChatServer) AddToChat(ctx context.Context, req *pb.AddToChatRequest) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, c.usecase.AddToChat(ctx, req.RelaterId, req.ChatType, req.CreatorId, req.CreatorName)
+}
+
+func (s *ChatServer) GetParticipants(
+	ctx context.Context,
+	req *pb.GetParticipantsRequest,
+) (*pb.GetParticipantsResponse, error) {
+
+	participants, err := s.usecase.GetParticipants(
+		ctx,
+		req.GetChatId(),
+	)
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	resp := &pb.GetParticipantsResponse{
+		Participants: make([]*pb.User, 0, len(participants)),
+	}
+
+	for _, participant := range participants {
+		resp.Participants = append(resp.Participants, &pb.User{
+			Id:   participant.ID,
+			Name: participant.Name,
+		})
+	}
+
+	return resp, nil
 }

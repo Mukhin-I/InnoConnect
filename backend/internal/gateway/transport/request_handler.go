@@ -8,8 +8,13 @@ import (
 	"innoconnect/internal/gateway/usecase"
 	"innoconnect/pkg/logger"
 	requestpb "innoconnect/pkg/pb/request"
+	userpb "innoconnect/pkg/pb/user"
+
+	"innoconnect/pkg/pb/chat"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (h *Handler) CreateRequest(c *gin.Context) {
@@ -36,13 +41,13 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 	request, err := h.requestClient.CreateRequest(
 		c.Request.Context(),
 		&requestpb.CreateRequestRequest{
-			CreatorId:      userID,
-			CreatorName:    name,
-			Title:          req.Title,
-			Description:    req.Description,
+			CreatorId:        userID,
+			CreatorName:      name,
+			Title:            req.Title,
+			Description:      req.Description,
 			RequesterAddress: req.RequesterAddress,
-			Type:           req.Type,
-			Deadline:       req.Deadline,
+			Type:             req.Type,
+			Deadline:         req.Deadline,
 		},
 	)
 
@@ -51,6 +56,27 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 		logger.Error("Failed to get answer from request service via gRPC: " + err.Error())
 		return
 	}
+
+	_, err = h.userClient.IncrementCreatedRequestsCount(
+		c.Request.Context(),
+		&userpb.IncrementUserRequestsCountRequest{
+			UserId: userID,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Failed to increment created requests count: " + err.Error())
+		return
+	}
+
+	_, err = h.chatClient.GetOrCreateRequestChat(
+		c.Request.Context(),
+		&chat.GetOrCreateRequestChatRequest{
+			RequestId: request.Id,
+			ChatName:  request.Title,
+			UserId:    userID,
+		},
+	)
 
 	c.JSON(http.StatusCreated, entity.CreateRequestResponse{
 		ID: request.Id,
@@ -126,5 +152,152 @@ func (h *Handler) GetRequest(c *gin.Context) {
 		RequesterAddress: resp.RequesterAddress,
 		Type:             resp.Type,
 		Deadline:         resp.Deadline,
+	})
+}
+
+func (h *Handler) DeleteRequest(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request id"})
+		return
+	}
+
+	creatorID, _, err := usecase.GetUserFromToken(c)
+	if err != nil {
+		logger.Error("Failed to get user from token: " + err.Error())
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return
+	}
+
+	_, err = h.requestClient.DeleteRequest(
+		c.Request.Context(),
+		&requestpb.DeleteRequestRequest{
+			Id:        id,
+			CreatorId: creatorID,
+		},
+	)
+	if err != nil {
+		switch status.Code(err) {
+		case codes.NotFound:
+			c.JSON(http.StatusNotFound, gin.H{"error": "request not found"})
+		case codes.PermissionDenied:
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		case codes.Unauthenticated:
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		default:
+			logger.Error("Failed to delete request: " + err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete request"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "request deleted successfully"})
+}
+
+func (h *Handler) ApplyToRequest(c *gin.Context) {
+	requestID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request id",
+		})
+		return
+	}
+
+	userID, userName, err := usecase.GetUserFromToken(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// TODO: remove uneccesarry return from this method
+	_, err = h.requestClient.ApplyToRequest(
+		c.Request.Context(),
+		&requestpb.ApplyToRequestRequest{
+			RequestId: requestID,
+			UserId:    userID,
+			UserName:  userName,
+		},
+	)
+
+	if err != nil {
+		logger.Error(
+			"failed to apply to request: " + err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to apply to request",
+		})
+		return
+	}
+
+	_, err = h.chatClient.AddToChat(
+		c.Request.Context(),
+		&chat.AddToChatRequest{
+			// TODO rename on user
+			CreatorId:   userID,
+			CreatorName: userName,
+			ChatType:    "REQUEST",
+			RelaterId:   requestID,
+		},
+	)
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+	})
+}
+
+func (h *Handler) CancelRequestApplication(c *gin.Context) {
+
+	requestID, err := strconv.ParseInt(c.Param("request_id"), 10, 64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request id",
+		})
+		return
+	}
+
+	userID, err := strconv.ParseInt(c.Param("user_id"), 10, 64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid user id",
+		})
+		return
+	}
+
+	creatorID, _, err := usecase.GetUserFromToken(c)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	_, err = h.requestClient.CancelRequestApplication(
+		c.Request.Context(),
+		&requestpb.CancelRequestApplicationRequest{
+			RequestId: requestID,
+			UserId:    userID,
+			CreatorId: creatorID,
+		},
+	)
+
+	if err != nil {
+		logger.Error(
+			"failed to cancel application: " + err.Error(),
+		)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to cancel application",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
 	})
 }

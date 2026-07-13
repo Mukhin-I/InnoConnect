@@ -2,20 +2,24 @@ package transport
 
 import (
 	"context"
+	"errors"
 	"time"
 
-	"innoconnect/internal/meeting/entity"
-	pb "innoconnect/pkg/pb/meeting"
+	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	"innoconnect/internal/meeting/entity"
+	"innoconnect/internal/meeting/usecase"
+	pb "innoconnect/pkg/pb/meeting"
 )
 
 type MeetingUsecase interface {
 	Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error)
 	GetAll(ctx context.Context) ([]entity.Meeting, error)
 	GetByID(ctx context.Context, id int64) (entity.Meeting, error)
-	ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) (error)
+	Delete(ctx context.Context, id int64, creatorID int64) error
+	ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) error
 }
 
 type MeetingServer struct {
@@ -108,6 +112,29 @@ func (s *MeetingServer) GetMeeting(
 		},
 		Participants: []*pb.User{},
 	}, nil
+}
+
+func (s *MeetingServer) DeleteMeeting(ctx context.Context, req *pb.DeleteMeetingRequest) (*emptypb.Empty, error) {
+	if req.GetId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "id is required")
+	}
+
+	if req.GetCreatorId() == 0 {
+		return nil, status.Error(codes.Unauthenticated, "creator_id is required")
+	}
+
+	err := s.usecase.Delete(ctx, req.GetId(), req.GetCreatorId())
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, status.Error(codes.NotFound, "meeting not found")
+	}
+	if errors.Is(err, usecase.ErrForbidden) {
+		return nil, status.Error(codes.PermissionDenied, "forbidden")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (s *MeetingServer) ApplyOnMeeting(ctx context.Context, req *pb.ApplyOnMeetingRequest) (*emptypb.Empty, error) {

@@ -17,6 +17,7 @@ import logoutIcon from './assets/logout.svg';
 import chevronIcon from './assets/chevron.svg';
 import thanksIcon from './assets/thanks.svg';
 import cityImg from './assets/city.svg';         
+import EventCard from './EventCard.jsx';
 
  function Profile() {
   const navigate = useNavigate();
@@ -48,8 +49,8 @@ import cityImg from './assets/city.svg';
             email: data.email,
             location: 'Иннополис, Россия',
             verified: true,
-            helped: 24,
-            requests: 16,
+            helped: data.completed_requests_count || 0,
+            requests: data.created_requests_count || 0,
           });
         } else {
           useMockData();
@@ -72,19 +73,16 @@ import cityImg from './assets/city.svg';
     return (
       <>
         <div className="profile-page">
-        <header className="profile-header">
+         <header className="map-header">
           <div className="logo-container">
-            <img src={logoIcon} alt="Logo" className="logo-icon" />
-          </div>
-          <div className="header-icons">
-            <img src={notificationIcon} alt="Notifications" className="header-icon" />
-            <img src={settingsIcon} alt="Settings" className="header-icon" />
-          </div>
-        </header>
-
+        <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                  <div className="header-icons">
+                    <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                      <img src={settingsIcon} alt="Settings" className="header-icon" />
+               </div>
+          </header>
         <h1 className="page-title">Профиль</h1>
         <p className="rtr-loading">Загрузка...</p>
-
         
       </div>
       <BottomMenu initialSelected={'profile'} />
@@ -95,15 +93,14 @@ import cityImg from './assets/city.svg';
   return (
     <>
       <div className="profile-page">
-        <header className="profile-header">
+         <header className="map-header">
           <div className="logo-container">
-            <img src={logoIcon} alt="Logo" className="logo-icon" />
-          </div>
-          <div className="header-icons">
-            <img src={notificationIcon} alt="Notifications" className="header-icon" />
-            <img src={settingsIcon} alt="Settings" className="header-icon" />
-          </div>
-        </header>
+        <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                  <div className="header-icons">
+                    <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                      <img src={settingsIcon} alt="Settings" className="header-icon" />
+               </div>
+          </header>
 
         <h1 className="page-title">Профиль</h1>
 
@@ -149,7 +146,21 @@ import cityImg from './assets/city.svg';
           </div>
         </section>
 
-        <nav className="menu-card">
+        <section className="thanks-card">
+          <div className='thanks-text'>
+          <div className="thanks-icon-box">
+            <img src={thanksIcon} alt="" className="thanks-icon" />
+          </div>
+          <h2 className="thanks-title">Спасибо,</h2>
+          <p className="thanks-text">что делаете Иннополис более дружным местом.</p>
+          </div>
+          <div className="thanks-art-box">
+            <img src={cityImg} alt="" className="thanks-art" />
+          </div>
+        </section>
+
+                <nav className="menu-card">
+          {/*
           <Link to="/profile/personal" className="menu-item">
             <span className="menu-icon-box">
               <img src={personalIcon} alt="" className="menu-icon" />
@@ -173,7 +184,7 @@ import cityImg from './assets/city.svg';
             <span className="menu-label">Помощь и поддержка</span>
             <img src={rightArrowIcon} alt="" className="menu-chevron" />
           </Link>
-
+          */}
           <button className="menu-item" onClick={handleLogout}>
             <span className="menu-icon-box">
               <img src={logoutIcon} alt="" className="menu-icon" />
@@ -182,21 +193,6 @@ import cityImg from './assets/city.svg';
             <img src={rightArrowIcon} alt="" className="menu-chevron" />
           </button>
         </nav>
-
-        <section className="thanks-card">
-          <div className='thanks-text'>
-          <div className="thanks-icon-box">
-            <img src={thanksIcon} alt="" className="thanks-icon" />
-          </div>
-          <h2 className="thanks-title">Спасибо,</h2>
-          <p className="thanks-text">что делаете Иннополис более дружным местом.</p>
-          </div>
-          <div className="thanks-art-box">
-            <img src={cityImg} alt="" className="thanks-art" />
-          </div>
-        </section>
-
-        
       </div>
       <BottomMenu initialSelected={'profile'} />
     </>

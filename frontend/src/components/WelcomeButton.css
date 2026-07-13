@@ -1,0 +1,12 @@
+.welcome-button {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 4vw;
+  cursor: pointer;
+  width: 80vw;
+  height: 4vh;
+  background: #BBD58B;
+  border-radius: 1000px;
+  border: none;
+  color: #FFFFFF;
+}

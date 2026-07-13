@@ -35,7 +35,8 @@ func CreateServer() error {
 		return err
 	}
 
-	handler := transport.NewHandler(meetingClient, requestClient, chatClient, userClient)
+	wsHub := transport.NewHub()
+	handler := transport.NewHandler(meetingClient, requestClient, chatClient, userClient, wsHub)
 
 	router := gin.Default()
 
@@ -71,14 +72,21 @@ func CreateServer() error {
 }
 
 func setEndpoints(router *gin.Engine, h *transport.Handler) {
-    router.POST("/register", h.Register)
-    router.POST("/login", h.Login)
-    router.GET("/me", h.GetCurrentUser)
+	router.POST("/register", h.Register)
+	router.POST("/login", h.Login)
+	router.GET("/me", h.GetCurrentUser)
 
 	router.POST("/requests", h.CreateRequest)
 	router.GET("/requests", h.GetRequests)
 	router.GET("/requests/:id", h.GetRequest)
+	router.DELETE("/requests/:id", h.DeleteRequest)
 	router.POST("/requests/:id/chat", h.GetOrCreateRequestChat)
+	router.POST("/requests/:id/apply", h.ApplyToRequest)
+
+	router.DELETE(
+		"/requests/:request_id/applications/:user_id",
+		h.CancelRequestApplication,
+	)
 
 	router.GET("/meetings/:id/chat", h.GetMeetingChat)
 
@@ -87,13 +95,16 @@ func setEndpoints(router *gin.Engine, h *transport.Handler) {
 	router.GET("/chats/:chat_id/messages", h.GetMessages)
 	router.POST("/chats/:chat_id/messages", h.SendMessage)
 
-    router.POST("/meetings", h.CreateMeeting)
-    router.GET("/meetings", h.GetMeetings)
-    router.GET("/meetings/:id", h.GetMeeting)
+	router.POST("/meetings", h.CreateMeeting)
+	router.GET("/meetings", h.GetMeetings)
+	router.GET("/meetings/:id", h.GetMeeting)
+	router.DELETE("/meetings/:id", h.DeleteMeeting)
 	router.POST("/meetings/:id", h.ApplyOnMeeting)
 
-    router.GET(
-        "/swagger/*any",
-        ginSwagger.WrapHandler(swaggerFiles.Handler),
-    )
+	router.GET("/ws", h.WebSocket)
+
+	router.GET(
+		"/swagger/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler),
+	)
 }

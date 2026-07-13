@@ -27,9 +27,10 @@ body {
 
 .header-top {
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
     gap: 3vw;
-    padding: 38px 24px 0 24px;
+    padding: 35px 24px 0 24px;
+        margin-bottom: 3vh;
 }
 
 .text-header {
@@ -37,7 +38,10 @@ body {
     flex-direction: column;
     text-align: left;
     width: 290px;
-    padding: 40px 24px 0 24px;
+}
+
+.header-register {
+    padding-left: 24px !important;
 }
 
 .header-top h2 {
@@ -46,6 +50,7 @@ body {
     font-weight: 600;
     color: #00130c;
     margin-right: auto;
+    text-align: left;
 }
 
 .text-header h1 {
@@ -92,11 +97,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 315px;
-    height: 110px;
+    width: 100%;
+    min-height: 160px;
     flex-shrink: 0;
     margin: 0 auto;
-    margin-top: 30px;
 }
 
 .img-container img {
@@ -110,11 +114,11 @@ body {
 .register-card {
     display: flex;
     flex-direction: column;
-    margin: auto auto 15px auto;
+    margin: 0 auto;
     background-color: #FFFFFF;
     border-radius: 25px;
     width: 91vw;
-    height: 250px;
+    min-height: 200px;
     padding: 18px 15px;
     box-sizing: border-box;
 }
@@ -122,15 +126,14 @@ body {
 .card-header {
     text-align: left;
     width: 100%;
-    margin-bottom: 24px;
 }
 
-.card-header h2 {
+.card-header-register{
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 10px;
-    color: 343434;
-    margin: 0;
+    color: #343434;
+    margin-bottom: 18px;
 }
 
 .register-inputs {

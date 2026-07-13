@@ -1,18 +1,27 @@
 package transport
 
 import (
+	"context"
 	"net/http"
 	"strconv"
 
+	"innoconnect/internal/gateway/entity"
 	"innoconnect/internal/gateway/usecase"
 	"innoconnect/pkg/logger"
 	chatpb "innoconnect/pkg/pb/chat"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 type chatMessageRequest struct {
 	Text string `json:"text"`
+}
+
+var upgrader = websocket.Upgrader{
+    CheckOrigin: func(r *http.Request) bool {
+        return true
+    },
 }
 
 func (h *Handler) GetOrCreateRequestChat(c *gin.Context) {
@@ -157,6 +166,7 @@ func (h *Handler) GetMessages(c *gin.Context) {
 }
 
 func (h *Handler) SendMessage(c *gin.Context) {
+	logger.Warn("Expired API!!!! Use websocket instead!!!!")
 	chatID, err := strconv.ParseInt(c.Param("chat_id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chat id"})
@@ -190,4 +200,81 @@ func (h *Handler) SendMessage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resp)
+}
+
+func (h *Handler) WebSocket(c *gin.Context) {
+	userID, _, err := usecase.GetUserFromToken(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+
+	h.wsHub.AddClient(userID, conn)
+	defer h.wsHub.RemoveClient(userID)
+
+	for {
+		var req entity.WSRequest
+
+		if err := conn.ReadJSON(&req); err != nil {
+			logger.Error(err.Error())
+			break
+		}
+
+		switch req.Type {
+
+		case "send_message":
+			h.handleSendMessage(c.Request.Context(), userID, req)
+
+		default:
+			logger.Error("unknown websocket message type")
+		}
+	}
+}
+
+// TODO: can be optimized for a one grpc call instead of 2
+func (h *Handler) handleSendMessage(
+	ctx context.Context,
+	userID int64,
+	req entity.WSRequest,
+) {
+	resp, err := h.chatClient.SendMessage(
+		ctx,
+		&chatpb.SendMessageRequest{
+			ChatId: req.ChatID,
+			UserId: userID,
+			Text:   req.Text,
+		},
+	)
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+
+	participants, err := h.chatClient.GetParticipants(
+		ctx,
+		&chatpb.GetParticipantsRequest{
+			ChatId: req.ChatID,
+		},
+	)
+
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+
+	wsMessage := entity.WSResponse{
+		Type:    "new_message",
+		ChatID:  req.ChatID,
+		Message: resp,
+	}
+
+	for _, participant := range participants.Participants {
+		h.wsHub.Send(participant.Id, wsMessage)
+	}
 }

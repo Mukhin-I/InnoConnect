@@ -9,6 +9,7 @@ const (
 
 type Chat struct {
 	ID           int64
+	Name string
 	Type         ChatType
 	RelatedID int64
 	Participants []User
@@ -16,6 +17,7 @@ type Chat struct {
 
 type ChatPreview struct {
 	ID           int64
+	Name string
 	Type         ChatType
 	Title        string
 	Participants []User

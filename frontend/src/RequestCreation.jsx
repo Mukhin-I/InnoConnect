@@ -225,22 +225,19 @@ function RequestCreation() {
   return (
     <>
       <div className="request-creation-page">
-        <header className="chat-header">
-                <div className="header-left">
-                <button className="rtr-back-btn" onClick={() => navigate('/chats')}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </button>
-                  <div className="logo-container">
-                    <img src={logoIcon} alt="Logo" className="logo-icon" />
-                  </div>
-                </div>
-                <div className="header-icons">
-                  <img src={notificationIcon} alt="Notifications" className="header-icon" />
-                  <img src={settingsIcon} alt="Settings" className="header-icon" />
-                </div>
-              </header>
+         <header className="map-header">
+                                  <div className="logo-container">
+                                    <button className="rtr-back-btn" onClick={() => navigate('/requests')}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </button>
+                        <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                                  <div className="header-icons">
+                                    <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                                      <img src={settingsIcon} alt="Settings" className="header-icon" />
+                                  </div>
+                                </header>
         <div className="request-creation-page-content">
             <div className="text-header">
               <h1>Создание просьбы</h1>

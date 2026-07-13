@@ -11,7 +11,7 @@ import unreadIcon from './assets/unread.svg';
 import ChatPreview from './components/ChatPreview.jsx';
 
 function Chats() {
-    const [filter, setFilter] = useState('all');
+    const [filter, setFilter] = useState('meeting');
 
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -48,25 +48,24 @@ function Chats() {
     }, []);
 
     const filteredChats = chats.filter(chat => {
-        if (filter === 'all') {
-            return true;
+        if (filter === 'meeting') {
+            return chat.type === 'MEETING';
         }
 
-        return chat.unread_count > 0;
+        return chat.type === 'REQUEST';
     });
 
     return (
         <>
             <div className="chats-page">
-                <header className="profile-header">
-                          <div className="logo-container">
-                            <img src={logoIcon} alt="Logo" className="logo-icon" />
-                          </div>
-                          <div className="header-icons">
-                            <img src={notificationIcon} alt="Notifications" className="header-icon" />
-                            <img src={settingsIcon} alt="Settings" className="header-icon" />
-                          </div>
-                </header>
+                <header className="map-header">
+                         <div className="logo-container">
+                       <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                                 <div className="header-icons">
+                                   <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                                     <img src={settingsIcon} alt="Settings" className="header-icon" />
+                              </div>
+                         </header>
                 <div className="chats-page-content">
 
                     <h1 className="chats-header">Чаты</h1>
@@ -74,19 +73,19 @@ function Chats() {
                     <div className="chats-top-bar">
                         <div className="chats-filter-container">
                             <div 
-                                className={`chat-filter-item ${filter === 'all' ? 'chat-selected' : ''}`}
-                                onClick={() => setFilter('all')}
+                                className={`chat-filter-item ${filter === 'meeting' ? 'chat-selected' : ''}`}
+                                onClick={() => setFilter('meeting')}
                             >
-                                <img src={allIcon} alt="all" />
-                                <p>Все</p>
+                                {/* <img src={allIcon} alt="all" /> */}
+                                <p>Мероприятия</p>
                             </div>
 
                             <div 
-                                className={`chat-filter-item ${filter === 'unread' ? 'chat-selected chat-selected-unread' : ''}`}
-                                onClick={() => setFilter('unread')}
+                                className={`chat-filter-item ${filter === 'request' ? 'chat-selected' : ''}`}
+                                onClick={() => setFilter('request')}
                             >
-                                <img src={unreadIcon} alt="unread" />
-                                <p>Непрочитанные</p>
+                                {/* <img src={unreadIcon} alt="unread" /> */}
+                                <p>Просьбы</p>
                             </div>
                         </div>
 

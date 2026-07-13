@@ -10,5 +10,6 @@ type Request struct {
 	Description      string
 	RequesterAddress string
 	Type             string
+	Status string
 	Deadline         time.Time
 }
