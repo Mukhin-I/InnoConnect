@@ -16,6 +16,9 @@ service RequestService {
     rpc GetRequest(GetRequestRequest)
         returns (RequestFull);
 
+    rpc DeleteRequest(DeleteRequestRequest)
+        returns (google.protobuf.Empty);
+
     // User applies to request
     rpc ApplyToRequest(ApplyToRequestRequest)
         returns (ApplyToRequestResponse);
@@ -117,4 +120,9 @@ message GetRequestsResponse {
 
 message GetRequestRequest {
     int64 id = 1;
+}
+
+message DeleteRequestRequest {
+    int64 id = 1;
+    int64 creator_id = 2;
 }

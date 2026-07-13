@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"innoconnect/internal/request/entity"
+	"innoconnect/internal/request/usecase"
 	"innoconnect/pkg/logger"
 	pb "innoconnect/pkg/pb/request"
 
@@ -19,6 +20,7 @@ type RequestUsecase interface {
 	Create(ctx context.Context, request entity.Request) (entity.Request, error)
 	GetAll(ctx context.Context) ([]entity.Request, error)
 	GetByID(ctx context.Context, id int64) (entity.Request, error)
+	Delete(ctx context.Context, id int64, creatorID int64) error
 	ApplyToRequest(ctx context.Context, requestID int64, userID int64, userName string) (string, error)
 	CancelRequestApplication(ctx context.Context, requestID int64, userID int64, creatorID int64) error
 }
@@ -86,13 +88,36 @@ func (s *RequestServer) GetRequest(ctx context.Context, req *pb.GetRequestReques
 	return toRequestFull(request), nil
 }
 
+func (s *RequestServer) DeleteRequest(ctx context.Context, req *pb.DeleteRequestRequest) (*emptypb.Empty, error) {
+	if req.GetId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "id is required")
+	}
+
+	if req.GetCreatorId() == 0 {
+		return nil, status.Error(codes.Unauthenticated, "creator_id is required")
+	}
+
+	err := s.usecase.Delete(ctx, req.GetId(), req.GetCreatorId())
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, status.Error(codes.NotFound, "request not found")
+	}
+	if errors.Is(err, usecase.ErrForbidden) {
+		return nil, status.Error(codes.PermissionDenied, "forbidden")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
 func toRequestShort(request entity.Request) *pb.RequestShort {
 	return &pb.RequestShort{
-		Id:       request.ID,
+		Id:        request.ID,
 		CreatorId: request.CreatorID,
-		Title:    request.Title,
-		Type:     request.Type,
-		Deadline: request.Deadline.Format(time.RFC3339),
+		Title:     request.Title,
+		Type:      request.Type,
+		Deadline:  request.Deadline.Format(time.RFC3339),
 	}
 }
 
@@ -107,7 +132,7 @@ func toRequestFull(request entity.Request) *pb.RequestFull {
 		Description:      request.Description,
 		RequesterAddress: request.RequesterAddress,
 		Type:             request.Type,
-		Status: request.Status,
+		Status:           request.Status,
 		Deadline:         request.Deadline.Format(time.RFC3339),
 	}
 }
@@ -131,7 +156,6 @@ func (s *RequestServer) ApplyToRequest(
 		)
 	}
 
-
 	req_title, err := s.usecase.ApplyToRequest(
 		ctx,
 		req.GetRequestId(),
@@ -154,7 +178,6 @@ func (s *RequestServer) ApplyToRequest(
 		)
 	}
 
-
 	return &pb.ApplyToRequestResponse{
 		ReqTitle: req_title,
 	}, nil
@@ -165,14 +188,12 @@ func (s *RequestServer) CancelRequestApplication(
 	req *pb.CancelRequestApplicationRequest,
 ) (*emptypb.Empty, error) {
 
-
 	if req.GetRequestId() == 0 {
 		return nil, status.Error(
 			codes.InvalidArgument,
 			"request_id is required",
 		)
 	}
-
 
 	if req.GetUserId() == 0 {
 		return nil, status.Error(
@@ -181,7 +202,6 @@ func (s *RequestServer) CancelRequestApplication(
 		)
 	}
 
-
 	if req.GetCreatorId() == 0 {
 		return nil, status.Error(
 			codes.Unauthenticated,
@@ -189,14 +209,12 @@ func (s *RequestServer) CancelRequestApplication(
 		)
 	}
 
-
 	err := s.usecase.CancelRequestApplication(
 		ctx,
 		req.GetRequestId(),
 		req.GetUserId(),
 		req.GetCreatorId(),
 	)
-
 
 	if err != nil {
 
@@ -207,13 +225,11 @@ func (s *RequestServer) CancelRequestApplication(
 			)
 		}
 
-
 		return nil, status.Error(
 			codes.Internal,
 			err.Error(),
 		)
 	}
-
 
 	return &emptypb.Empty{}, nil
 }

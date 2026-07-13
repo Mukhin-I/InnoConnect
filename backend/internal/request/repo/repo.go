@@ -144,6 +144,24 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.Request, err
 	return request, nil
 }
 
+func (r *Repository) Delete(ctx context.Context, id int64) error {
+	query := `
+		DELETE FROM requests
+		WHERE id = $1
+	`
+
+	result, err := r.pool.Exec(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	if result.RowsAffected() == 0 {
+		return pgx.ErrNoRows
+	}
+
+	return nil
+}
+
 func (r *Repository) ApplyToRequest(
 	ctx context.Context,
 	requestID int64,
@@ -156,7 +174,6 @@ func (r *Repository) ApplyToRequest(
 		return "", err
 	}
 	defer tx.Rollback(ctx)
-
 
 	// Add user application
 	_, err = tx.Exec(
@@ -179,7 +196,6 @@ func (r *Repository) ApplyToRequest(
 	if err != nil {
 		return "", err
 	}
-
 
 	// Change request status
 	var title string
@@ -214,7 +230,6 @@ func (r *Repository) CancelRequestApplication(
 	}
 	defer tx.Rollback(ctx)
 
-
 	// Cancel application only if creator owns request
 	result, err := tx.Exec(
 		ctx,
@@ -239,11 +254,9 @@ func (r *Repository) CancelRequestApplication(
 		return err
 	}
 
-
 	if result.RowsAffected() == 0 {
 		return pgx.ErrNoRows
 	}
-
 
 	// Return request back to pending
 	_, err = tx.Exec(
@@ -259,7 +272,6 @@ func (r *Repository) CancelRequestApplication(
 	if err != nil {
 		return err
 	}
-
 
 	return tx.Commit(ctx)
 }
