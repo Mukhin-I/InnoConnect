@@ -24,6 +24,8 @@ type UserRepository interface {
 	Create(ctx context.Context, user entity.User) (entity.User, error)
 	GetByEmail(ctx context.Context, email string) (entity.User, error)
 	GetByID(ctx context.Context, id int64) (entity.User, error)
+	IncrementCreatedRequestsCount(ctx context.Context, userID int64) error
+	IncrementCompletedRequestsCount(ctx context.Context, userID int64) error
 }
 
 type LoginResult struct {
@@ -81,6 +83,14 @@ func (u *Usecase) Login(ctx context.Context, email, password string) (LoginResul
 
 func (u *Usecase) GetCurrentUser(ctx context.Context, id int64) (entity.User, error) {
 	return u.repo.GetByID(ctx, id)
+}
+
+func (u *Usecase) IncrementCreatedRequestsCount(ctx context.Context, userID int64) error {
+	return u.repo.IncrementCreatedRequestsCount(ctx, userID)
+}
+
+func (u *Usecase) IncrementCompletedRequestsCount(ctx context.Context, userID int64) error {
+	return u.repo.IncrementCompletedRequestsCount(ctx, userID)
 }
 
 func (u *Usecase) generateToken(userID int64, name string) (string, error) {

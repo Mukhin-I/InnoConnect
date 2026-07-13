@@ -8,6 +8,7 @@ import (
 	"innoconnect/internal/gateway/usecase"
 	"innoconnect/pkg/logger"
 	requestpb "innoconnect/pkg/pb/request"
+	userpb "innoconnect/pkg/pb/user"
 
 	"innoconnect/pkg/pb/chat"
 
@@ -53,6 +54,18 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		logger.Error("Failed to get answer from request service via gRPC: " + err.Error())
+		return
+	}
+
+	_, err = h.userClient.IncrementCreatedRequestsCount(
+		c.Request.Context(),
+		&userpb.IncrementUserRequestsCountRequest{
+			UserId: userID,
+		},
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		logger.Error("Failed to increment created requests count: " + err.Error())
 		return
 	}
 

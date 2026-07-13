@@ -6,6 +6,7 @@ import (
 	"innoconnect/internal/user/entity"
 	"innoconnect/pkg/logger"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -52,7 +53,9 @@ func (r *Repository) GetByEmail(ctx context.Context, email string) (entity.User,
 			id,
 			email,
 			password_hash,
-			name
+			name,
+			created_requests_count,
+			completed_requests_count
 		FROM users
 		WHERE email = $1
 	`
@@ -64,6 +67,8 @@ func (r *Repository) GetByEmail(ctx context.Context, email string) (entity.User,
 		&user.Email,
 		&user.PasswordHash,
 		&user.Name,
+		&user.CreatedRequestsCount,
+		&user.CompletedRequestsCount,
 	)
 
 	if err != nil {
@@ -79,7 +84,9 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.User, error)
 			id,
 			email,
 			password_hash,
-			name
+			name,
+			created_requests_count,
+			completed_requests_count
 		FROM users
 		WHERE id = $1
 	`
@@ -91,6 +98,8 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.User, error)
 		&user.Email,
 		&user.PasswordHash,
 		&user.Name,
+		&user.CreatedRequestsCount,
+		&user.CompletedRequestsCount,
 	)
 
 	if err != nil {
@@ -99,4 +108,40 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.User, error)
 	}
 
 	return user, nil
+}
+
+func (r *Repository) IncrementCreatedRequestsCount(ctx context.Context, userID int64) error {
+	query := `
+		UPDATE users
+		SET created_requests_count = created_requests_count + 1
+		WHERE id = $1
+	`
+
+	result, err := r.pool.Exec(ctx, query, userID)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return pgx.ErrNoRows
+	}
+
+	return nil
+}
+
+func (r *Repository) IncrementCompletedRequestsCount(ctx context.Context, userID int64) error {
+	query := `
+		UPDATE users
+		SET completed_requests_count = completed_requests_count + 1
+		WHERE id = $1
+	`
+
+	result, err := r.pool.Exec(ctx, query, userID)
+	if err != nil {
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return pgx.ErrNoRows
+	}
+
+	return nil
 }
