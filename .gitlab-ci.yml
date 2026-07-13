@@ -51,7 +51,7 @@ integration_and_unit_tests:
   - $COMPOSE up -d --build --wait --wait-timeout 90
   - cd backend/tests
   - pip3 install -q --break-system-packages -r requirements.txt
-  - API_BASE_URL=http://localhost:8080 pytest --junitxml=report.xml
+  - API_BASE_URL=http://gateway:8080 pytest --junitxml=report.xml
 
   after_script:
     - export COMPOSE="docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml"
