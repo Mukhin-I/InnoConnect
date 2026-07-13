@@ -15,3 +15,8 @@ type Meeting struct {
 	MeetingTime time.Time
 	MaxPeople   *int32
 }
+
+type User struct {
+    ID  int64  `json:"id"`
+	Name string `json:"name"`
+}

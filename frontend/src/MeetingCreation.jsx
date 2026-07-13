@@ -2,6 +2,7 @@ import './MeetingCreation.css'
 import arrowIcon from './assets/arrowIcon.png'
 import mapIcon from './assets/mapIcon.png'
 import notificationIcon from './assets/notificationIcon.png'
+import calendarIcon from './assets/calendarIcon.png'
 import settingsIcon from './assets/settingsIcon.png'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,16 +14,24 @@ import learningActiveIcon from './assets/learningActiveIcon.png'
 import learningNotActiveIcon from './assets/learningNotActiveIcon.png'
 import MapBox from './components/MapBox'
 import LocationPicker from './components/LocationPicker'
+import IconButton from './components/IconButton'
+import CreationInput from './components/CreationInput'
+import TextareaCounter from './components/TextareaCounter'
+import LocationEditButton from './components/LocationEditButton'
+import seatsIcon from './assets/seatsIcon.png'
+import CategorySelector from './components/CategorySelector'
+import CreateButton from './components/CreateButton'
+import logoIcon from './assets/logo.svg';
+
 
 function MeetingCreation() {
   const navigate = useNavigate();
   const handleClose = () => {
     navigate('/');
   };
-  const [selected, setSelected] = useState('Спорт');
-  const [text, setText] = useState('');
-  const maxLength = 500;
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [selected, setSelected] = useState('Спорт');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -35,21 +44,28 @@ function MeetingCreation() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  const categoryIcons = {
-    Спорт: {
-      active: gantelActiveIcon,
-      inactive: gantelNotActiveIcon
+  const categories = [
+    {
+      id: 'Спорт',
+      label: 'Спорт',
+      activeIcon: gantelActiveIcon,
+      inactiveIcon: gantelNotActiveIcon
     },
-    Соц: {
-      active: socialActiveIcon,
-      inactive: socialNotActiveIcon
+    {
+      id: 'Соц',
+      label: 'Соц',
+      activeIcon: socialActiveIcon,
+      inactiveIcon: socialNotActiveIcon
     },
-    Учеба: {
-      active: learningActiveIcon,
-      inactive: learningNotActiveIcon
-    }
-  };
+    {
+      id: 'Учеба',
+      label: 'Учеба',
+      activeIcon: learningActiveIcon,
+      inactiveIcon: learningNotActiveIcon
+    },
+  ];
 
   const combineDateTime = (dateStr, timeStr) => {
     if (!dateStr || !timeStr) return null;
@@ -89,7 +105,7 @@ function MeetingCreation() {
       return;
     }
 
-    if (!text.trim()) {
+    if (!description.trim()) {
       setError('Введите описание мероприятия');
       setIsLoading(false);
       return;
@@ -110,7 +126,7 @@ function MeetingCreation() {
 
     const requestBody = {
       title: title.trim(),
-      description: text.trim(),
+      description: description.trim(),
       meeting_time: meetingTime,
       type: selected,
     };
@@ -129,9 +145,9 @@ function MeetingCreation() {
     }
 
     try {
-      const token = 'temp';
+      const token = localStorage.getItem('token');
       
-      const response = await fetch('http://localhost:8080/meetings', {
+      const response = await fetch(`${API_URL}/meetings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +162,7 @@ function MeetingCreation() {
       }
       
       setTitle('');
-      setText('');
+      setDescription('');
       setDate('');
       setStartTime('');
       setEndDate('');
@@ -168,42 +184,46 @@ function MeetingCreation() {
   return (
     <>
       <div className="meeting-creation-page">
+                <header className="map-header">
+                          <div className="logo-container">
+                            <button className="rtr-back-btn" onClick={() => navigate('/')}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 18L9 12L15 6" stroke="#1A1D1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
+                          <div className="header-icons">
+                            <img src={notificationIcon} alt="Notifications" className="header-icon" />
+                              <img src={settingsIcon} alt="Settings" className="header-icon" />
+                          </div>
+                        </header>
         <div className="meeting-creation-page-content">
-          <button className="close-button-creation" onClick={handleClose}>×</button>
-          <div className="header-top">
-            <h2>InnoConnect</h2>
-            <button className="notification-button"><img src={notificationIcon} alt="" /></button>
-            <button className="settings-button"><img src={settingsIcon} alt="" /></button>
-          </div>
           <div className="text-header">
             <h1>Создание мероприятия</h1>
-            <p>Расскажите о вашем мероприятии, чтобы другие пользователи могли присоединиться.</p>
+            <p className="text-header-p">Расскажите о вашем мероприятии, чтобы другие пользователи могли присоединиться.</p>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="creation-card">
               <div className="meeting-name">
                 <h2>Название мероприятия</h2>
-                <input 
-                  type="text" 
-                  placeholder="Введите название мероприятия"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
+                <CreationInput
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Введите название мероприятия"
+                icon={calendarIcon}
+                required
                 />
               </div>
               <div className="meeting-description">
                 <h2>Описание мероприятия</h2>
-                <textarea 
-                  rows={5} 
-                  placeholder="Расскажите подробно о вашем мероприятии" 
-                  maxLength={maxLength}
-                  value={text} 
-                  onChange={(e) => setText(e.target.value)}
-                  required
+                <TextareaCounter
+                   value={description}
+                   onChange={(e) => setDescription(e.target.value)}
+                   maxLength={500}
+                   rows={5}
+                   placeholder="Расскажите подробно о вашем мероприятии"
+                   required
                 />
-                <div className="char-counter-inside">
-                  {text.length}/{maxLength}
-                </div>
               </div>
               <div className="meeting-time-date">
                 <h2>Время мероприятия</h2>
@@ -252,53 +272,40 @@ function MeetingCreation() {
                       <h2>Укажите адрес вашего мероприятия</h2>
                       <p>Нажмите на карту или введите адрес</p>
                     </div>
-                    <button type="button" className="edit-location-button"
-                        onClick={() => setIsModalOpen(true)}>Изменить</button>
+                    <LocationEditButton onClick={() => setIsModalOpen(true)} />
                   </div>
                 </div>
                 
                 <div className="seats-amount">
                   <h2>Количество мест <span className="optional-text">(Optional)</span></h2>
-                  <input 
-                    type="number" 
-                    placeholder="Введите количество мест"
-                    value={maxPeople}
-                    onChange={(e) => setMaxPeople(e.target.value)}
-                    min="1"
+                  <CreationInput
+                      type="number"
+                      placeholder="Введите количество мест"
+                      value={maxPeople}
+                      onChange={(e) => setMaxPeople(e.target.value)}
+                      min="1"
+                      icon={seatsIcon}
                   />
                 </div>
                 
                 <div className="event-cataegories">
                   <h2>Категория мероприятия</h2>
-                  <div className="category-switch">
-                    <button 
-                      type="button"
-                      className={selected === 'Спорт' ? 'active' : ''}
-                      onClick={() => setSelected('Спорт')}>
-                      <img src={selected === 'Спорт' ? categoryIcons.Спорт.active : categoryIcons.Спорт.inactive} alt="" />Спорт
-                    </button>
-                    <button 
-                      type="button"
-                      className={selected === 'Соц' ? 'active' : ''}
-                      onClick={() => setSelected('Соц')}>
-                      <img src={selected === 'Соц' ? categoryIcons.Соц.active : categoryIcons.Соц.inactive} alt="" />Соц
-                    </button>
-                    <button 
-                      type="button"
-                      className={selected === 'Учеба' ? 'active' : ''}
-                      onClick={() => setSelected('Учеба')}>
-                      <img src={selected === 'Учеба' ? categoryIcons.Учеба.active : categoryIcons.Учеба.inactive} alt="" />Учеба
-                    </button>
-                  </div>
+                  <CategorySelector
+                    categories={categories}
+                    selectedCategory={selected}
+                    onSelectCategory={setSelected}
+                  />
                 </div>
-                
-                <button 
-                  type="submit" 
-                  className="create-event-button"
+                <CreateButton
+                  type="submit"
                   disabled={isLoading}
-                  style={{opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer'}}>
+                  style={{
+                      opacity: isLoading ? 0.7 : 1,
+                      cursor: isLoading ? 'not-allowed' : 'pointer'
+                  }}
+              >
                   {isLoading ? 'Создание...' : 'Создать мероприятие'}
-                </button>
+              </CreateButton>
               </div>
             </div>
           </form>
@@ -311,6 +318,7 @@ function MeetingCreation() {
         currentLatitude={latitude}
         currentLongitude={longitude}
         currentAddress={address}
+        selectedCategory={selected}
       />
     </>
   )

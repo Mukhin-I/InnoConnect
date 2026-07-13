@@ -2,11 +2,12 @@
 backend/.env
 .git
 .env
+.env.example
 backend/deployment/ssh
 backend/deployment/ssh_git
 backend/deployment/lexa-ssh-git.pub
 backend/deployment/lexa-ssh.pub
-backend/db/pgdata_chat/
-backend/db/pgdata_meeting/
-backend/db/pgdata_request/
-backend/db/pgdata_user/
+backend/db/pgdata_meeting/18
+backend/db/pgdata_chat/18
+backend/db/pgdata_request/18
+backend/db/pgdata_user/18

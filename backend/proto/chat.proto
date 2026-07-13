@@ -1,0 +1,173 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "pkg/pb/chat";
+
+import "google/protobuf/empty.proto";
+
+service ChatService {
+
+  // POST /requests/{id}/chat
+  rpc GetOrCreateRequestChat(GetOrCreateRequestChatRequest)
+      returns (ChatResponse);
+
+  // GET /meetings/{id}/chat
+  rpc GetMeetingChat(GetMeetingChatRequest)
+      returns (ChatResponse);
+
+  // GET /chats/{chat_id}
+  rpc GetChat(GetChatRequest)
+      returns (GetChatResponse);
+
+  // GET /chats/{chat_id}/messages
+  rpc GetMessages(GetMessagesRequest)
+      returns (GetMessagesResponse);
+
+  // POST /chats/{chat_id}/messages
+  rpc SendMessage(SendMessageRequest)
+      returns (Message);
+
+  rpc GetChats(GetChatsRequest)
+    returns (GetChatsResponse);
+
+  rpc createMeetingChat(CreateMeetingChatRequest)
+    returns (ChatResponse);
+
+  rpc AddToChat(AddToChatRequest)
+    returns (google.protobuf.Empty);
+
+  rpc GetParticipants(GetParticipantsRequest)
+    returns (GetParticipantsResponse);
+}
+
+enum ChatType {
+  CHAT_TYPE_UNSPECIFIED = 0;
+  REQUEST = 1;
+  MEETING = 2;
+}
+
+message User {
+  int64 id = 1;
+  string name = 2;
+}
+
+message ChatResponse {
+  int64 chat_id = 1;
+  ChatType type = 2;
+}
+
+message GetOrCreateRequestChatRequest {
+  int64 request_id = 1;
+
+  string chat_name = 2;
+
+  // extracted from JWT by Gateway
+  int64 user_id = 3;
+}
+
+message CreateMeetingChatRequest {
+  int64 meeting_id = 1;
+
+  string chat_name = 2;
+
+  // extracted from JWT by Gateway
+  int64 creator_id = 3;
+  string creator_name = 4;
+}
+
+message AddToChatRequest {
+  int64 relater_id = 1;
+
+  string chat_type = 2;
+
+  // extracted from JWT by Gateway
+  int64 creator_id = 3;
+  string creator_name = 4;
+}
+
+message GetMeetingChatRequest {
+  int64 meeting_id = 1;
+
+  // extracted from JWT by Gateway
+  int64 creator_id = 2;
+  string creator_name = 3;
+}
+
+message GetChatRequest {
+  int64 chat_id = 1;
+
+  // requester
+  int64 user_id = 2;
+  string creator_name = 3;
+}
+
+message GetChatResponse {
+  int64 chat_id = 1;
+  string chat_name = 2;
+  ChatType type = 3;
+
+  repeated User participants = 4;
+}
+
+message GetMessagesRequest {
+  int64 chat_id = 1;
+
+  // requester
+  int64 user_id = 2;
+}
+
+message Message {
+  int64 id = 1;
+
+  User sender = 2;
+
+  string text = 3;
+
+  string sent_at = 4;
+}
+
+message GetMessagesResponse {
+  repeated Message messages = 1;
+}
+
+message SendMessageRequest {
+  int64 chat_id = 1;
+
+  // sender extracted from JWT
+  int64 user_id = 2;
+
+  string text = 3;
+}
+
+message GetChatsRequest {
+  // extracted from JWT by Gateway
+  int64 user_id = 1;
+}
+
+message ChatPreview {
+  int64 chat_id = 1;
+
+  string name = 2;
+
+  ChatType type = 3;
+
+  // Other participants in the chat.
+  // For private chats this will contain one user.
+  // For meeting chats it contains all participants except the requester.
+  repeated User participants = 4;
+
+  Message last_message = 5;
+}
+
+message GetChatsResponse {
+  repeated ChatPreview chats = 1;
+}
+
+message GetParticipantsRequest {
+  int64 chat_id = 1;
+}
+
+message GetParticipantsResponse {
+  repeated User participants = 1;
+}

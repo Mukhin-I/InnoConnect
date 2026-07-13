@@ -1,0 +1,98 @@
+.request-card-container {
+    background-color: #fff;
+    width: 100%;
+    height: 26.935vw;
+    border-radius: 12px;
+    padding: 5.263vw 4.025vw;
+    display: flex;
+    align-items: center;
+    gap: 3.096vw;
+    position: relative;
+    text-decoration: none;
+}
+
+.request-card-icon {
+    background-color: #F5F9EF;
+    width: 15.48vw;
+    height: 16.409vw;
+    border-radius: 10px;
+    padding: 4.954vw 4.644vw;
+}
+
+.type-request-icon-card {
+    width: 6.502vw;
+    height: 6.502vw;
+    background: #7A9681;
+}
+
+.helpreq {
+    mask: url('../assets/helprequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/helprequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.stuffreq {
+    mask: url('../assets/stuffrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/stuffrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.transportreq {
+    mask: url('../assets/transportrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/transportrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+.otherreq {
+    mask: url('../assets/otherrequest.svg') no-repeat center;
+    mask-size: contain;
+
+    -webkit-mask: url('../assets/otherrequest.svg') no-repeat center;
+    -webkit-mask-size: contain;
+}
+
+.request-card-type {
+    font-size: 2.477vw;
+    color: #84A886;
+    font-weight: 600;
+}
+
+.request-card-title {
+    font-size: 3.715vw;
+    font-weight: 600;
+    color: #000;
+    margin-top: 1.858vw;
+}
+
+.request-card-date {
+    margin-top: 0.619vw;
+    font-weight: 500;
+    font-size: 2.477vw;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.request-card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.new-request-tag {
+    width: 10.836vw;
+    height: 4.954vw;
+    border-radius: 500px;
+    background-color: #F5F9EF;
+    padding: 1.548vw 2.167vw;
+    position: absolute;
+    bottom: 3.715vw;
+    right: 3.715vw;
+}
+
+.new-request-tag p {
+    font-weight: 700;
+    font-size: 1.858vw;
+    color: #7A9681;
+}

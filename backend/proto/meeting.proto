@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package meeting;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "pkg/pb/meeting";
+
+service MeetingService {
+  rpc CreateMeeting(CreateMeetingRequest)
+    returns (MeetingShort);
+
+  rpc GetMeetings(GetMeetingsRequest)
+      returns (GetMeetingsResponse);
+
+  rpc GetMeeting(GetMeetingRequest)
+      returns (MeetingFull);
+
+  rpc DeleteMeeting(DeleteMeetingRequest)
+      returns (google.protobuf.Empty);
+
+  rpc ApplyOnMeeting(ApplyOnMeetingRequest)
+      returns (google.protobuf.Empty);
+}
+
+message ApplyOnMeetingRequest {
+  User user = 1;
+  int64 meeting_id = 2;
+}
+
+message User {
+  int64 id = 1;
+  string name = 2;
+}
+
+message MeetingShort {
+  int64 id = 1;
+
+  optional string address = 2;
+
+  string type = 3;
+
+  optional double latitude = 4;
+  optional double longitude = 5;
+}
+
+message MeetingFull {
+  int64 id = 1;
+
+  string title = 2;
+  string description = 3;
+
+  User creator = 4;
+  repeated User participants = 5;
+
+  optional string address = 6;
+
+  string type = 7;
+
+  optional double latitude = 8;
+  optional double longitude = 9;
+
+  string meeting_time = 10;
+
+  int32 current_people = 11;
+
+  optional int32 max_people = 12;
+}
+
+message CreateMeetingRequest {
+  int64 creator_id = 1;
+  string creator_name = 2;
+
+  string title = 3;
+  string description = 4;
+
+  optional string address = 5;
+
+  string type = 6;
+
+  optional double latitude = 7;
+  optional double longitude = 8;
+
+  string meeting_time = 9;
+
+  optional int32 max_people = 10;
+}
+
+message GetMeetingsRequest {}
+
+message GetMeetingsResponse {
+  repeated MeetingShort meetings = 1;
+}
+
+message GetMeetingRequest {
+  int64 id = 1;
+}
+
+message DeleteMeetingRequest {
+  int64 id = 1;
+  int64 creator_id = 2;
+}

@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package request;
+
+option go_package = "pkg/pb/request";
+
+import "google/protobuf/empty.proto";
+
+service RequestService {
+    rpc CreateRequest(CreateRequestRequest)
+        returns (RequestFull);
+
+    rpc GetRequests(GetRequestsRequest)
+        returns (GetRequestsResponse);
+
+    rpc GetRequest(GetRequestRequest)
+        returns (RequestFull);
+
+    rpc DeleteRequest(DeleteRequestRequest)
+        returns (google.protobuf.Empty);
+
+    // User applies to request
+    rpc ApplyToRequest(ApplyToRequestRequest)
+        returns (ApplyToRequestResponse);
+
+    // Creator cancels/removes user from request
+    rpc CancelRequestApplication(CancelRequestApplicationRequest)
+        returns (google.protobuf.Empty);
+}
+
+message ApplyToRequestRequest {
+    int64 request_id = 1;
+
+    // extracted from JWT by Gateway
+    int64 user_id = 2;
+    string user_name = 3;
+}
+
+message CancelRequestApplicationRequest {
+    int64 request_id = 1;
+
+    // user who will be removed
+    int64 user_id = 2;
+
+    // request creator from JWT
+    int64 creator_id = 3;
+}
+
+message ApplyToRequestResponse {
+    string req_title = 1;
+}
+
+message RequestApplication {
+    int64 request_id = 1;
+
+    User user = 2;
+
+    string status = 3;
+
+    string applied_at = 4;
+}
+
+message User {
+    int64 id = 1;
+    string name = 2;
+}
+
+message RequestShort {
+    int64 id = 1;
+
+    int64 creator_id = 2;
+
+    string title = 3;
+
+    string type = 4;
+
+    string deadline = 5;
+}
+
+
+message RequestFull {
+    int64 id = 1;
+
+    User creator = 2;
+
+    string title = 3;
+
+    string description = 4;
+
+    string requester_address = 5;
+
+    string type = 6;
+
+    string status = 7;
+
+    string deadline = 8;
+}
+
+message CreateRequestRequest {
+    int64 creator_id = 1;
+
+    string creator_name = 2;
+
+    string title = 3;
+
+    string description = 4;
+
+    string requester_address = 5;
+
+    string type = 6;
+
+    string deadline = 7;
+}
+
+message GetRequestsRequest {}
+
+message GetRequestsResponse {
+    repeated RequestShort requests = 1;
+}
+
+message GetRequestRequest {
+    int64 id = 1;
+}
+
+message DeleteRequestRequest {
+    int64 id = 1;
+    int64 creator_id = 2;
+}
