@@ -49,8 +49,8 @@ import EventCard from './EventCard.jsx';
             email: data.email,
             location: 'Иннополис, Россия',
             verified: true,
-            helped: 24,
-            requests: 16,
+            helped: data.completed_requests_count || 0,
+            requests: data.created_requests_count || 0,
           });
         } else {
           useMockData();
