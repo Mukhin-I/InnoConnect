@@ -9,6 +9,7 @@ import (
 	chatpb "innoconnect/pkg/pb/chat"
 )
 
+// NewChatClient creates a new gRPC client for the chat service
 func NewChatClient() (chatpb.ChatServiceClient, error) {
 	chatHost := config.GetVar("GRPC_CHAT_CLIENT_HOST")
 	if chatHost == "" {

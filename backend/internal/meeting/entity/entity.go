@@ -2,6 +2,7 @@ package entity
 
 import "time"
 
+// Meeting entity for database operations
 type Meeting struct {
 	ID          int64
 	CreatorID   int64
@@ -16,7 +17,8 @@ type Meeting struct {
 	MaxPeople   *int32
 }
 
+// Meeting participant
 type User struct {
-    ID  int64  `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }

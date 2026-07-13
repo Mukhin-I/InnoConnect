@@ -13,14 +13,17 @@ import (
 	"innoconnect/pkg/logger"
 )
 
+// Repository provides methods to interact with the chat database.
 type Repository struct {
 	db *pgxpool.Pool
 }
 
+// New creates a new instance of Repository with the provided database connection pool.
 func New(db *pgxpool.Pool) *Repository {
 	return &Repository{db: db}
 }
 
+// GetChatByID retrieves a chat by its ID, including its participants.
 func (r *Repository) GetChatByID(
 	ctx context.Context,
 	chatID int64,
@@ -41,7 +44,7 @@ func (r *Repository) GetChatByID(
 		&chat.Name,
 		&chatType,
 	)
-	
+
 	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
@@ -57,6 +60,7 @@ func (r *Repository) GetChatByID(
 	return chat, nil
 }
 
+// GetChatsByUserID retrieves all chat previews for a given user ID, including the last message and participants for each chat.
 func (r *Repository) GetChatsByUserID(
 	ctx context.Context,
 	userID int64,
@@ -100,7 +104,7 @@ func (r *Repository) GetChatsByUserID(
 		logger.Info("Getting chatid: " + strconv.FormatInt(chatID, 10))
 		result = append(result, entity.ChatPreview{
 			ID:           chatID,
-			Name: name,
+			Name:         name,
 			Type:         entity.ChatTypeFromString(chatType),
 			Participants: participants,
 			LastMessage:  lastMsg,
@@ -110,6 +114,7 @@ func (r *Repository) GetChatsByUserID(
 	return result, nil
 }
 
+// GetMessages retrieves all messages for a given chat ID, ordered by the time they were sent.
 func (r *Repository) GetMessages(
 	ctx context.Context,
 	chatID int64,
@@ -151,6 +156,7 @@ func (r *Repository) GetMessages(
 	return messages, nil
 }
 
+// SendMessage inserts a new message into the database for a given chat ID and sender ID, returning the created message.
 func (r *Repository) SendMessage(
 	ctx context.Context,
 	chatID, senderID int64,
@@ -183,6 +189,7 @@ func (r *Repository) SendMessage(
 	return msg, nil
 }
 
+// GetRequestChat retrieves a chat of type 'REQUEST' associated with a specific request ID and user ID, including its participants.
 func (r *Repository) GetRequestChat(
 	ctx context.Context,
 	requestID, userID int64,
@@ -211,6 +218,7 @@ func (r *Repository) GetRequestChat(
 	return chat, nil
 }
 
+// CreateRequestChat creates a new chat of type 'REQUEST' associated with a specific request ID and user ID, and adds the user as a participant.
 func (r *Repository) CreateRequestChat(
 	ctx context.Context,
 	requestID, userID int64,
@@ -258,6 +266,7 @@ func (r *Repository) CreateRequestChat(
 	}, nil
 }
 
+// getParticipants retrieves all participants for a given chat ID.
 func (r *Repository) getParticipants(
 	ctx context.Context,
 	chatID int64,
@@ -290,6 +299,7 @@ func (r *Repository) getParticipants(
 	return users, nil
 }
 
+// getLastMessage retrieves the last message for a given chat ID, if it exists.
 func (r *Repository) getLastMessage(
 	ctx context.Context,
 	chatID int64,
@@ -324,6 +334,7 @@ func (r *Repository) getLastMessage(
 	return &msg, nil
 }
 
+// GetChat retrieves a chat of a specific type associated with a given meeting ID, including its participants.
 func (r *Repository) GetChat(
 	ctx context.Context,
 	meetingID int64,
@@ -360,6 +371,7 @@ func (r *Repository) GetChat(
 	return chat, nil
 }
 
+// CreateMeetingChat creates a new chat of type 'MEETING' associated with a specific meeting ID, adds the creator as a participant, and returns the created chat.
 func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, chatName string, creatorID int64, creatorName string) (entity.Chat, error) {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
@@ -398,6 +410,7 @@ func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, cha
 	return chat, nil
 }
 
+// AddParticipant adds a user as a participant to a specific chat, optionally within an existing transaction.
 func (r *Repository) AddParticipant(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -442,6 +455,7 @@ func (r *Repository) AddParticipant(
 	return nil
 }
 
+// RemoveParticipant removes a user from the participants of a specific chat.
 func (r *Repository) GetParticipants(
 	ctx context.Context,
 	chatID int64,

@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
+	// Initialize the chat server
 	chatapp.CreateServer()
 }

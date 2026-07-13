@@ -11,16 +11,19 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Repository struct for request service
 type Repository struct {
 	pool *pgxpool.Pool
 }
 
+// New creates a new instance of the Repository with the provided database connection pool
 func New(pool *pgxpool.Pool) *Repository {
 	return &Repository{
 		pool: pool,
 	}
 }
 
+// Create inserts a new request into the database and returns the created request with its ID
 func (r *Repository) Create(ctx context.Context, request entity.Request) (entity.Request, error) {
 	query := `
 		INSERT INTO requests (
@@ -55,6 +58,7 @@ func (r *Repository) Create(ctx context.Context, request entity.Request) (entity
 	return request, nil
 }
 
+// GetAll retrieves all requests from the database that have a deadline in the future
 func (r *Repository) GetAll(ctx context.Context) ([]entity.Request, error) {
 	now := time.Now()
 
@@ -111,6 +115,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Request, error) {
 	return requests, nil
 }
 
+// GetByID retrieves a request by its ID from the database
 func (r *Repository) GetByID(ctx context.Context, id int64) (entity.Request, error) {
 	query := `
 		SELECT
@@ -148,6 +153,7 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.Request, err
 	return request, nil
 }
 
+// Delete removes a request from the database by its ID
 func (r *Repository) Delete(ctx context.Context, id int64) error {
 	query := `
 		DELETE FROM requests
@@ -166,6 +172,7 @@ func (r *Repository) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
+// ApplyToRequest allows a user to apply to a request, changing its status to "IN PROGRESS"
 func (r *Repository) ApplyToRequest(
 	ctx context.Context,
 	requestID int64,
@@ -221,6 +228,7 @@ func (r *Repository) ApplyToRequest(
 	return title, tx.Commit(ctx)
 }
 
+// CancelRequestApplication allows a user to cancel their application to a request, changing its status back to "PENDING"
 func (r *Repository) CancelRequestApplication(
 	ctx context.Context,
 	requestID int64,

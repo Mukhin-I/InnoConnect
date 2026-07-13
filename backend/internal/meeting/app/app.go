@@ -7,15 +7,16 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"google.golang.org/grpc"
 	"innoconnect/internal/meeting/repo"
 	"innoconnect/internal/meeting/transport"
 	"innoconnect/internal/meeting/usecase"
 	"innoconnect/pkg/config"
 	"innoconnect/pkg/logger"
 	pb "innoconnect/pkg/pb/meeting"
-	"google.golang.org/grpc"
 )
 
+// CreateServer initializes and starts the gRPC server for the meeting service
 func CreateServer() {
 	meetingPort := config.GetVar("MEETING_SERVICE_PORT")
 	dbPool, err := pgxpool.New(context.Background(), meetingDatabaseURL())
@@ -34,8 +35,8 @@ func CreateServer() {
 		time.Sleep(2 * time.Second)
 	}
 	//if err := dbPool.Ping(context.Background()); err != nil {
-		//logger.Error("Failed to ping meeting database: " + err.Error())
-		//return
+	//logger.Error("Failed to ping meeting database: " + err.Error())
+	//return
 	//}
 
 	meetingRepo := repo.New(dbPool)
@@ -58,6 +59,7 @@ func CreateServer() {
 	}
 }
 
+// meetingDatabaseURL constructs the database URL for the meeting service
 func meetingDatabaseURL() string {
 	host := config.GetVar("DB_MEETING_HOST")
 	if host == "" {

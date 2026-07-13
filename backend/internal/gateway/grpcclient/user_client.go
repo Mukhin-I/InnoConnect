@@ -9,6 +9,7 @@ import (
 	userpb "innoconnect/pkg/pb/user"
 )
 
+// NewUserClient creates a new gRPC client for the user service
 func NewUserClient() (userpb.UserServiceClient, error) {
 	userHost := config.GetVar("GRPC_USER_CLIENT_HOST")
 	if userHost == "" {

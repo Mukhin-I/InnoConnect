@@ -9,6 +9,7 @@ import (
 	requestpb "innoconnect/pkg/pb/request"
 )
 
+// NewRequestClient creates a new gRPC client for the request service
 func NewRequestClient() (requestpb.RequestServiceClient, error) {
 	requestHost := config.GetVar("GRPC_REQUEST_CLIENT_HOST")
 	if requestHost == "" {

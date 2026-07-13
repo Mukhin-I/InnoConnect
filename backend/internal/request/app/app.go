@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// CreateServer initializes and starts the gRPC server for the request service
 func CreateServer() {
 	requestPort := config.GetVar("REQUEST_SERVICE_PORT")
 	dbPool, err := pgxpool.New(context.Background(), requestDatabaseURL())
@@ -60,6 +61,7 @@ func CreateServer() {
 	}
 }
 
+// requestDatabaseURL constructs the database URL for the request service
 func requestDatabaseURL() string {
 	host := config.GetVar("DB_REQUEST_HOST")
 	if host == "" {

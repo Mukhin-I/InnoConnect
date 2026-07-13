@@ -9,6 +9,7 @@ import (
 	meetingpb "innoconnect/pkg/pb/meeting"
 )
 
+// NewMeetingClient creates a new gRPC client for the meeting service
 func NewMeetingClient() (meetingpb.MeetingServiceClient, error) {
 	meeting_host := config.GetVar("GRPC_MEETING_CLIENT_HOST")
 	meeting_port := config.GetVar("MEETING_SERVICE_PORT")
