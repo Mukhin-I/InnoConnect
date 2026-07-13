@@ -17,6 +17,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// CreateRequest godoc
+// @Summary Create a request
+// @Description Creates a new request for the authenticated user
+// @Tags requests
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Param request body entity.CreateRequestRequest true "Request data"
+// @Success 201 {object} entity.CreateRequestResponse
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /requests [post]
 func (h *Handler) CreateRequest(c *gin.Context) {
 	var req entity.CreateRequestRequest
 
@@ -92,6 +105,14 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 	})
 }
 
+// GetRequests godoc
+// @Summary Get all requests
+// @Description Returns a list of requests
+// @Tags requests
+// @Produce json
+// @Success 200 {object} entity.GetRequestsResponse
+// @Failure 500 {object} map[string]interface{}
+// @Router /requests [get]
 func (h *Handler) GetRequests(c *gin.Context) {
 	logger.Info("Getting requests from request service")
 
@@ -121,6 +142,16 @@ func (h *Handler) GetRequests(c *gin.Context) {
 	c.JSON(http.StatusOK, entity.GetRequestsResponse{Requests: requests})
 }
 
+// GetRequest godoc
+// @Summary Get request by ID
+// @Description Returns detailed information about a request
+// @Tags requests
+// @Produce json
+// @Param id path int true "Request ID"
+// @Success 200 {object} entity.RequestFull
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /requests/{id} [get]
 func (h *Handler) GetRequest(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -155,6 +186,20 @@ func (h *Handler) GetRequest(c *gin.Context) {
 	})
 }
 
+// DeleteRequest godoc
+// @Summary Delete a request
+// @Description Deletes a request if the authenticated user is the creator
+// @Tags requests
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Param id path int true "Request ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 403 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /requests/{id} [delete]
 func (h *Handler) DeleteRequest(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -194,6 +239,18 @@ func (h *Handler) DeleteRequest(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "request deleted successfully"})
 }
 
+// ApplyToRequest godoc
+// @Summary Apply to a request
+// @Description Applies the authenticated user to a request
+// @Tags requests
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Param id path int true "Request ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /requests/{id}/apply [post]
 func (h *Handler) ApplyToRequest(c *gin.Context) {
 	requestID, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -248,6 +305,19 @@ func (h *Handler) ApplyToRequest(c *gin.Context) {
 	})
 }
 
+// CancelRequestApplication godoc
+// @Summary Cancel request application
+// @Description Cancels the authenticated user's application to a request
+// @Tags requests
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Param request_id path int true "Request ID"
+// @Param user_id path int true "User ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /requests/{request_id}/applications/{user_id} [delete]
 func (h *Handler) CancelRequestApplication(c *gin.Context) {
 
 	requestID, err := strconv.ParseInt(c.Param("request_id"), 10, 64)

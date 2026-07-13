@@ -200,6 +200,20 @@ func (h *Handler) GetMeeting(c *gin.Context) {
 	})
 }
 
+// DeleteMeeting godoc
+// @Summary Delete a meeting
+// @Description Deletes a meeting if the authenticated user is the creator
+// @Tags meetings
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Param id path int true "Meeting ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 403 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /meetings/{id} [delete]
 func (h *Handler) DeleteMeeting(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -239,6 +253,18 @@ func (h *Handler) DeleteMeeting(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "meeting deleted successfully"})
 }
 
+// ApplyOnMeeting godoc
+// @Summary Apply to a meeting
+// @Description Applies the authenticated user to a meeting
+// @Tags meetings
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Param id path int true "Meeting ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /meetings/{id} [post]
 func (h *Handler) ApplyOnMeeting(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {

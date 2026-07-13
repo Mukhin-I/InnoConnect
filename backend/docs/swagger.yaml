@@ -19,6 +19,36 @@ definitions:
       type:
         type: string
     type: object
+  entity.CreateRequestRequest:
+    properties:
+      deadline:
+        type: string
+      description:
+        type: string
+      requester_address:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  entity.CreateRequestResponse:
+    properties:
+      creator:
+        $ref: '#/definitions/internal_gateway_entity.User'
+      deadline:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      requester_address:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
   entity.GetMeetingsResponse:
     properties:
       meetings:
@@ -26,12 +56,19 @@ definitions:
           $ref: '#/definitions/entity.MeetingShort'
         type: array
     type: object
+  entity.GetRequestsResponse:
+    properties:
+      requests:
+        items:
+          $ref: '#/definitions/entity.RequestShort'
+        type: array
+    type: object
   entity.MeetingFull:
     properties:
       address:
         type: string
       creator:
-        $ref: '#/definitions/entity.User'
+        $ref: '#/definitions/internal_gateway_entity.User'
       current_people:
         type: integer
       description:
@@ -48,7 +85,7 @@ definitions:
         type: string
       participants:
         items:
-          $ref: '#/definitions/entity.User'
+          $ref: '#/definitions/internal_gateway_entity.User'
         type: array
       title:
         type: string
@@ -68,11 +105,46 @@ definitions:
       type:
         type: string
     type: object
-  entity.User:
+  entity.RequestFull:
+    properties:
+      creator:
+        $ref: '#/definitions/internal_gateway_entity.User'
+      deadline:
+        type: string
+      description:
+        type: string
+      request_id:
+        type: integer
+      requester_address:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  entity.RequestShort:
+    properties:
+      creator_id:
+        type: integer
+      deadline:
+        type: string
+      request_id:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  internal_gateway_entity.User:
     properties:
       id:
         type: integer
       name:
+        type: string
+    type: object
+  transport.chatMessageRequest:
+    properties:
+      text:
         type: string
     type: object
 host: localhost:8080
@@ -82,6 +154,222 @@ info:
   title: Innoconnect API
   version: "1.0"
 paths:
+  /chats:
+    get:
+      description: Returns all chats available to the authenticated user
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all chats
+      tags:
+      - chats
+  /chats/{chat_id}:
+    get:
+      description: Returns detailed information about a specific chat
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Chat ID
+        in: path
+        name: chat_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a chat by ID
+      tags:
+      - chats
+  /chats/{chat_id}/messages:
+    get:
+      description: Returns messages for a chat
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Chat ID
+        in: path
+        name: chat_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get chat messages
+      tags:
+      - chats
+    post:
+      consumes:
+      - application/json
+      description: Sends a message to a chat using the REST endpoint
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Chat ID
+        in: path
+        name: chat_id
+        required: true
+        type: integer
+      - description: Message payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/transport.chatMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Send a chat message
+      tags:
+      - chats
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns a JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Log in a user
+      tags:
+      - users
+  /me:
+    get:
+      description: Returns the authenticated user's profile information
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get current user profile
+      tags:
+      - users
   /meetings:
     get:
       description: Returns a list of meetings
@@ -128,6 +416,55 @@ paths:
       tags:
       - meetings
   /meetings/{id}:
+    delete:
+      description: Deletes a meeting if the authenticated user is the creator
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a meeting
+      tags:
+      - meetings
     get:
       description: Returns detailed information about a meeting
       parameters:
@@ -150,4 +487,398 @@ paths:
       summary: Get meeting by ID
       tags:
       - meetings
+    post:
+      description: Applies the authenticated user to a meeting
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Apply to a meeting
+      tags:
+      - meetings
+  /meetings/{id}/chat:
+    get:
+      description: Returns the chat associated with a meeting
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Meeting ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a meeting chat
+      tags:
+      - chats
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account
+      parameters:
+      - description: Registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new user
+      tags:
+      - users
+  /requests:
+    get:
+      description: Returns a list of requests
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.GetRequestsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all requests
+      tags:
+      - requests
+    post:
+      consumes:
+      - application/json
+      description: Creates a new request for the authenticated user
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.CreateRequestRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.CreateRequestResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a request
+      tags:
+      - requests
+  /requests/{id}:
+    delete:
+      description: Deletes a request if the authenticated user is the creator
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a request
+      tags:
+      - requests
+    get:
+      description: Returns detailed information about a request
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.RequestFull'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get request by ID
+      tags:
+      - requests
+  /requests/{id}/apply:
+    post:
+      description: Applies the authenticated user to a request
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Apply to a request
+      tags:
+      - requests
+  /requests/{id}/chat:
+    post:
+      description: Returns the chat for a request, creating it if needed
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get or create a request chat
+      tags:
+      - chats
+  /requests/{request_id}/applications/{user_id}:
+    delete:
+      description: Cancels the authenticated user's application to a request
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Request ID
+        in: path
+        name: request_id
+        required: true
+        type: integer
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cancel request application
+      tags:
+      - requests
+  /ws:
+    get:
+      description: Opens a websocket connection for real-time chat communication
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Open a chat websocket
+      tags:
+      - chats
 swagger: "2.0"

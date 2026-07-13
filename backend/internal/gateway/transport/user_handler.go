@@ -12,6 +12,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Register godoc
+// @Summary Register a new user
+// @Description Creates a new user account
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body map[string]interface{} true "Registration data"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Router /register [post]
 func (h *Handler) Register(c *gin.Context) {
 	var req userpb.RegisterRequest
 
@@ -33,6 +43,17 @@ func (h *Handler) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": resp.GetMessage()})
 }
 
+// Login godoc
+// @Summary Log in a user
+// @Description Authenticates a user and returns a JWT token
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body map[string]interface{} true "Login credentials"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req userpb.LoginRequest
 
@@ -57,6 +78,15 @@ func (h *Handler) Login(c *gin.Context) {
 	})
 }
 
+// GetCurrentUser godoc
+// @Summary Get current user profile
+// @Description Returns the authenticated user's profile information
+// @Tags users
+// @Produce json
+// @Param Authorization header string true "Bearer JWT token"
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /me [get]
 func (h *Handler) GetCurrentUser(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
