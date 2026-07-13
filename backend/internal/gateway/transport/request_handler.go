@@ -12,6 +12,8 @@ import (
 	"innoconnect/pkg/pb/chat"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (h *Handler) CreateRequest(c *gin.Context) {
@@ -38,13 +40,13 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 	request, err := h.requestClient.CreateRequest(
 		c.Request.Context(),
 		&requestpb.CreateRequestRequest{
-			CreatorId:      userID,
-			CreatorName:    name,
-			Title:          req.Title,
-			Description:    req.Description,
+			CreatorId:        userID,
+			CreatorName:      name,
+			Title:            req.Title,
+			Description:      req.Description,
 			RequesterAddress: req.RequesterAddress,
-			Type:           req.Type,
-			Deadline:       req.Deadline,
+			Type:             req.Type,
+			Deadline:         req.Deadline,
 		},
 	)
 
@@ -58,8 +60,8 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 		c.Request.Context(),
 		&chat.GetOrCreateRequestChatRequest{
 			RequestId: request.Id,
-			ChatName: request.Title,
-			UserId: userID,
+			ChatName:  request.Title,
+			UserId:    userID,
 		},
 	)
 
@@ -140,6 +142,45 @@ func (h *Handler) GetRequest(c *gin.Context) {
 	})
 }
 
+func (h *Handler) DeleteRequest(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request id"})
+		return
+	}
+
+	creatorID, _, err := usecase.GetUserFromToken(c)
+	if err != nil {
+		logger.Error("Failed to get user from token: " + err.Error())
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return
+	}
+
+	_, err = h.requestClient.DeleteRequest(
+		c.Request.Context(),
+		&requestpb.DeleteRequestRequest{
+			Id:        id,
+			CreatorId: creatorID,
+		},
+	)
+	if err != nil {
+		switch status.Code(err) {
+		case codes.NotFound:
+			c.JSON(http.StatusNotFound, gin.H{"error": "request not found"})
+		case codes.PermissionDenied:
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		case codes.Unauthenticated:
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		default:
+			logger.Error("Failed to delete request: " + err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete request"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "request deleted successfully"})
+}
+
 func (h *Handler) ApplyToRequest(c *gin.Context) {
 	requestID, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -179,15 +220,15 @@ func (h *Handler) ApplyToRequest(c *gin.Context) {
 	}
 
 	_, err = h.chatClient.AddToChat(
-        c.Request.Context(),
-        &chat.AddToChatRequest{
-            // TODO rename on user
-            CreatorId:   userID,
-        	CreatorName: userName,
-			ChatType: "REQUEST",
-            RelaterId: requestID,
-        },
-    )
+		c.Request.Context(),
+		&chat.AddToChatRequest{
+			// TODO rename on user
+			CreatorId:   userID,
+			CreatorName: userName,
+			ChatType:    "REQUEST",
+			RelaterId:   requestID,
+		},
+	)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,

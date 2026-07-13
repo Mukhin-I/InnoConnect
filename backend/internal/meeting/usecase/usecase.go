@@ -2,14 +2,18 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"innoconnect/internal/meeting/entity"
 )
+
+var ErrForbidden = errors.New("forbidden")
 
 type MeetingRepository interface {
 	Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error)
 	GetAll(ctx context.Context) ([]entity.Meeting, error)
 	GetByID(ctx context.Context, id int64) (entity.Meeting, error)
+	Delete(ctx context.Context, id int64) error
 	ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) error
 }
 
@@ -33,6 +37,19 @@ func (u *Usecase) GetAll(ctx context.Context) ([]entity.Meeting, error) {
 
 func (u *Usecase) GetByID(ctx context.Context, id int64) (entity.Meeting, error) {
 	return u.repo.GetByID(ctx, id)
+}
+
+func (u *Usecase) Delete(ctx context.Context, id int64, creatorID int64) error {
+	meeting, err := u.repo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if meeting.CreatorID != creatorID {
+		return ErrForbidden
+	}
+
+	return u.repo.Delete(ctx, id)
 }
 
 func (u *Usecase) ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) error {

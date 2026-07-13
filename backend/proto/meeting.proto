@@ -16,6 +16,9 @@ service MeetingService {
   rpc GetMeeting(GetMeetingRequest)
       returns (MeetingFull);
 
+  rpc DeleteMeeting(DeleteMeetingRequest)
+      returns (google.protobuf.Empty);
+
   rpc ApplyOnMeeting(ApplyOnMeetingRequest)
       returns (google.protobuf.Empty);
 }
@@ -91,4 +94,9 @@ message GetMeetingsResponse {
 
 message GetMeetingRequest {
   int64 id = 1;
+}
+
+message DeleteMeetingRequest {
+  int64 id = 1;
+  int64 creator_id = 2;
 }
