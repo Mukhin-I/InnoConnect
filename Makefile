@@ -2,7 +2,7 @@ MAKEFLAGS += --silent # Убрать стандартные warnings из-за �
 
 ENV_FILE = .env
 
- # вынесено отдельно (без комментария на той же строке, иначе в переменную попадёт хвостовой пробел), чтобы Windows-скрипт (scripts/make.ps1) брал тот же путь
+ # вынесено отдельно (без комментария на той же строке, иначе в переменную попадёт хвостовой пробел), чтобы Windows-скрипт (make.ps1) брал тот же путь
 DOCKER_COMPOSE_FILE = ./backend/deployment/docker/docker-compose.yml
 DOCKER_COMPOSE_DEV_FILE = ./backend/deployment/docker/docker-compose-dev.yml
 
@@ -26,7 +26,7 @@ ARGS = $(filter $(SERVICES), $(input)) # оставляем только код�
 	@:
 $(firstword $(ARGS)): # берём из отфильтрованных слов первое и на нём триггерим проход по всей входной строчке 
 ifeq ($(OS),Windows_NT) # $(OS)=Windows_NT задаётся системой всегда на Windows — определяем ветку прямо при чтении Makefile, без WSL/bash
-	@powershell -NoProfile -ExecutionPolicy Bypass -File "scripts/make.ps1" -EnvFile "$(ENV_FILE)" -ComposeFile "$(DOCKER_COMPOSE_FILE)" -ComposeDevFile "$(DOCKER_COMPOSE_DEV_FILE)" $(ARGS) # та же самая логика, переписанная на PowerShell (см. scripts/make.ps1), т.к. на Windows нет /bin/sh
+	@powershell -NoProfile -ExecutionPolicy Bypass -File "make.ps1" -EnvFile "$(ENV_FILE)" -ComposeFile "$(DOCKER_COMPOSE_FILE)" -ComposeDevFile "$(DOCKER_COMPOSE_DEV_FILE)" $(ARGS) # та же самая логика, переписанная на PowerShell (см. make.ps1), т.к. на Windows нет /bin/sh
 else
 	@if [ "$@" = "$(firstword $(ARGS))" ]; then # на остальных кодовых словах ничего не делаем, чтобы один и тот же цикл не выполнять N слов=раз\
 		db="false"; # со знака @ тут начинается bash синтаксис, объявляем флаги\
