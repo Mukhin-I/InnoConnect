@@ -84,7 +84,7 @@ func setEndpoints(router *gin.Engine, h *transport.Handler) {
 	router.POST("/requests/:id/apply", h.ApplyToRequest)
 
 	router.DELETE(
-		"/requests/:request_id/applications/:user_id",
+		"/requests/:id/applications/:user_id",
 		h.CancelRequestApplication,
 	)
 
