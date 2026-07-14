@@ -86,19 +86,22 @@ func (u *ChatUsecase) GetOrCreateRequestChat(
 	ctx context.Context,
 	requestID,
 	userID int64,
+	username string,
+	chatName string,
 ) (entity.Chat, error) {
 
 	chat, err := u.repo.GetRequestChat(ctx, requestID, userID)
 
 	if err == nil {
+		logger.Info("Get a request chat successfully")
 		return chat, nil
 	}
 
 	if !errors.Is(err, pgx.ErrNoRows) {
 		return entity.Chat{}, err
 	}
-
-	return u.repo.CreateRequestChat(ctx, requestID, userID)
+	logger.Info("Creating request chat")
+	return u.repo.CreateRequestChat(ctx, requestID, userID, username, chatName)
 }
 
 // CreateMeetingChat creates a new meeting chat with the given details

@@ -47,12 +47,17 @@ function Chats() {
 
     }, []);
 
+    const CHAT_TYPE = {
+        REQUEST: 1,
+        MEETING: 2,
+    };
+
     const filteredChats = chats.filter(chat => {
         if (filter === 'meeting') {
-            return chat.type === 'MEETING';
+            return chat.type === CHAT_TYPE.MEETING;
         }
 
-        return chat.type === 'REQUEST';
+        return chat.type === CHAT_TYPE.REQUEST;
     });
 
     return (

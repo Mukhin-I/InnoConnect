@@ -15,7 +15,7 @@ import (
 
 // ChatUsecase defines chat business logic interface
 type ChatUsecase interface {
-	GetOrCreateRequestChat(ctx context.Context, requestID, userID int64) (entity.Chat, error)
+	GetOrCreateRequestChat(ctx context.Context, requestID, userID int64, username string, chatName string) (entity.Chat, error)
 	GetMeetingChat(ctx context.Context, meetingID, userID int64) (entity.Chat, error)
 	GetChat(ctx context.Context, chatID, userID int64) (entity.Chat, error)
 	GetChats(ctx context.Context, userID int64) ([]entity.ChatPreview, error)
@@ -47,6 +47,8 @@ func (s *ChatServer) GetOrCreateRequestChat(
 		ctx,
 		req.GetRequestId(),
 		req.GetUserId(),
+		req.GetUsername(),
+		req.GetChatName(),
 	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

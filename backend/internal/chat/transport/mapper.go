@@ -30,6 +30,7 @@ func toChatResponse(chat entity.Chat) *pb.ChatResponse {
 	return &pb.ChatResponse{
 		ChatId: chat.ID,
 		Type:   toProtoChatType(chat.Type),
+		Name: chat.Name,
 	}
 }
 
@@ -42,8 +43,9 @@ func toGetChatResponse(chat entity.Chat) *pb.GetChatResponse {
 	}
 
 	return &pb.GetChatResponse{
-		ChatId:       chat.ID,
-		Type:         toProtoChatType(chat.Type),
+		ChatId:      chat.ID,
+		ChatName: chat.Name,
+		Type:        toProtoChatType(chat.Type),
 		Participants: users,
 	}
 }
@@ -62,9 +64,9 @@ func toChatPreview(chat entity.ChatPreview) *pb.ChatPreview {
 	}
 
 	return &pb.ChatPreview{
-		ChatId:       chat.ID,
-		Name:         chat.Title,
-		Type:         toProtoChatType(chat.Type),
+		ChatId:      chat.ID,
+		Name: chat.Name,
+		Type:        toProtoChatType(chat.Type),
 		Participants: users,
 		LastMessage:  lastMessage,
 	}

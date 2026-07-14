@@ -55,6 +55,7 @@ message User {
 message ChatResponse {
   int64 chat_id = 1;
   ChatType type = 2;
+  string name = 3;
 }
 
 message GetOrCreateRequestChatRequest {
@@ -64,6 +65,7 @@ message GetOrCreateRequestChatRequest {
 
   // extracted from JWT by Gateway
   int64 user_id = 3;
+  string username = 4;
 }
 
 message CreateMeetingChatRequest {
