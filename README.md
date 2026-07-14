@@ -23,19 +23,14 @@ To stop just press CRTL+C in terminal
 I will show you how to run this project using docker!
 
 It's simple: 
-
-* run 
-```
-docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml up -d --build
-```
+* then open here a ```terminal``` or ```cmd```
+* run ```make init``` or dev build: ```make dev init```
 * And it starts!!!
 * you can verify it by writing ```docker ps -a``` in the terminal and see (healthy) mark at the corresponding container names
-* or **STOP** it using
-```
-docker compose --env-file .env -f backend/deployment/docker/docker-compose.yml down
-```
+* or **STOP** it using ```make down```
+* edit ```.env``` files if you want
 
 *This is IT*! 
 Good **luck** in your future work!
 
-Best withes, MJ and AF
+Best withes, MJ, V. Make-ovsky and AF
