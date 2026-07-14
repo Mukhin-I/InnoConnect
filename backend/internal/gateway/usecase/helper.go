@@ -17,6 +17,7 @@ func GetUserFromToken(c *gin.Context) (int64, string, error) {
 	const prefix = "Bearer "
 	tokenString := strings.TrimPrefix(tokenStringUnparsed, prefix)
 
+	logger.Info("Token: " + tokenString)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

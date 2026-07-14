@@ -191,7 +191,7 @@ function RequestCreation() {
     };
 
     try {
-      const token = 'temp';
+      const token = localStorage.getItem('token');
       
       const response = await fetch(`${API_URL}/requests`, {
         method: 'POST',
