@@ -372,9 +372,9 @@ func (r *Repository) CreateMeetingChat(ctx context.Context, meetingID int64, cha
 
 	err = tx.QueryRow(ctx, `
 		INSERT INTO chats (type, name, related_id)
-		VALUES ('MEETING', $1)
+		VALUES ('MEETING', $1, $2)
 		RETURNING id, type, related_id
-	`, meetingID).Scan(
+	`, chatName, meetingID).Scan(
 		&chat.ID,
 		&chatType,
 		&chat.RelatedID,

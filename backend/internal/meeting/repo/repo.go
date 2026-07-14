@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"innoconnect/internal/meeting/entity"
+	"innoconnect/pkg/logger"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -56,6 +57,7 @@ func (r *Repository) Create(ctx context.Context, meeting entity.Meeting) (entity
 	).Scan(&meeting.ID)
 
 	if err != nil {
+		logger.Error(err.Error())
 		return entity.Meeting{}, err
 	}
 
