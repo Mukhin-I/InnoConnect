@@ -20,7 +20,7 @@ function ChatPreview({ chat }) {
     };
 
     const path = chat.type === CHAT_TYPE.MEETING
-        ? `/group-chats/${chat.chat_id}`
+        ? `/chats/${chat.chat_id}`
         : `/chats/${chat.chat_id}`;
 
     const title = chat.name ?? 'Чат';

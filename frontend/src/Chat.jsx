@@ -16,17 +16,23 @@ function Chat() {
   const navigate = useNavigate();
   const { id: chatId } = useParams();
 
-  const [contact, setContact] = useState({ name: 'Иван Петров', role: 'Житель Иннополиса' });
+  //const [contact, setContact] = useState({ name: 'Иван Петров', role: 'Житель Иннополиса' });
+  const [contact, setContact] = useState(null);
+  const [task, setTask] = useState({
+    category: 'Помощь',
+    title: '',
+    time: '',
+  });
   const [messages, setMessages] = useState([]);
   const [myId, setMyId] = useState(null);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const task = {
-    category: 'Помощь',
-    title: 'Помочь с выносом мусора',
-    time: 'Сегодня, 15:45',
-  };
+  //const task = {
+    //category: 'Помощь',
+    //title: 'Помочь с выносом мусора',
+    //time: 'Сегодня, 15:45',
+  //};
 
   const token = localStorage.getItem('token');
 
@@ -56,6 +62,9 @@ function Chat() {
         });
         if (infoRes.ok) {
           const info = await infoRes.json();
+          setTask({
+            title: info.chat_name ?? 'Без названия',
+          });
           const other = info.participants.find((p) => p.id !== meId) || info.participants[0];
           if (other) setContact({ name: other.name, role: 'Житель Иннополиса' });
         }
