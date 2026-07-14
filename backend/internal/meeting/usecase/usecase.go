@@ -9,6 +9,7 @@ import (
 
 var ErrForbidden = errors.New("forbidden")
 
+// Meeting repository interface
 type MeetingRepository interface {
 	Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error)
 	GetAll(ctx context.Context) ([]entity.Meeting, error)
@@ -17,6 +18,7 @@ type MeetingRepository interface {
 	ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) error
 }
 
+// Meeting usecase with business logic
 type Usecase struct {
 	repo MeetingRepository
 }
@@ -39,6 +41,7 @@ func (u *Usecase) GetByID(ctx context.Context, id int64) (entity.Meeting, error)
 	return u.repo.GetByID(ctx, id)
 }
 
+// Delete checks if the user is the creator of the meeting before deleting it
 func (u *Usecase) Delete(ctx context.Context, id int64, creatorID int64) error {
 	meeting, err := u.repo.GetByID(ctx, id)
 	if err != nil {

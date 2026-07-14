@@ -13,6 +13,7 @@ import (
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
+// ChatUsecase defines chat business logic interface
 type ChatUsecase interface {
 	GetOrCreateRequestChat(ctx context.Context, requestID, userID int64) (entity.Chat, error)
 	GetMeetingChat(ctx context.Context, meetingID, userID int64) (entity.Chat, error)
@@ -21,10 +22,11 @@ type ChatUsecase interface {
 	GetMessages(ctx context.Context, chatID, userID int64) ([]entity.Message, error)
 	SendMessage(ctx context.Context, chatID, userID int64, text string) (entity.Message, error)
 	CreateMeetingChat(ctx context.Context, meetingID int64, chatName string, creator_id int64, creator_name string) (entity.Chat, error)
-	AddToChat(ctx context.Context, meetingID int64, chatType string, user_id int64, user_name string) (error)
+	AddToChat(ctx context.Context, meetingID int64, chatType string, user_id int64, user_name string) error
 	GetParticipants(ctx context.Context, chatID int64) ([]entity.User, error)
 }
 
+// gRPC server for chat service
 type ChatServer struct {
 	pb.UnimplementedChatServiceServer
 	usecase ChatUsecase
@@ -58,7 +60,6 @@ func (s *ChatServer) CreateMeetingChat(
 	req *pb.CreateMeetingChatRequest,
 ) (*pb.ChatResponse, error) {
 
-	// 1. Validate input (basic safety)
 	if req.GetMeetingId() == 0 {
 		return nil, status.Error(codes.InvalidArgument, "meeting_id is required")
 	}
@@ -67,7 +68,6 @@ func (s *ChatServer) CreateMeetingChat(
 		return nil, status.Error(codes.Unauthenticated, "user_id is required")
 	}
 
-	// 2. Call usecase
 	chat, err := s.usecase.CreateMeetingChat(
 		ctx,
 		req.GetMeetingId(),
@@ -80,7 +80,6 @@ func (s *ChatServer) CreateMeetingChat(
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	// 3. Map response
 	return &pb.ChatResponse{
 		ChatId: chat.ID,
 		Type:   pb.ChatType_MEETING,

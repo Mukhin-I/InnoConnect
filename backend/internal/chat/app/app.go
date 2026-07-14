@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"time"
 
-	"innoconnect/internal/chat/repo"
+	repository "innoconnect/internal/chat/repo"
 	"innoconnect/internal/chat/transport"
 	"innoconnect/internal/chat/usecase"
 	"innoconnect/pkg/config"
@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Start gRPC server with database connection
 func CreateServer() {
 	port := config.GetVar("CHAT_SERVICE_PORT")
 
@@ -33,6 +34,7 @@ func CreateServer() {
 	}
 	defer dbPool.Close()
 
+	// Wait for database to be ready
 	var pingErr error
 	for i := 0; i < 10; i++ {
 		pingErr = dbPool.Ping(context.Background())
@@ -63,6 +65,7 @@ func CreateServer() {
 	}
 }
 
+// Build postgres://user:pass@host:port/database?sslmode=disable
 func chatDatabaseURL() string {
 	host := config.GetVar("DB_CHAT_HOST")
 	if host == "" {
