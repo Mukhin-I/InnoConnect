@@ -97,7 +97,7 @@ func (r *Repository) GetChatsByUserID(
 		participants, _ := r.getParticipants(ctx, chatID)
 		lastMsg, _ := r.getLastMessage(ctx, chatID)
 
-		logger.Info("Getting chatid: " + strconv.FormatInt(chatID, 10))
+		logger.Info("Getting chatid: " + strconv.FormatInt(chatID, 10) + " Chatname " + name)
 		result = append(result, entity.ChatPreview{
 			ID:           chatID,
 			Name: name,
@@ -106,7 +106,6 @@ func (r *Repository) GetChatsByUserID(
 			LastMessage:  lastMsg,
 		})
 	}
-
 	return result, nil
 }
 
@@ -213,7 +212,7 @@ func (r *Repository) GetRequestChat(
 
 func (r *Repository) CreateRequestChat(
 	ctx context.Context,
-	requestID, userID int64,
+	requestID, userID int64, username string, chatName string,
 ) (entity.Chat, error) {
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -228,27 +227,25 @@ func (r *Repository) CreateRequestChat(
 	var chatID int64
 
 	err = tx.QueryRow(ctx, `
-		INSERT INTO chats (type, related_id)
-		VALUES ('REQUEST', $1)
+		INSERT INTO chats (type, name, related_id)
+		VALUES ('REQUEST', $1, $2)
 		RETURNING id
-	`, requestID).Scan(&chatID)
+	`, chatName, requestID).Scan(&chatID)
 
 	if err != nil {
+		logger.Error(err.Error())
 		return entity.Chat{}, err
 	}
 
-	// add creator + requester (simplified example)
-	_, err = tx.Exec(ctx, `
-		INSERT INTO chat_participants (chat_id, user_id, user_name)
-		VALUES ($1, $2, 'unknown')
-		ON CONFLICT DO NOTHING
-	`, chatID, userID)
+	err = r.AddParticipant(ctx, tx, chatID, userID, username)
 
 	if err != nil {
+		logger.Error(err.Error())
 		return entity.Chat{}, err
 	}
 
 	if err := tx.Commit(ctx); err != nil {
+		logger.Error(err.Error())
 		return entity.Chat{}, err
 	}
 

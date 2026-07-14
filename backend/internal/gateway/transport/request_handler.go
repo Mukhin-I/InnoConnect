@@ -88,6 +88,7 @@ func (h *Handler) CreateRequest(c *gin.Context) {
 			RequestId: request.Id,
 			ChatName:  request.Title,
 			UserId:    userID,
+			Username: name,
 		},
 	)
 

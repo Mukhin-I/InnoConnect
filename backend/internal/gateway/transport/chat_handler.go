@@ -179,6 +179,8 @@ func (h *Handler) GetChats(c *gin.Context) {
 		return
 	}
 
+	logger.Info(resp.Chats[len(resp.Chats)-1].Name)
+
 	c.JSON(http.StatusOK, resp)
 }
 

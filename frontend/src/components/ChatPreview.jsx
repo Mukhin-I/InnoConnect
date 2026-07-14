@@ -1,10 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ChatPreview.css';
-import chatAvatar from './chat-avatar.svg'
+import chatAvatar from './chat-avatar.svg';
 
-function ChatPreview( {chat} ) {
+function ChatPreview({ chat }) {
     const navigate = useNavigate();
+
+    const CHAT_TYPE = {
+        REQUEST: 1,
+        MEETING: 2,
+    };
 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
@@ -14,43 +19,43 @@ function ChatPreview( {chat} ) {
         });
     };
 
-    const path = chat.type === 'MEETING'
+    const path = chat.type === CHAT_TYPE.MEETING
         ? `/group-chats/${chat.chat_id}`
         : `/chats/${chat.chat_id}`;
 
-    const title = chat.type === 'MEETING'
-        ? (chat.request_title ?? 'Групповой чат')
-        : (chat.participants?.[0]?.name ?? 'Чат');
+    const title = chat.name ?? 'Чат';
 
-    return(
-        <>
-            <div className="chat-card" onClick={() => navigate(path)}>
-                <div className="chat-left">
-                    <img src={chatAvatar} alt="avatar" className="avatar" />
-                    <div className="chat-info">
-                        <div className="chat-info-top">
-                            <h2>{title}</h2>
-                            {chat.request_title && (
-                                <div className="request-associated"><p>{chat.request_title}</p></div>
-                            )}
-                        </div>
+    return (
+        <div className="chat-card" onClick={() => navigate(path)}>
+            <div className="chat-left">
+                <img src={chatAvatar} alt="avatar" className="avatar" />
 
-                        <p className="last-message">{chat.last_message?.text ?? 'Нет сообщений'}</p>
+                <div className="chat-info">
+                    <div className="chat-info-top">
+                        <h2>{title}</h2>
                     </div>
-                </div>
-                <div className="chat-right">
-                    {chat.last_message && (
-                        <p className="sent-at">{formatTime(chat.last_message.sent_at)}</p>
-                    )}
-                    {chat.unread_count > 0 && (
-                        <div className="num-of-unread">
-                            {chat.unread_count}
-                        </div>
-                    )}
+
+                    <p className="last-message">
+                        {chat.last_message?.text ?? 'Нет сообщений'}
+                    </p>
                 </div>
             </div>
-        </>
+
+            <div className="chat-right">
+                {chat.last_message && (
+                    <p className="sent-at">
+                        {formatTime(chat.last_message.sent_at)}
+                    </p>
+                )}
+
+                {chat.unread_count > 0 && (
+                    <div className="num-of-unread">
+                        {chat.unread_count}
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }
 
-export default ChatPreview
+export default ChatPreview;

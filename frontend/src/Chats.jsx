@@ -95,7 +95,7 @@ function Chats() {
                     </div>
 
                     <div className="list-of-chats">
-                        {filteredChats.map(chat => (
+                        {chats.map(chat => (
                             <ChatPreview
                                 key={chat.chat_id}
                                 chat={chat}
