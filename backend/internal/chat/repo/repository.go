@@ -323,7 +323,7 @@ func (r *Repository) getLastMessage(
 
 func (r *Repository) GetChat(
 	ctx context.Context,
-	meetingID int64,
+	relatedID int64,
 	chatType string,
 ) (entity.Chat, error) {
 
@@ -331,24 +331,25 @@ func (r *Repository) GetChat(
 	defer cancel()
 
 	var chat entity.Chat
-
 	err := r.db.QueryRow(ctx, `
-		SELECT id, type
+		SELECT id
 		FROM chats
-		WHERE type = '$1'
+		WHERE type = $1
 		  AND related_id = $2
-	`, chatType, meetingID).Scan(
+	`, chatType, relatedID).Scan(
 		&chat.ID,
 	)
 
 	chat.Type = entity.ChatTypeFromString(chatType)
 
 	if err != nil {
+		logger.Error(err.Error())
 		return entity.Chat{}, err
 	}
 
 	participants, err := r.getParticipants(ctx, chat.ID)
 	if err != nil {
+		logger.Error(err.Error())
 		return entity.Chat{}, err
 	}
 

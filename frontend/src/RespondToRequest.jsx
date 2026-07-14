@@ -85,7 +85,34 @@ const RespondToRequest = () => {
       navigate('/welcome');
       return;
     }
-  }
+
+    try {
+      const response = await fetch(`${API_URL}/requests/${id}/apply`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200) {
+        console.log("Successfully applied to request");
+
+      } else if (response.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/welcome');
+
+      } else {
+        const errorData = await response.json();
+        console.error(
+          errorData.message || "Failed to apply"
+        );
+      }
+
+    } catch (error) {
+      console.error("Error applying to request:", error);
+    }
+  };
 
   const typeOfReq = {
         "Помощь": "helpreq",
@@ -161,7 +188,7 @@ const RespondToRequest = () => {
 
       <div className="rtr-bottom-actions">
         <button className="rtr-btn-primary">
-         <img src={heartIcon} alt="Heart" className="rtr-iconbox-icon" onclick={handleResponse} />
+         <img src={heartIcon} alt="Heart" className="rtr-iconbox-icon" onClick={handleResponse} />
           Откликнуться
         </button>
         <button className="rtr-btn-secondary"
