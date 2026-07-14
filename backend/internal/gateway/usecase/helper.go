@@ -10,6 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// GetUserFromToken extracts user ID and name from JWT token in the request header
 func GetUserFromToken(c *gin.Context) (int64, string, error) {
 	tokenStringUnparsed := c.GetHeader("Authorization")
 	secret := config.GetVar("JWT_SECRET")

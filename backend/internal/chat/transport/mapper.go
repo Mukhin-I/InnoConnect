@@ -7,6 +7,7 @@ import (
 	pb "innoconnect/pkg/pb/chat"
 )
 
+// toUser converts an entity.User to a pb.User
 func toUser(user entity.User) *pb.User {
 	return &pb.User{
 		Id:   user.ID,
@@ -14,6 +15,7 @@ func toUser(user entity.User) *pb.User {
 	}
 }
 
+// toMessage converts an entity.Message to a pb.Message
 func toMessage(message entity.Message) *pb.Message {
 	return &pb.Message{
 		Id:     message.ID,
@@ -23,6 +25,7 @@ func toMessage(message entity.Message) *pb.Message {
 	}
 }
 
+// toChatResponse converts an entity.Chat to a pb.ChatResponse
 func toChatResponse(chat entity.Chat) *pb.ChatResponse {
 	return &pb.ChatResponse{
 		ChatId: chat.ID,
@@ -31,6 +34,7 @@ func toChatResponse(chat entity.Chat) *pb.ChatResponse {
 	}
 }
 
+// toGetChatResponse converts an entity.Chat to a pb.GetChatResponse
 func toGetChatResponse(chat entity.Chat) *pb.GetChatResponse {
 	users := make([]*pb.User, 0, len(chat.Participants))
 
@@ -46,6 +50,7 @@ func toGetChatResponse(chat entity.Chat) *pb.GetChatResponse {
 	}
 }
 
+// toChatPreview converts an entity.ChatPreview to a pb.ChatPreview
 func toChatPreview(chat entity.ChatPreview) *pb.ChatPreview {
 	users := make([]*pb.User, 0, len(chat.Participants))
 
@@ -63,10 +68,11 @@ func toChatPreview(chat entity.ChatPreview) *pb.ChatPreview {
 		Name: chat.Name,
 		Type:        toProtoChatType(chat.Type),
 		Participants: users,
-		LastMessage: lastMessage,
+		LastMessage:  lastMessage,
 	}
 }
 
+// toProtoChatType converts an entity.ChatType to a pb.ChatType
 func toProtoChatType(t entity.ChatType) pb.ChatType {
 	switch t {
 	case entity.RequestChat:

@@ -13,16 +13,19 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Repository struct for meeting database operations
 type Repository struct {
 	pool *pgxpool.Pool
 }
 
+// New creates a new instance of the Repository with the provided database connection pool
 func New(pool *pgxpool.Pool) *Repository {
 	return &Repository{
 		pool: pool,
 	}
 }
 
+// Create inserts a new meeting into the database and returns the created meeting with its ID
 func (r *Repository) Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error) {
 	query := `
 		INSERT INTO meetings (
@@ -64,6 +67,7 @@ func (r *Repository) Create(ctx context.Context, meeting entity.Meeting) (entity
 	return meeting, nil
 }
 
+// GetAll retrieves all meetings from the database that are scheduled for the future
 func (r *Repository) GetAll(ctx context.Context) ([]entity.Meeting, error) {
 	now := time.Now()
 
@@ -123,6 +127,7 @@ func (r *Repository) GetAll(ctx context.Context) ([]entity.Meeting, error) {
 	return meetings, nil
 }
 
+// GetByID retrieves a meeting by its ID from the database
 func (r *Repository) GetByID(ctx context.Context, id int64) (entity.Meeting, error) {
 	query := `
 		SELECT
@@ -164,6 +169,7 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (entity.Meeting, err
 	return meeting, nil
 }
 
+// Update modifies an existing meeting in the database
 func (r *Repository) Delete(ctx context.Context, id int64) error {
 	query := `
 		DELETE FROM meetings
@@ -182,6 +188,7 @@ func (r *Repository) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
+// ApplyOnMeeting adds a user as a participant to a meeting in the database
 func (r *Repository) ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) error {
 	// Check context first
 	select {

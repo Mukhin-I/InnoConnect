@@ -18,6 +18,7 @@ type RequestRepository interface {
 	CancelRequestApplication(ctx context.Context, requestID int64, userID int64, creatorID int64) error
 }
 
+// Usecase struct implements the business logic for requests
 type Usecase struct {
 	repo RequestRepository
 }

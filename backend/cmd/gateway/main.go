@@ -10,5 +10,6 @@ import (
 )
 
 func main() {
+	// Initialize the gateway server
 	gatewayapp.CreateServer()
 }

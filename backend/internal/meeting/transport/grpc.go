@@ -5,15 +5,17 @@ import (
 	"errors"
 	"time"
 
+	"innoconnect/internal/meeting/entity"
+	"innoconnect/internal/meeting/usecase"
+	pb "innoconnect/pkg/pb/meeting"
+
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
-	"innoconnect/internal/meeting/entity"
-	"innoconnect/internal/meeting/usecase"
-	pb "innoconnect/pkg/pb/meeting"
 )
 
+// Meeting business logic interface
 type MeetingUsecase interface {
 	Create(ctx context.Context, meeting entity.Meeting) (entity.Meeting, error)
 	GetAll(ctx context.Context) ([]entity.Meeting, error)
@@ -22,6 +24,7 @@ type MeetingUsecase interface {
 	ApplyOnMeeting(ctx context.Context, userid int64, username string, id int64) error
 }
 
+// gRPC server for meeting service
 type MeetingServer struct {
 	pb.UnimplementedMeetingServiceServer
 	usecase MeetingUsecase

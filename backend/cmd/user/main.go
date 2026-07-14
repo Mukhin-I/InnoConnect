@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
+	// Initialize the user server
 	userapp.CreateServer()
 }

@@ -14,7 +14,7 @@ import (
 	_ "innoconnect/docs"
 )
 
-// Function for setuping Gin server
+// Setup and run gateway server
 func CreateServer() error {
 	meetingClient, err := grpcclient.NewMeetingClient()
 	if err != nil {
@@ -71,6 +71,7 @@ func CreateServer() error {
 	return nil
 }
 
+// Configure all HTTP endpoints
 func setEndpoints(router *gin.Engine, h *transport.Handler) {
 	router.POST("/register", h.Register)
 	router.POST("/login", h.Login)
