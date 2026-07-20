@@ -27,9 +27,12 @@ function Welcome() {
     <>
      <div className="welcome-page">
       <div className="welcome-content">
-          <div className="logo-container">
-            <img src={logoIcon} alt="Logo" style={{ width: 121, height: 22 }} />
-          </div>
+        <div className="header-top header-welcome">
+            <div className="logo-container">
+              <img src={logoIcon} alt="Logo" style={{ width: 121, height: 22 }} />
+            </div>
+        </div>
+          
         <div className="title-container">
           <h1>Твой город -<br />твои люди</h1>
           <p>Удобный способ находить события и помогать соседям в Иннополисе в один клик.</p>
