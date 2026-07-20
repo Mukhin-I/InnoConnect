@@ -68,7 +68,7 @@ function Login() {
     <>
       <div className="login-page">
         <div className="login-page-content">
-            <div className="header-top">
+            <div className="header-top header-login">
                     <img src={logoIcon} alt="Logo" style={{ width: 65, height: 15 }} />
             </div>
             <div className="text-header">

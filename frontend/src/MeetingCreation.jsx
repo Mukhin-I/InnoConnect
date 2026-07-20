@@ -192,10 +192,10 @@ function MeetingCreation() {
                     </svg>
                   </button>
                 <img src={logoIcon} alt="Logo" style={{ width: 108, height: 25 }} />          </div>
-                          <div className="header-icons">
+                          {/* <div className="header-icons">
                             <img src={notificationIcon} alt="Notifications" className="header-icon" />
                               <img src={settingsIcon} alt="Settings" className="header-icon" />
-                          </div>
+                          </div> */}
                         </header>
         <div className="meeting-creation-page-content">
           <div className="text-header">
