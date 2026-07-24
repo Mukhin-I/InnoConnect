@@ -38,6 +38,6 @@ Best withes, MJ, V. Make-ovsky and AF
 
 ## Screenshots
 
-(./screenshots/ic1.png)
-(./screenshots/ic2.png)
-(./screenshots/ic3.png)
+![Map page](./screenshots/ic1.png)
+![Event preview](./screenshots/ic2.png)
+![Register](./screenshots/ic3.png)
