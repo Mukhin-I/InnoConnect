@@ -34,3 +34,10 @@ It's simple:
 Good **luck** in your future work!
 
 Best withes, MJ, V. Make-ovsky and AF
+
+
+## Screenshots
+
+(./screenshots/ic1.png)
+(./screenshots/ic2.png)
+(./screenshots/ic3.png)
